@@ -421,7 +421,7 @@ function ProgressOverviewMixin:LoadActivities()
 			local activityInfo = miog:GetActivityInfo(activityID)
 			local mapID = activityInfo.mapID
 
-			miog.checkSingleMapIDForNewData(mapID, true)
+			miog:GetMapInfo(mapID)
 			--miog.checkForMapAchievements(mapID)
 
 			tinsert(raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
@@ -439,6 +439,13 @@ function ProgressOverviewMixin:LoadActivities()
 		self.raidActivities = raidActivities
 
 		if(raidActivities[1]) then
+			self.currentRaidMapIDs = {}
+
+			for k, v in pairs(raidActivities) do
+				tinsert(self.currentRaidMapIDs, v.mapID)
+
+			end
+
 			self.currentRaidMapID = raidActivities[1].mapID
 
 		end
@@ -531,9 +538,26 @@ function ProgressOverviewMixin:OnLoad()
 		local mapID = self.currentRaidMapID
 
 		if(data.raids and mapID) then
+
 			local journalInfo = miog:GetJournalDataForMapID(mapID)
 			local numBosses = #journalInfo.bosses
 			local playerInstanceData = data.raids.instances[mapID]
+
+			--[[
+			local totalNumBosses = 0
+			local text = ""
+			
+			for i = 1, 3, 1 do
+				local raidProgressFrame = i == 1 and frame.Identifiers.Normal or i == 2 and frame.Identifiers.Heroic or i == 3 and frame.Identifiers.Mythic
+
+				for k, v in pairs(self.currentRaidMapIDs) do
+					local journalInfo = miog:GetJournalDataForMapID(mapID)
+					local numBosses = #journalInfo.bosses
+					local playerInstanceData = data.raids.instances[mapID]
+					
+
+				end
+			end]]
 
 			for i = 1, 3, 1 do
 				local raidProgressFrame = i == 1 and frame.Identifiers.Normal or i == 2 and frame.Identifiers.Heroic or i == 3 and frame.Identifiers.Mythic
@@ -1131,7 +1155,7 @@ function ProgressRaidMixin:LoadActivities()
 			local activityInfo = miog:GetActivityInfo(activityID)
 			local mapID = activityInfo.mapID
 
-			miog.checkSingleMapIDForNewData(mapID, true)
+			miog:GetMapInfo(mapID)
 
 			tinsert(raidTable, {name = name, order = order, activityID = activityID, mapID = mapID})
 		end

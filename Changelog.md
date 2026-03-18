@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.10a] - 2026-03-18
+
+### Fixed
+
+- Multiple errors regarding raid and the new patch have been resolved.
+
+### Known issues
+
+- [Progress] Only progress for a single raid is currently shown.
+This is fixed in v3.9.11, coming Friday.
+
+- [GroupOrganizer] The online / afk / dnd / offline indicator is currently not working.
+You can still hover over the players to check their status.
+
+
+
+
 ## [3.9.10] - 2026-03-17
 
 ### Changed
@@ -4833,7 +4850,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.10..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.10a..HEAD
+[3.9.10a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10a
 [3.9.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10
 [3.9.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.9
 [3.9.8a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.8a

@@ -555,8 +555,8 @@ miog.CURRENCY_INFO = {
 		{id = 3343,},
 		{id = 3345,},
 		{id = 3347,},
-		{id = 3378,}, --valorstones
-		{id = 3310,}, --catalyst
+		{id = 3378,}, --manaflux
+		--{id = 3310,}, --cofferkey shards
 		{id = 3212,}, --spark
 		{id = 3316,}, --voidlight
 	}
@@ -614,7 +614,7 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 	[280] = {abbreviatedName="STRTS", mapID = "2441", challengeModeID=391, fileName="tazavesh_streets"},
 	[281] = {abbreviatedName="GMBT", mapID = "2441", challengeModeID=392, fileName="tazavesh_gambit"},
 
-	[378] = {abbreviatedName="MFO", mapID = "2810",
+	[378] = {abbreviatedName="MFO", mapID = 2810,
 		bossIcons = {
 			{icon = "interface/icons/inv_112_achievement_raid_automaton.blp"},
 			{icon = "interface/icons/inv_112_achievement_raid_silkworm.blp"},
@@ -656,6 +656,25 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 		},
 		abbreviatedName = "LOU",
 		mapID = 2769,
+	},
+	[402] = {
+		abbreviatedName = "VS",
+		mapID = 2912,
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_voidspire_hostgeneral.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_kaiju.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_salhadaar.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_dragonduo.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_paladintrio.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_alleria.blp"},
+		},
+	},
+	[404] = {
+		abbreviatedName = "DR",
+		mapID = 2939,
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_dreamwell_malformedmanifestation.blp"},
+		},
 	},
 }
 
@@ -1399,10 +1418,23 @@ miog.MAP_INFO = {
 	[2915] = {abbreviatedName = "NPX", fileName = "nexuspointxenas"},
 	[2923] = {abbreviatedName = "VA", fileName = "domanaararena"},
 
-	[2912] = {abbreviatedName = "VS", fileName = "voidspire"},
+	[2912] = {abbreviatedName = "VS", fileName = "voidspire",
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_voidspire_hostgeneral.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_kaiju.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_salhadaar.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_dragonduo.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_paladintrio.blp"},
+			{icon = "interface/icons/inv_120_raid_voidspire_alleria.blp"},
+		},
+	},
 	[2913] = {abbreviatedName = "MQD", fileName = "darkwell"},
 	[2930] = {abbreviatedName = "MN", fileName = "midnight"},
-	[2939] = {abbreviatedName = "DR", fileName = "riftofaln"},
+	[2939] = {abbreviatedName = "DR", fileName = "riftofaln",
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_dreamwell_malformedmanifestation.blp"},
+		},
+	},
 }
 
 miog.CHALLENGE_MODE_INFO = {
@@ -1977,7 +2009,12 @@ function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID
 end
 
 function miog:CreateJournalDB()
-	local startTier = 1;
+	local startTier = 1
+
+	if(not EncounterJournal) then
+		EncounterJournal_LoadUI()
+
+	end
 
 	if(EJ_GetNumTiers() > 0) then
 		for tier = startTier, GetNumExpansions() do
@@ -1989,7 +2026,13 @@ function miog:CreateJournalDB()
 				local index = 1
 				local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
-				--EJ_SelectInstance(journalInstanceID)
+
+				if(tier == 12) then
+					print(instanceName)
+
+				end
+
+				EJ_SelectInstance(journalInstanceID)
 
 				if(not database.pointers.journal[journalInstanceID]) then
 					while instanceName do
@@ -2007,22 +2050,17 @@ function miog:CreateJournalDB()
 	end
 end
 
-function miog:LoadJournalDBIfNeeded()
-	EncounterJournal_LoadUI()
-
-	miog:CreateJournalDB()
-end
-
 function miog:GetJournalInstanceInfo(journalInstanceID)
-	miog:LoadJournalDBIfNeeded()
+	if(not database.pointers.journal[journalInstanceID]) then
+		miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 
-	return database.pointers.journal[journalInstanceID] or miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
+	end
+
+	return database.pointers.journal[journalInstanceID]
 
 end
 
 function miog:GetJournalDB()
-	miog:LoadJournalDBIfNeeded()
-
 	return miog.database.pointers.journal
 end
 
@@ -2251,6 +2289,9 @@ function miog:GetGroupInfo(groupID)
 	elseif(not database.pointers.groups[groupID].abbreviatedName) then
 		miog:AggregateActivityInfoForGroup(groupID)
 
+	elseif(not database.pointers.groups[groupID].bosses) then
+		miog:IntegrateJournalDataIntoGroup(groupID)
+
 	end
 
 	return database.pointers.groups[groupID]
@@ -2281,13 +2322,13 @@ function miog:GetActivityInfo(activityID)
 end
 
 do
-	miog:LoadJournalDBIfNeeded()
+	miog:CreateJournalDB()
 
-	for _, activityID in pairs(manualData.activity) do
+	--[[for _, activityID in pairs(manualData.activity) do
 		miog:CreateGroupAndSiblingActivitiesFromActivity(activityID, true)
 
 		tinsert(database.pointers.unlistedActivities, database.pointers.activity[activityID])
-	end
+	end]]
 
 	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
 		for _, activityID in ipairs(C_LFGList.GetAvailableActivities(categoryID)) do
@@ -2323,8 +2364,6 @@ function miog:HasJournalInstanceInfo(journalInstanceID)
 end
 
 function miog:GetJournalInstanceIDFromMapID(mapID)
-	miog:LoadJournalDBIfNeeded()
-
 	local journalInstanceID
 
 	if(not database.pointers.map[mapID]) then
@@ -2345,8 +2384,6 @@ function miog:GetJournalInstanceIDFromMapID(mapID)
 end
 
 function miog:GetJournalInstanceIDFromActivityID(activityID)
-	miog:LoadJournalDBIfNeeded()
-
 	local journalInstanceID
 
 	if(not database.pointers.activity[activityID]) then
@@ -2366,8 +2403,6 @@ end
 
 function miog:GetJournalDataForMapID(mapID)
 	if(mapID) then
-		miog:LoadJournalDBIfNeeded()
-
 		if(not miog:HasMapInfo(mapID)) then
 			miog:GetMapInfo(mapID)
 
@@ -2384,8 +2419,6 @@ function miog:GetJournalDataForMapID(mapID)
 end
 
 function miog:GetJournalDataForActivityID(activityID)
-	miog:LoadJournalDBIfNeeded()
-
 	if(activityID) then
 		if(not miog:HasActivityInfo(activityID)) then
 			miog:GetActivityInfo(activityID)

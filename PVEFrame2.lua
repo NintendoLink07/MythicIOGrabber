@@ -225,7 +225,6 @@ local function createPVEFrameReplacement()
 				local activities = C_WeeklyRewards.GetActivities(v)
 
 				if(activities and #activities > 0) then
-
 					local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
 					currentFrame:SetInfo(activities)
 
@@ -236,7 +235,6 @@ local function createPVEFrameReplacement()
 					local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
 					local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 					dimColor[4] = 0.1
-						
 
 					currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
 					currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
@@ -244,7 +242,7 @@ local function createPVEFrameReplacement()
 					local ilvls = currentFrame:GetAllItemlevels()
 
 					currentFrame.ThresholdBar:SetValue(0)
-					local currentValue = currentFrame["Progress1"]:GetLeft() - 4
+					local currentValue = 0
 					
 					local all = farthestActivity.progress >= farthestActivity.threshold
 					

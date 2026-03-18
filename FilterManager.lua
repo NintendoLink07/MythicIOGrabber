@@ -879,14 +879,13 @@ local function refreshFilters()
 
 		table.sort(seasonGroups, sortActivityGroup)
 
-
 		for k, groupID in ipairs(seasonGroups) do
 			tinsert(allGroups, {filterID = groupID, isPvE = true})
 
 		end
 
 		if(isMainRaid and not isLegacyRaid) then
-			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
+			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 133)
 
 			if(worldBossActivity and #worldBossActivity > 0) then
 				local activityInfo = miog:GetActivityInfo(worldBossActivity[1])
@@ -956,7 +955,7 @@ local function refreshFilters()
 					
 					if(data.isPvE) then
 						local info = miog:GetGroupInfo(data.filterID)
-						bossTable = info.activityDBs[1].bosses
+						bossTable = info.bosses
 						bossIcons = info.bossIcons or {}
 
 					elseif(data.isWorld) then
@@ -1506,7 +1505,7 @@ local function loadFilterManager()
 					
 					if(type == "pve") then
 						local info = miog:GetGroupInfo(filterID)
-						bossTable = info.activityDBs[1].bosses
+						bossTable = info.bosses
 
 					elseif(type == "world") then
 						local info = miog:GetMapInfo(filterID)

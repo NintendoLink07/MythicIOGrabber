@@ -427,7 +427,7 @@ local function createDataProviderWithUnsortedData()
 		if(C_LFGList.HasSearchResultInfo(resultID)) then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-			if(searchResultInfo and not searchResultInfo.hasSelf) then
+			if(searchResultInfo) then
 				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 				--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
@@ -698,7 +698,7 @@ local function insertRoleMembersOrDummy(array, result)
 end
 
 local function updateScrollBoxFrame(frame, data)
-	if(C_LFGList.HasSearchResultInfo(data.resultID)) then
+	if(C_LFGList.HasSearchResultInfo(data.resultID) and not InCombatLockdown()) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 		local activityID = searchResultInfo.activityIDs[1]
 		local activityInfo = miog:GetActivityInfo(activityID)

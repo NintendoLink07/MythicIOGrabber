@@ -361,7 +361,7 @@ local function setupFramePools()
         if(guildClubId) then
             local clubMembers = C_Club.GetClubMembers(guildClubId)
 
-            if(type(clubMembers) == "table") then
+            if(not issecrettable(clubMembers)) then
                 local orderedGuildList = {}
                 
                 for k, v in ipairs(clubMembers) do

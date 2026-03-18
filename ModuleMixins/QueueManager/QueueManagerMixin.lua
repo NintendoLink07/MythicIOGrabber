@@ -128,7 +128,6 @@ function QueueManagerMixin:UpdatePlunderstormQueue()
 end
 
 function QueueManagerMixin:CheckQueues()
-	if(not InCombatLockdown()) then
 		self.dataProvider:Flush()
 
 		self:UpdateFakeApplications()
@@ -141,12 +140,13 @@ function QueueManagerMixin:CheckQueues()
 		self:UpdatePlunderstormQueue()
 
 		self.Title:SetShown(self.dataProvider:GetSize() < 1)
-	end
 end
 
 function QueueManagerMixin:OnEvent(event, ...)
-	self:CheckQueues()
+	if(not InCombatLockdown()) then
+		self:CheckQueues()
 
+	end
 end
 
 --QueueStatusFrame events for queues
