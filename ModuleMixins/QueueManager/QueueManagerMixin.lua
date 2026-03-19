@@ -128,6 +128,7 @@ function QueueManagerMixin:UpdatePlunderstormQueue()
 end
 
 function QueueManagerMixin:CheckQueues()
+	if(not InCombatLockdown()) then
 		self.dataProvider:Flush()
 
 		self:UpdateFakeApplications()
@@ -140,13 +141,12 @@ function QueueManagerMixin:CheckQueues()
 		self:UpdatePlunderstormQueue()
 
 		self.Title:SetShown(self.dataProvider:GetSize() < 1)
+	end
 end
 
 function QueueManagerMixin:OnEvent(event, ...)
-	if(not InCombatLockdown()) then
-		self:CheckQueues()
+	self:CheckQueues()
 
-	end
 end
 
 --QueueStatusFrame events for queues
@@ -209,7 +209,7 @@ function QueueManagerMixin:OnLoad()
 			
 			if(hasData) then
 				timeInQueue = queuedTime and GetTime() - queuedTime or 0
-				frame:SetTimerInfo("add", timeInQueue)
+				frame:SetTimerInfo(false, timeInQueue)
 
 				timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
 				frame:SetWaitInfo(timeToMatch)
@@ -233,9 +233,7 @@ function QueueManagerMixin:OnLoad()
 				macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
 				backgroundImage = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
 
-				frame.CancelApplication:SetShown(UnitIsGroupLeader("player"))
-
-				frame:SetTimerInfo("sub", activeEntryInfo.duration)
+				frame:SetTimerInfo()
 
 				activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numApplicants .. ")"
 				
@@ -251,7 +249,7 @@ function QueueManagerMixin:OnLoad()
 				macrotext = "idkwhatilldoherebutillfigureitout"
 				timeInQueue = searchResultInfo.age
 
-				frame:SetTimerInfo("add", timeInQueue)
+				frame:SetTimerInfo(false, timeInQueue)
 
 			else
 				macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
@@ -259,7 +257,7 @@ function QueueManagerMixin:OnLoad()
 				local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
 				timeInQueue = appDuration
 				
-				frame:SetTimerInfo("sub", timeInQueue)
+				frame:SetTimerInfo(false, timeInQueue)
 
 			end
 
@@ -349,7 +347,7 @@ function QueueManagerMixin:OnLoad()
 			activityName = mapName
 
 			frame.index = data.index
-			frame:SetTimerInfo("add", timeInQueue)
+			frame:SetTimerInfo(false, timeInQueue)
 			frame:SetWaitInfo(timeToMatch)
 
 			frame.Wait:Show()

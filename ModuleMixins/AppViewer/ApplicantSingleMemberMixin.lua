@@ -25,16 +25,9 @@ end
 
 function ApplicantSingleMemberMixin:SetItemLevel(itemLevel)
     if(itemLevel) then
-        local reqIlvl = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredItemLevel or 0
+        self.ItemLevel:SetText(miog.round(itemLevel, 1))
+        self.ItemLevel:SetTextColor(miog.createCustomColorForItemLevel(itemLevel, 700, 730):GetRGBA())
 
-        if(reqIlvl > itemLevel) then
-            self.ItemLevel:SetText(wticc(miog.round(itemLevel, 1), miog.CLRSCC["red"]))
-
-        else
-            self.ItemLevel:SetText(miog.round(itemLevel, 1))
-            self.ItemLevel:SetTextColor(miog.createCustomColorForItemLevel(itemLevel, 700, 730):GetRGBA())
-
-        end
     end
 end
 

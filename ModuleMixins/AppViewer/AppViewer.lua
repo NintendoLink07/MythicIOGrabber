@@ -236,10 +236,8 @@ function AppViewer:RetrieveAndSetEntryInfo()
 		local activityInfo = miog:GetActivityInfo(activeEntry.activityIDs[1])
 		categoryID = activityInfo.categoryID
 
-		local pretext = activeEntry.privateGroup and "!" or ""
-
-		self.ActivityBar.Name:SetText(pretext .. activeEntry.name)
-		self.ActivityBar.Title:SetText(pretext .. (activityInfo.difficultyID and miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] and activityInfo.fullName .. " - " .. miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] or activityInfo.fullName))
+		self.ActivityBar.Name:SetText(activeEntry.name)
+		self.ActivityBar.Title:SetText(activityInfo.difficultyID and miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] and activityInfo.fullName .. " - " .. miog.DIFFICULTY_ID_TO_SHORT_NAME[activityInfo.difficultyID] or activityInfo.fullName)
 		self.ActivityBar.Description:SetText(activeEntry.comment)
 		self.ActivityBar.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID], "MIRROR", "MIRROR")
 		

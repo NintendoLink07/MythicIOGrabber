@@ -2026,12 +2026,6 @@ function miog:CreateJournalDB()
 				local index = 1
 				local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
 
-
-				if(tier == 12) then
-					print(instanceName)
-
-				end
-
 				EJ_SelectInstance(journalInstanceID)
 
 				if(not database.pointers.journal[journalInstanceID]) then

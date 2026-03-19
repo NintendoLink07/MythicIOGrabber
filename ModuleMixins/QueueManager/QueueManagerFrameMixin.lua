@@ -1,45 +1,38 @@
-local formatter = CreateFromMixins(SecondsFormatterMixin)
-formatter:SetStripIntervalWhitespace(true)
-formatter:Init(0, SecondsFormatter.Abbreviation.OneLetter)
-
 QueueManagerFrameMixin = {}
 
 function QueueManagerFrameMixin:OnLoad()
-    self.formatter = formatter
+    self.timer = C_DurationUtil.CreateDuration()
 
 	self.CancelApplication:RegisterForClicks("LeftButtonDown")
     self.CancelApplication:SetAttribute("type", "macro")
 end
 
-function QueueManagerFrameMixin:SetTimerInfo(type, value)
-    self.timerType = type
-
+function QueueManagerFrameMixin:SetTimerInfo(hasEnd, value)
     value = value or 0
 
     if(self.Ticker) then
         self.Ticker:Cancel()
-        self.Age:SetText(formatter:Format(value))
 
     end
 
-    if(type == "add") then
-        self.Ticker = C_Timer.NewTicker(1, function()
-            value = value + 1
-            self.Age:SetText(formatter:Format(value))
-
-        end)
+    if(hasEnd) then
+        self.timer:SetTimeFromStart(time(), value)
         
-    elseif(type == "sub") then
-        self.Ticker = C_Timer.NewTicker(1, function()
-            value = value - 1
-            self.Age:SetText(formatter:Format(value))
+    else
+        self.timer:SetTimeSpan(value, "9999999999")
 
-        end)
     end
+
+    self.Ticker = C_Timer.NewTicker(1, function()
+        self.Age:SetText(self.timer:GetClockTime())
+
+    end)
+
+    self.Age:SetText(self.timer:GetClockTime())
 end
 
 function QueueManagerFrameMixin:SetWaitInfo(timeToMatch)
-    self.Wait:SetText(timeToMatch ~= -1 and "(" .. (timeToMatch ~= -1 and formatter:Format(timeToMatch)) .. ")" or "")
+    self.Wait:SetText(timeToMatch ~= -1 and "(" .. timeToMatch .. ")" or "")
     
 end
 
@@ -135,23 +128,23 @@ function QueueManagerLFGFrameMixin:OnEnter()
             GameTooltip:AddLine("Wait times:")
 
             if (myWaitOk) then
-                GameTooltip:AddLine(string.format("~ |cffffffff%s|r", self.formatter:Format(myWait)))
+                GameTooltip:AddLine(string.format("~ |cffffffff%s|r", myWait))
             end
 
             if (averageWaitOk) then
-                GameTooltip:AddLine(string.format("Ø |cffffffff%s|r", self.formatter:Format(averageWait)))
+                GameTooltip:AddLine(string.format("Ø |cffffffff%s|r", averageWait))
             end
 
             if (tankWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", self.formatter:Format(tankWait)))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", tankWait))
             end
 
             if (healerWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", self.formatter:Format(healerWait)))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", healerWait))
             end
 
             if (damageWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", self.formatter:Format(damageWait)))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", damageWait))
             end
 
         end
@@ -273,6 +266,34 @@ end
 
 QueueManagerListingFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
+function QueueManagerListingFrameMixin:SetTimerInfo()
+    self.timer:SetToDefaults()
+
+    if(self.Ticker) then
+        self.Ticker:Cancel()
+
+    end
+
+    local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+
+    self.timer:SetTimeFromStart(time(), activeEntryInfo.duration)
+
+    self.Ticker = C_Timer.NewTicker(1, function()
+        activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+
+        if(activeEntryInfo) then
+            self.timer:SetTimeFromStart(time(), activeEntryInfo.duration)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        else
+            self.Ticker:Cancel()
+
+        end
+    end)
+
+    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+end
+
 function QueueManagerListingFrameMixin:OnClick()
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.ApplicationViewer)
@@ -299,6 +320,11 @@ function QueueManagerListingFrameMixin:OnEnter()
     end
 end
 
+
+function QueueManagerListingFrameMixin:OnShow()
+	self.CancelApplication:SetShown(UnitIsGroupLeader("player"))
+
+end
 
 
 

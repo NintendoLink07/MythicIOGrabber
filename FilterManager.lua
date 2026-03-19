@@ -507,7 +507,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 							-- 2 alive
 							-- 3 defeated
 
-							local bossIsDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName] or false
+							local bossIsDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
 
 							if(bossIsDefeated and state == 2 or not bossIsDefeated and state == 3) then
 								return false, "bossSelectionMismatch"

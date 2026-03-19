@@ -236,13 +236,13 @@ local function createPVEFrameReplacement()
 					local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
 					dimColor[4] = 0.1
 
-					currentFrame.ThresholdBar:SetMinMaxValues(currentFrame.ThresholdBar:GetLeft() or 0, currentFrame.ThresholdBar:GetRight() or 100)
+					currentFrame.ThresholdBar:SetMinMaxValues(0, 100)
 					currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
 
 					local ilvls = currentFrame:GetAllItemlevels()
 
 					currentFrame.ThresholdBar:SetValue(0)
-					local currentValue = 0
+					local currentValue
 					
 					local all = farthestActivity.progress >= farthestActivity.threshold
 					
@@ -279,7 +279,14 @@ local function createPVEFrameReplacement()
 						singleFrame.Glow:SetShown(not activityIndex and isCompleted)
 
 						if(isCompleted) then
-							currentValue = currentValue + singleFrame:GetWidth() + 4
+							if(not currentValue) then
+								currentValue = v == 3 and 64 or 50
+
+							else
+								currentValue = currentValue + 7.333
+
+							end
+
 							currentFrame.ThresholdBar:SetValue(currentValue)
 							singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
 

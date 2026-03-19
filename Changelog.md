@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.9.10b] - 2026-03-19
+
+### Fixed
+
+- [MainFrame] The vault progress bar textures should now be set correctly again.
+
+- Multiple errors regarding secret values or tables have been resolved.
+
+
+
+
 ## [3.9.10a] - 2026-03-18
 
 ### Fixed
@@ -4850,7 +4862,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.10a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.10b..HEAD
+[3.9.10b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10b
 [3.9.10a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10a
 [3.9.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10
 [3.9.9]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.9

@@ -4,6 +4,7 @@
         <Scripts>
 			<OnClick method="OnClick" />
 			<OnEnter method="OnEnter" />
+			<OnShow method="OnShow" />
         </Scripts>
     </Button>
 </Ui>
