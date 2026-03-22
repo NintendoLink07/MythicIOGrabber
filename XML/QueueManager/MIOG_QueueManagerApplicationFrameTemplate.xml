@@ -4,6 +4,7 @@
         <Scripts>
 			<OnClick method="OnClick" />
             <OnLoad method="OnLoad" />
+            <OnEnter method="OnEnter" />
         </Scripts>
     </Button>
 </Ui>

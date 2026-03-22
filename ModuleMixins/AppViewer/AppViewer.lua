@@ -94,7 +94,6 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		local parent
 		local multipleMembers = applicantData.numMembers > 1
-		local numMembers = applicantData.numMembers
 
 		local allDataAvailable = true
 
@@ -103,12 +102,12 @@ function AppViewer:AddApplicant(applicantID, activityID)
 		local isRaid = categoryID == 3
 		local raidTable = {}
 
-		for k = 1, numMembers do
+		for k = 1, applicantData.numMembers do
 			local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(applicantID, k)
 
 			if(name) then
 				local primary, secondary
-				local fullName, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
+				local _, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 				local raidData
 
 				if(categoryID == 2) then
@@ -141,21 +140,13 @@ function AppViewer:AddApplicant(applicantID, activityID)
 					template = "MIOG_AppViewerApplicantSingleMemberTemplate",
 					applicantID = applicantID,
 					applicantIndex = k,
-					numMembers = numMembers,
-
-					class = class,
-					specID = specID,
-
-					playerName = playerName,
-					realm = realm,
 
 					categoryID = categoryID,
+
+					itemLevel = itemLevel,
 					primary = primary,
 					secondary = secondary,
-
 					raidData = raidData,
-					itemLevel = itemLevel,
-
 					role = roleValue,
 				}
 
@@ -172,7 +163,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		if(allDataAvailable) then
 			if(multipleMembers) then
-				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / numMembers, overallSecondary / numMembers, overallRole / numMembers, overallItemLevel / numMembers
+				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / applicantData.numMembers, overallSecondary / applicantData.numMembers, overallRole / applicantData.numMembers, overallItemLevel / applicantData.numMembers
 
 				parent = treeDataProvider:Insert({
 					template = "MIOG_AppViewerApplicantMultiMemberTemplate",
@@ -199,7 +190,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 			for k = 1, applicantData.numMembers do
 				local singleMember = parent:Insert(groupData[k])
 				singleMember:SetCollapsed(true, true, false)
-				singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID, name = groupData[k].playerName, realm = groupData[k].realm})
+				singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID})
 
 			end
 		end
@@ -217,8 +208,6 @@ function AppViewer:RefreshApplicantList()
 
 	if(applicantList and #applicantList > 0) then
 		for _, applicantID in ipairs(applicantList) do
-			local applicantData = C_LFGList.GetApplicantInfo(applicantID)
-
 			self:AddApplicant(applicantID, activeEntry.activityIDs[1])
 			
 		end
@@ -259,24 +248,17 @@ function AppViewer:RetrieveAndSetEntryInfo()
 
 		end
 
-		if(activeEntry.requiredItemLevel > 0) then
-			self.ActivityBar.Secondary:SetText(activeEntry.requiredItemLevel)
-
-		else
-			self.ActivityBar.Secondary:SetText("---")
-
-		end
-
+		self.ActivityBar.Secondary:SetText(activeEntry.requiredItemLevel)
 		self.ActivityBar.VoiceChat:SetDesaturated(not LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked())
 
-		if(activeEntry.isCrossFactionListing) then
+		--[[if(LFGListFrame.EntryCreation.CrossFactionGroup.CheckButton:IsChecked()) then
 			self.ActivityBar.Faction:SetTexture(2437241)
 
 		else
 			local playerFaction = UnitFactionGroup("player")
 			self.ActivityBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
 
-		end
+		end]]
 	end
 end
 
@@ -313,13 +295,17 @@ function AppViewer:OnEvent(event, ...)
 		if(justCreated == nil) then
 			if(queueTimer) then
 				queueTimer:Cancel()
-				queueTimer = nil
+
 			end
 		else
 			if(justCreated) then
 				treeDataProvider:Flush()
 				MIOG_NewSettings.queueUpTime = GetTimePreciseSec()
 				
+				if(queueTimer) then
+					queueTimer:Cancel()
+					
+				end
 			else
 				MIOG_NewSettings.queueUpTime = MIOG_NewSettings.queueUpTime > 0 and MIOG_NewSettings.queueUpTime or GetTimePreciseSec()
 

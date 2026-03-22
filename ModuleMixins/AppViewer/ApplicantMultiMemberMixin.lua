@@ -14,10 +14,9 @@ function ApplicantMultiMemberMixin:SetData(data)
     local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
 
     if(applicantData) then
-        local numMembers = applicantData.numMembers
-        self.Players:SetText("(" .. numMembers .. ") ")
+        self.Players:SetText("(" .. applicantData.numMembers .. ") ")
 
-        for i = 1, numMembers do
+        for i = 1, applicantData.numMembers do
             local name, class = C_LFGList.GetApplicantMemberInfo(self.applicantID, i)
             local _, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 
@@ -71,6 +70,6 @@ function ApplicantMultiMemberMixin:SetData(data)
             end
         end]]
 
-        self:SetInviteDeclineVisible(true, numMembers)
+        self:SetInviteDeclineVisible(true, applicantData.numMembers)
     end
 end

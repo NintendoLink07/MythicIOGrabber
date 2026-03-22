@@ -1427,6 +1427,32 @@ miog.MAP_INFO = {
 			{icon = "interface/icons/inv_120_raid_voidspire_paladintrio.blp"},
 			{icon = "interface/icons/inv_120_raid_voidspire_alleria.blp"},
 		},
+		achievementIDs = {
+			61276,
+			61277,
+			61278,
+			61279,
+			61280,
+			61281,
+			61282,
+			61283,
+			61284,
+			61285,
+			61286,
+			61287,
+			61288,
+			61289,
+			61290,
+			61291,
+			61292,
+			61293,
+			61294,
+			61295,
+			61296,
+			61297,
+			61298,
+			61299,
+		}
 	},
 	[2913] = {abbreviatedName = "MQD", fileName = "darkwell"},
 	[2930] = {abbreviatedName = "MN", fileName = "midnight"},
@@ -1434,6 +1460,12 @@ miog.MAP_INFO = {
 		bossIcons = {
 			{icon = "interface/icons/inv_120_raid_dreamwell_malformedmanifestation.blp"},
 		},
+		achievementIDs = {
+			61474,
+			61475,
+			61476,
+			61477,
+		}
 	},
 }
 
@@ -1837,7 +1869,10 @@ function miog:RetrieveJournalInstanceBossData(journalInstanceID)
 end
 
 function miog:RetrieveJournalInstanceEncounterData(journalInstanceID)
-	miog:SaveJournalInstanceBossData(journalInstanceID)
+	if(not database.pointers.journal[journalInstanceID].encounters) then
+		miog:SaveJournalInstanceBossData(journalInstanceID)
+
+	end
 
 	return database.pointers.journal[journalInstanceID].encounters
 end
@@ -1875,7 +1910,12 @@ function miog:GetJournalInstanceBossDataFromActivity(activityID)
 end
 
 function miog:GetEncounterDataFromJournalInstance(journalInstanceID)
-	return database.pointers.journal[journalInstanceID].encounters or miog:RetrieveJournalInstanceEncounterData(journalInstanceID)
+	if(not database.pointers.journal[journalInstanceID]) then
+		miog:GetJournalInstanceInfo(journalInstanceID)
+
+	end
+
+	return database.pointers.journal[journalInstanceID].encounters
 
 end
 
@@ -2316,6 +2356,8 @@ function miog:GetActivityInfo(activityID)
 end
 
 do
+	C_LFGList.RequestAvailableActivities()
+	
 	miog:CreateJournalDB()
 
 	--[[for _, activityID in pairs(manualData.activity) do
@@ -2534,6 +2576,8 @@ miog.TELEPORT_SPELLS_TO_MAP_DATA = {
 	[1254551] = {mapID = 1753},
 }
 
+miog.MAP_TELEPORTS = {}
+
 local function loadRawData()
 	local loadHQData = miog.isMIOGHQLoaded()
 
@@ -2548,10 +2592,15 @@ local function loadRawData()
 	end
 
 	for k, v in pairs(miog.TELEPORT_SPELLS_TO_MAP_DATA) do
-		if(miog.MAP_INFO[v.mapID]) then
-			v.abbreviatedName = miog.MAP_INFO[v.mapID].abbreviatedName
+		local mapInfo = miog:GetMapInfo(v.mapID)
+
+		if(mapInfo) then
+			v.abbreviatedName = mapInfo.abbreviatedName
+			mapInfo.teleport = k
 
 		end
+
+		miog.MAP_TELEPORTS[v.mapID] = k
 	end
 end
 

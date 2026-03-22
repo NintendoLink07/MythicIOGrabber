@@ -1,5 +1,8 @@
 local addonName, miog = ...
 
+local lastUpdate = 0
+local dataProvider = CreateDataProvider()
+
 QueueManagerMixin = {}
 
 function QueueManagerMixin:UpdateFakeApplications()
@@ -11,7 +14,7 @@ function QueueManagerMixin:UpdateListing()
 	local isActive = C_LFGList.HasActiveEntryInfo()
 
 	if (isActive) then
-		self.dataProvider:Insert({
+		dataProvider:Insert({
 			template = "MIOG_QueueManagerListingFrameTemplate",
 		})
 	end
@@ -38,7 +41,7 @@ function QueueManagerMixin:UpdatePVEQueues()
 				local isCurrentlyActive = activeID == queueID
 				
 				if(isCurrentlyActive or isRF) then
-					self.dataProvider:Insert({
+					dataProvider:Insert({
 						template = "MIOG_QueueManagerLFGFrameTemplate",
 						categoryID = categoryID,
 						queueID = queueID,
@@ -59,7 +62,7 @@ function QueueManagerMixin:UpdateGroupApplications()
 			local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(v)
 
 			if(resultID and appStatus == "applied") then
-				self.dataProvider:Insert({
+				dataProvider:Insert({
 					template = "MIOG_QueueManagerApplicationFrameTemplate",
 					resultID = resultID,
 				})
@@ -73,10 +76,10 @@ end
 
 function QueueManagerMixin:UpdatePVPQueues()
 	for i=1, GetMaxBattlefieldID() do
-		local status, mapName, teamSize, registeredMatch, suspend, queueType, gameType, role, asGroup, shortDescription, longDescription, isSoloQueue = GetBattlefieldStatus(i);
+		local status = GetBattlefieldStatus(i);
 
 		if(status and status ~= "none" and status ~= "error") then
-			self.dataProvider:Insert({
+			dataProvider:Insert({
 				template = "MIOG_QueueManagerFramePVPTemplate",
 				index = i,
 				type = "battlefield"
@@ -87,10 +90,10 @@ end
 
 function QueueManagerMixin:UpdateWorldPVPQueues()
 	for i=1, MAX_WORLD_PVP_QUEUES do
-		local status, mapName, queueID, expireTime, averageWaitTime, queuedTime, suspended = GetWorldPVPQueueStatus(i)
+		local status = GetWorldPVPQueueStatus(i)
 
 		if(status and status ~= "none") then
-			self.dataProvider:Insert({
+			dataProvider:Insert({
 				template = "MIOG_QueueManagerFramePVPTemplate",
 				index = i,
 				type = "world"
@@ -99,7 +102,7 @@ function QueueManagerMixin:UpdateWorldPVPQueues()
 	end
 
 	if(CanHearthAndResurrectFromArea()) then
-		self.dataProvider:Insert({
+		dataProvider:Insert({
 			template = "MIOG_QueueManagerFramePVPTemplate",
 			type = "openworld"
 		})
@@ -109,7 +112,7 @@ end
 
 function QueueManagerMixin:UpdatePetBattleQueue()
 	if(C_PetBattles.GetPVPMatchmakingInfo()) then
-		self.dataProvider:Insert({
+		dataProvider:Insert({
 			template = "MIOG_QueueManagerFramePVPTemplate",
 			type = "petbattle",
 		})
@@ -119,7 +122,7 @@ end
 
 function QueueManagerMixin:UpdatePlunderstormQueue()
 	if(C_LobbyMatchmakerInfo.IsInQueue()) then
-		self.dataProvider:Insert({
+		dataProvider:Insert({
 			template = "MIOG_QueueManagerFramePVPTemplate",
 			type = "plunderstorm",
 		})
@@ -129,7 +132,7 @@ end
 
 function QueueManagerMixin:CheckQueues()
 	if(not InCombatLockdown()) then
-		self.dataProvider:Flush()
+		dataProvider:Flush()
 
 		self:UpdateFakeApplications()
 		self:UpdatePVEQueues()
@@ -140,13 +143,8 @@ function QueueManagerMixin:CheckQueues()
 		self:UpdatePetBattleQueue()
 		self:UpdatePlunderstormQueue()
 
-		self.Title:SetShown(self.dataProvider:GetSize() < 1)
+		self.Title:SetShown(dataProvider:GetSize() < 1)
 	end
-end
-
-function QueueManagerMixin:OnEvent(event, ...)
-	self:CheckQueues()
-
 end
 
 --QueueStatusFrame events for queues
@@ -186,110 +184,40 @@ function QueueManagerMixin:RegisterNecessaryEvents()
 	self:RegisterEvent("PET_BATTLE_QUEUE_STATUS");
 end
 
+function QueueManagerMixin:OnEvent(...)
+	self:CheckQueues()
+
+end
+
 function QueueManagerMixin:OnLoad()
-    self.dataProvider = CreateDataProvider()
+	--[[EventRegistry:RegisterCallback("LobbyMatchmaker.UpdateQueueState",
+		function(...)
+			local table = ...
+			print(table:GetDebugName())
+
+			local currentTime = GetTime()
+
+			if(currentTime > lastUpdate + 0.5) then
+				lastUpdate = currentTime
+
+				self:CheckQueues()
+			end
+		end,
+	self);]]
+	
+	--hooksecurefunc(QueueStatusFrame, "Update", self.CheckQueues)
+
+    dataProvider = CreateDataProvider()
     local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3)
 
 	local function Initializer(frame, data)
-		frame.queueID = data.queueID
-		frame.categoryID = data.categoryID
-		frame.isMultiDungeon = data.isMultiDungeon
-		frame.index = data.index
-
 		local backgroundImage, activityName, macrotext, timeInQueue, timeToMatch
 
 		if(data.template == "MIOG_QueueManagerLFGFrameTemplate") then
-			local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(data.queueID)
-			local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(data.categoryID, data.queueID)
-
-			backgroundImage = miog:GetImageForMapID(mapID) or fileID
-
-			activityName = data.isMultiDungeon and MULTIPLE_DUNGEONS or name
-			macrotext = "/run LeaveSingleLFG(" .. data.categoryID .. "," .. data.queueID .. ")"
 			
-			if(hasData) then
-				timeInQueue = queuedTime and GetTime() - queuedTime or 0
-				frame:SetTimerInfo(false, timeInQueue)
-
-				timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
-				frame:SetWaitInfo(timeToMatch)
-
-				local totalNumOfPlayers = maxPlayers - tankNeeds - healerNeeds - dpsNeeds
-
-				if(totalNumOfPlayers > 1) then
-					frame.Name:SetTextColor(1, 1, 0, 1)
-					activityName = "(" .. (totalNumOfPlayers / maxPlayers * 100) .. "%) " .. activityName
-
-				end
-			end
 		elseif(data.template == "MIOG_QueueManagerListingFrameTemplate") then
-			local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-			local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-			local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
-
-			if(activityInfo) then
-				local unitName, unitID = miog:GetGroupLeader()
-
-				macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
-				backgroundImage = activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png"
-
-				frame:SetTimerInfo()
-
-				activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numApplicants .. ")"
-				
-			end
-
-			frame.Wait:Hide()
 
 		elseif(data.template == "MIOG_QueueManagerApplicationFrameTemplate") then
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-
-			if(isFakeApp) then
-				frame:SetAlpha(0.5)
-				macrotext = "idkwhatilldoherebutillfigureitout"
-				timeInQueue = searchResultInfo.age
-
-				frame:SetTimerInfo(false, timeInQueue)
-
-			else
-				macrotext = "/run C_LFGList.CancelApplication(" .. data.resultID .. ")"
-
-				local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(data.resultID)
-				timeInQueue = appDuration
-				
-				frame:SetTimerInfo(false, timeInQueue)
-
-			end
-
-			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
-
-			activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
-			backgroundImage = activityInfo.horizontal
-
-			frame.categoryID = activityInfo.categoryID
-
-			local eligible, reasonID = miog.filter.checkIfSearchResultIsEligible(data.resultID, true)
-			local reason = miog.INELIGIBILITY_REASONS[reasonID]
-
-			if(eligible == false) then
-				frame.Name:SetTextColor(1, 0, 0, 1)
-
-				if(reason) then
-					frame.Name:SetText(frame.Name:GetText() .. " - " .. reason[2])
-
-				end
-
-			else
-				frame.Name:SetTextColor(1, 1, 1, 1)
-
-			end
-
-			frame:SetScript("OnEnter", function(self)
-				miog.createResultTooltip(data.resultID, self)
-
-			end)
-
-			frame.Wait:Hide()
 			
 		elseif(data.template == "MIOG_QueueManagerFramePVPTemplate") then
 			local status, mapName
@@ -347,9 +275,6 @@ function QueueManagerMixin:OnLoad()
 			activityName = mapName
 
 			frame.index = data.index
-			frame:SetTimerInfo(false, timeInQueue)
-			frame:SetWaitInfo(timeToMatch)
-
 			frame.Wait:Show()
 		end
 
@@ -365,8 +290,7 @@ function QueueManagerMixin:OnLoad()
 
 		--end
 
-		frame.Name:SetText(activityName)
-		frame.CancelApplication:SetAttribute("macrotext1", macrotext)
+		frame:SetData(data)
     end
 
     local function CustomFactory(factory, data)
@@ -391,11 +315,9 @@ function QueueManagerMixin:OnLoad()
 
 	ScrollUtil.AddManagedScrollBarVisibilityBehavior(self.ScrollBox, self.ScrollBar, scrollBoxAnchorsWithBar, scrollBoxAnchorsWithoutBar)
 
-	self.ScrollBox:SetDataProvider(self.dataProvider)
+	self.ScrollBox:SetDataProvider(dataProvider)
 
 	self:RegisterNecessaryEvents()
-	self:RegisterEvent("PLAYER_REGEN_ENABLED")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 	--[[
 	

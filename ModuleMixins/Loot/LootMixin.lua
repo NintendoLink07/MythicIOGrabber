@@ -316,7 +316,7 @@ function LootMixin:RequestLoot(origin)
                     end
                 end
 
-                if(hasNoDifficulty or EJ_IsValidInstanceDifficulty(selectedDifficulty)) then
+                if(hasNoDifficulty or selectedDifficulty and EJ_IsValidInstanceDifficulty(selectedDifficulty)) then
                     if(hasNoDifficulty) then
                         local difficultyID = miog:GetHighestDifficultyForInstance()
 

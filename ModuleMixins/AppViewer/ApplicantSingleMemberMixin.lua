@@ -18,7 +18,7 @@ function ApplicantSingleMemberMixin:SetClass(fileName)
         self:SetBackdropBorderColor(r, g, b, a)
 
     else
-        self.Class:SetTexture(miog.OFFICIAL_CLASSES[100].icon)
+        self.Class:SetTexture(miog.CLASSES[100].icon)
 
     end
 end
@@ -27,6 +27,9 @@ function ApplicantSingleMemberMixin:SetItemLevel(itemLevel)
     if(itemLevel) then
         self.ItemLevel:SetText(miog.round(itemLevel, 1))
         self.ItemLevel:SetTextColor(miog.createCustomColorForItemLevel(itemLevel, 700, 730):GetRGBA())
+
+    else
+        self.ItemLevel:SetText("---")
 
     end
 end
@@ -57,9 +60,9 @@ function ApplicantSingleMemberMixin:SetData(data)
 
     name = table.concat(nameTable)
 
-    self.Name:SetText(data.playerName or playerName or name)
-    self:SetClass(data.class)
-    self.Spec:SetTexture(miog.SPECIALIZATIONS[data.specID or 0].squaredIcon)
+    self.Name:SetText(playerName or name)
+    self:SetClass(class)
+    self.Spec:SetTexture(miog.SPECIALIZATIONS[specID or 0].squaredIcon)
 
     local comment = data.comment
     self.Comment:SetShown(comment and comment ~= "")

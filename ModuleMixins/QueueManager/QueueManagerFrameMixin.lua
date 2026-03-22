@@ -1,3 +1,5 @@
+local addonName, miog = ...
+
 QueueManagerFrameMixin = {}
 
 function QueueManagerFrameMixin:OnLoad()
@@ -5,35 +7,77 @@ function QueueManagerFrameMixin:OnLoad()
 
 	self.CancelApplication:RegisterForClicks("LeftButtonDown")
     self.CancelApplication:SetAttribute("type", "macro")
+
 end
 
-function QueueManagerFrameMixin:SetTimerInfo(hasEnd, value)
-    value = value or 0
-
+function QueueManagerFrameMixin:CancelTicker()
     if(self.Ticker) then
         self.Ticker:Cancel()
+        self.timer:SetToDefaults()
 
     end
+end
 
-    if(hasEnd) then
-        self.timer:SetTimeFromStart(time(), value)
-        
+--implementation in child mixins
+function QueueManagerFrameMixin:SetTimerText()
+
+end
+
+function QueueManagerFrameMixin:SetTimerInfo(type, value1, value2)
+    self:CancelTicker()
+
+    if(type == "start") then
+        self.Ticker = C_Timer.NewTicker(1, function()
+            self.timer:SetTimeFromStart(value1, value2)
+            self:SetTimerText()
+        end)
+    elseif(type == "end") then
+        self.Ticker = C_Timer.NewTicker(1, function()
+            self.timer:SetTimeFromEnd(value1, value2)
+            self:SetTimerText()
+
+        end)
+    elseif(type == "span") then
+        self.Ticker = C_Timer.NewTicker(1, function()
+            self.timer:SetTimeSpan(value1, value2)
+            self:SetTimerText()
+
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+        end)
+
     else
-        self.timer:SetTimeSpan(value, "9999999999")
+        self.Age:SetText("On hold")
 
     end
-
-    self.Ticker = C_Timer.NewTicker(1, function()
-        self.Age:SetText(self.timer:GetClockTime())
-
-    end)
-
-    self.Age:SetText(self.timer:GetClockTime())
 end
 
 function QueueManagerFrameMixin:SetWaitInfo(timeToMatch)
     self.Wait:SetText(timeToMatch ~= -1 and "(" .. timeToMatch .. ")" or "")
     
+end
+
+function QueueManagerFrameMixin:SetMacrotext()
+	self.CancelApplication:SetAttribute("macrotext1", self.macrotext)
+
+end
+
+function QueueManagerFrameMixin:SetData(data)
+    self.data = data
+    self:Init()
+    self:SetMacrotext()
+
+end
+
+function QueueManagerFrameMixin:OnHide()
+    self:CancelTicker()
+
+end
+
+function QueueManagerFrameMixin:SetBackground(background)
+    self.Background:SetVertTile(true)
+    self.Background:SetHorizTile(true)
+    self.Background:SetTexture(background, "MIRROR", "MIRROR")
+
 end
 
 
@@ -45,8 +89,49 @@ end
 
 QueueManagerLFGFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
+function QueueManagerLFGFrameMixin:SetTimerText()
+    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+end
+
+function QueueManagerLFGFrameMixin:Init()
+    local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLeveKWl, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(self.data.queueID)
+    local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(self.data.categoryID, self.data.queueID)
+
+    local activityName = self.data.isMultiDungeon and MULTIPLE_DUNGEONS or name
+    
+    if(hasData) then
+        if(queuedTime) then
+            if(not issecretvalue(queuedTime)) then
+                self:SetTimerInfo("end", queuedTime, GetTime())
+
+            end
+        end
+
+        timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
+        --self:SetWaitInfo(timeToMatch)
+
+        local totalNumOfPlayers = maxPlayers - tankNeeds - healerNeeds - dpsNeeds
+
+        if(totalNumOfPlayers > 1) then
+            self.Name:SetTextColor(1, 1, 0, 1)
+            activityName = "(" .. (totalNumOfPlayers / maxPlayers * 100) .. "%) " .. activityName
+
+        end
+
+    else
+        self:SetTimerInfo()
+
+    end
+
+    self:SetBackground(miog:GetImageForMapID(mapID) or fileID)
+	self.Name:SetText(activityName)
+
+    self.macrotext = "/run LeaveSingleLFG(" .. self.data.categoryID .. "," .. self.data.queueID .. ")"
+end
+
 function QueueManagerLFGFrameMixin:RetrieveQueueList()
-    local queuedList = GetLFGQueuedList(self.categoryID, {}) or {}
+    local queuedList = GetLFGQueuedList(self.data.categoryID, {}) or {}
     local dungeonList = {}
 
     for queueID, queued in pairs(queuedList) do
@@ -59,16 +144,16 @@ function QueueManagerLFGFrameMixin:RetrieveQueueList()
 end
 
 function QueueManagerLFGFrameMixin:OnEnter()
-    local queueID = self.queueID
-    local categoryID = self.categoryID
+    local queueID = self.data.queueID
+    local categoryID = self.data.categoryID
 
     local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, altName, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(queueID)
     local inParty, joined, isQueued, noPartialClear, achievements, lfgComment, slotCount, categoryID2, leader, tank, healer, dps, x1, x2, x3, x4 = GetLFGInfoServer(categoryID, queueID)
     local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(categoryID, queueID)
-    local activityName = activityName == self.isMultiDungeon and MULTIPLE_DUNGEONS or name
+    local activityName = activityName == self.data.isMultiDungeon and MULTIPLE_DUNGEONS or name
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(self.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, 1, true)
+    GameTooltip:SetText(self.data.isMultiDungeon and MULTIPLE_DUNGEONS or activityName, 1, 1, 1, 1, true)
 
     if(altName and name ~= altName) then
         GameTooltip:AddLine(altName)
@@ -114,7 +199,8 @@ function QueueManagerLFGFrameMixin:OnEnter()
         GameTooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds))
 
         if (queuedTime > 0) then
-            GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", self.formatter:Format(GetTime() - queuedTime)))
+            GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime)))
+
         end
 
         local myWaitOk = myWait > 0
@@ -150,7 +236,7 @@ function QueueManagerLFGFrameMixin:OnEnter()
         end
     end
         
-    if(self.isMultiDungeon) then
+    if(self.data.isMultiDungeon) then
         GameTooltip_AddBlankLineToTooltip(GameTooltip)
         GameTooltip:AddLine(QUEUED_FOR_SHORT)
 
@@ -178,8 +264,69 @@ end
 
 
 
-
 QueueManagerApplicationFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
+
+function QueueManagerApplicationFrameMixin:SetTimerText()
+    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+end
+
+function QueueManagerApplicationFrameMixin:Init()
+    local searchResultInfo = C_LFGList.GetSearchResultInfo(self.data.resultID)
+
+    if(not issecrettable(searchResultInfo)) then
+        local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
+
+        self.categoryID = activityInfo.categoryID
+
+        if(isFakeApp) then
+            self.macrotext = "idkwhatilldoherebutillfigureitout"
+
+        else
+            self.macrotext = "/run C_LFGList.CancelApplication(" .. self.data.resultID .. ")"
+
+        end
+
+        activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
+
+        local eligible, reasonID = miog.filter.checkIfSearchResultIsEligible(self.data.resultID, true)
+        local reason = miog.INELIGIBILITY_REASONS[reasonID]
+
+        if(eligible or not reason) then
+            self.Name:SetTextColor(1, 1, 1, 1)
+            self.Name:SetText(activityName)
+
+        else
+            self.Name:SetTextColor(1, 0, 0, 1)
+            self.Name:SetText(self.Name:GetText() .. " - " .. reason[2])
+
+        end
+
+        self.Wait:Hide()
+
+        if(isFakeApp) then
+            if(not issecrettable(searchResultInfo)) then
+                self:SetAlpha(0.5)
+                self:SetTimerInfo("start", searchResultInfo.age, GetTime())
+
+            end
+        else
+		    local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(self.data.resultID)
+
+            if(appDuration and not issecretvalue(appDuration)) then
+                self:SetTimerInfo("start", GetTime(), appDuration)
+
+            end
+        end
+
+        self:SetBackground(activityInfo.horizontal)
+    end
+end
+
+function QueueManagerApplicationFrameMixin:OnEnter()
+    miog.createResultTooltip(self.data.resultID, self)
+
+end
 
 function QueueManagerApplicationFrameMixin:OnClick()
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -196,6 +343,11 @@ end
 
 QueueManagerPVPFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
+function QueueManagerPVPFrameMixin:SetTimerText()
+    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+end
+
 function QueueManagerPVPFrameMixin:OnEnter()
     local index = self.index
     local type = self.type
@@ -209,7 +361,7 @@ function QueueManagerPVPFrameMixin:OnEnter()
         assignedSpec = C_PvP.GetAssignedSpecForBattlefieldQueue(index);
 
     elseif(type == "world") then
-        _, mapName, _, _, estimatedTime, queuedTime = GetWorldPVPQueueStatus(data.index)
+        _, mapName, _, _, estimatedTime, queuedTime = GetWorldPVPQueueStatus(self.data.index)
 
     elseif(type == "openWorld") then
         mapName = GetRealZoneText()
@@ -266,32 +418,35 @@ end
 
 QueueManagerListingFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
-function QueueManagerListingFrameMixin:SetTimerInfo()
-    self.timer:SetToDefaults()
+function QueueManagerListingFrameMixin:SetTimerText()
+    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
 
-    if(self.Ticker) then
-        self.Ticker:Cancel()
+end
 
-    end
-
+function QueueManagerListingFrameMixin:Init()
     local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 
-    self.timer:SetTimeFromStart(time(), activeEntryInfo.duration)
+    if(activeEntryInfo) then
+        local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
 
-    self.Ticker = C_Timer.NewTicker(1, function()
-        activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+        if(activityInfo) then
+            local unitName, unitID = miog:GetGroupLeader()
+            self:SetBackground(activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png")
 
-        if(activeEntryInfo) then
-            self.timer:SetTimeFromStart(time(), activeEntryInfo.duration)
-            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+            local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
+            activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numApplicants .. ")"
+            
+        end
 
-        else
-            self.Ticker:Cancel()
+        if(not issecretvalue(activeEntryInfo.duration)) then
+            self:SetTimerInfo("start", activeEntryInfo.duration, GetTime())
 
         end
-    end)
 
-    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+        self.Wait:Hide()
+        self.macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
+        self.Name:SetText(activityName)
+    end
 end
 
 function QueueManagerListingFrameMixin:OnClick()
@@ -319,7 +474,6 @@ function QueueManagerListingFrameMixin:OnEnter()
 
     end
 end
-
 
 function QueueManagerListingFrameMixin:OnShow()
 	self.CancelApplication:SetShown(UnitIsGroupLeader("player"))

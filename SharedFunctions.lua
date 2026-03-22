@@ -558,6 +558,8 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 		requiredPvpRating = pvpRating,
 	};
 
+	--C_LFGList.CreateListing(createData)
+
 	if(LFGListEntryCreation_IsEditMode(self)) then
 		-- Pull these values from the active entry.
 		createData.isAutoAccept = activeEntryInfo.autoAccept;
@@ -1098,33 +1100,37 @@ miog.isMIOGHQLoaded = function()
 end
 
 miog.refreshLastGroupTeleport = function(mapID)
-	local mapInfo = miog.MAP_INFO[mapID or MIOG_CharacterSettings.lastGroupMap]
+	if(not InCombatLockdown()) then
+		local teleportMap = mapID or MIOG_CharacterSettings.lastGroupMap
+		local mapInfo = miog:GetMapInfo(teleportMap)
+		local teleportSpellID = miog.MAP_TELEPORTS[teleportMap]
 
-	local lastGroupTeleportButton = miog.MainTab.QueueInformation.LastGroup.TeleportButton
+		local lastGroupTeleportButton = miog.MainTab.QueueInformation.LastGroup.TeleportButton
 
-	if(mapInfo and mapInfo.teleport and C_Spell.IsSpellUsable(mapInfo.teleport) and C_SpellBook.IsSpellInSpellBook(mapInfo.teleport)) then
-		local spellInfo = C_Spell.GetSpellInfo(mapInfo.teleport)
-		local desc = C_Spell.GetSpellDescription(mapInfo.teleport)
+		if(mapInfo and teleportSpellID) then
+			local spellInfo = C_Spell.GetSpellInfo(teleportSpellID)
+			local desc = C_Spell.GetSpellDescription(teleportSpellID)
 
-		--lastGroupTeleportButton.Text:SetText(mapInfo.abbreviatedName or WrapTextInColorCode("MISSING", "FFFF0000"))
-		lastGroupTeleportButton:SetNormalTexture(spellInfo.iconID)
-		lastGroupTeleportButton:SetHighlightAtlas("communities-create-avatar-border-hover")
-		lastGroupTeleportButton:SetAttribute("type", "spell")
-		lastGroupTeleportButton:SetAttribute("spell", spellInfo.name)
-		lastGroupTeleportButton:RegisterForClicks("LeftButtonDown")
-		lastGroupTeleportButton:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip_AddHighlightLine(GameTooltip, spellInfo.name)
-			GameTooltip:AddLine(desc)
-			GameTooltip:Show()
-		end)
-		
-        local spellCooldownInfo = C_Spell.GetSpellCooldown(mapInfo.teleport)
-        lastGroupTeleportButton.Cooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
-		lastGroupTeleportButton:Show()
-	else
-		lastGroupTeleportButton:Hide()
+			--lastGroupTeleportButton.Text:SetText(mapInfo.abbreviatedName or WrapTextInColorCode("MISSING", "FFFF0000"))
+			lastGroupTeleportButton:SetNormalTexture(spellInfo.iconID)
+			lastGroupTeleportButton:SetHighlightAtlas("communities-create-avatar-border-hover")
+			lastGroupTeleportButton:SetAttribute("type", "spell")
+			lastGroupTeleportButton:SetAttribute("spell", spellInfo.name)
+			lastGroupTeleportButton:RegisterForClicks("LeftButtonDown")
+			lastGroupTeleportButton:SetScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip_AddHighlightLine(GameTooltip, spellInfo.name)
+				GameTooltip:AddLine(desc)
+				GameTooltip:Show()
+			end)
+			
+			local spellCooldownInfo = C_Spell.GetSpellCooldown(teleportSpellID)
+			lastGroupTeleportButton.Cooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration, spellCooldownInfo.modRate)
+			lastGroupTeleportButton:Show()
+		else
+			lastGroupTeleportButton:Hide()
 
+		end
 	end
 end
 
@@ -1393,26 +1399,32 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 
 	if(data.resultID) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-
-		if(searchResultInfo.leaderName) then
-			--local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
-			playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
-		end
 		
-		comment = searchResultInfo.comment
-		activityID = searchResultInfo.activityIDs[1]
+		if(searchResultInfo) then
+			comment = searchResultInfo.comment
+			activityID = searchResultInfo.activityIDs[1]
 
+			if(searchResultInfo.leaderName) then
+				--local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
+				playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
+			end
+		end
 	elseif(data.applicantID) then
 		local applicantData = C_LFGList.GetApplicantInfo(data.applicantID)
+
+		if(applicantData) then
+			comment = applicantData.comment
+			
+		end
+
 		playerName, realm = data.name, data.realm
-		comment = applicantData and applicantData.comment or ""
 		activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
 	end
 	
 	frame:Flush()
 	frame:SetPlayerData(playerName, realm)
-	frame:SetOptionalData(comment, realm)
+	frame:SetComment(comment)
 	frame:ApplyFillData(true)
 
 	local activityInfo = miog:GetActivityInfo(activityID)

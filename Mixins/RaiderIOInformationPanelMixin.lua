@@ -192,7 +192,6 @@ function RaiderIOInformationPanelMixin:Flush()
 
     self.mplusData = nil
     self.raidData = nil
-    self.comment = nil
     self.realm = nil
     self.roles = nil
     self.race = nil
@@ -202,7 +201,7 @@ end
 
 function RaiderIOInformationPanelMixin:CalculatePanelHeight()
     if(self.Comment) then
-        if(self.comment and self.comment ~= "") then
+        if(self.Comment:GetText() ~= "") then
             self.Comment:Show()
             self:SetHeight(200)
 
@@ -214,13 +213,28 @@ function RaiderIOInformationPanelMixin:CalculatePanelHeight()
     end
 end
 
+function RaiderIOInformationPanelMixin:SetComment(comment)
+    if(self.Comment) then
+        if(comment and comment ~= "") then
+	        self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. (comment or ""))
+            
+        else
+	        self.Comment:SetText("")
+
+        end
+    end
+    
+    self:CalculatePanelHeight()
+end
+
 function RaiderIOInformationPanelMixin:SetFillData(mplusData, raidData, server, comment, roles, race)
     self.mplusData = mplusData
     self.raidData = raidData
-    self.comment = comment
     self.realm = server
     self.roles = roles
     self.race = race
+
+    self:SetComment(comment)
 end
 
 function RaiderIOInformationPanelMixin:SetPlayerData(playerName, server, region)
@@ -230,10 +244,11 @@ function RaiderIOInformationPanelMixin:SetPlayerData(playerName, server, region)
 end
 
 function RaiderIOInformationPanelMixin:SetOptionalData(comment, server, roles, race)
-    self.comment = comment
     self.realm = server
     self.roles = roles
     self.race = race
+
+    self:SetComment(comment)
 end
 
 function RaiderIOInformationPanelMixin:RequestFillData()
@@ -421,8 +436,6 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 end
 
 function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
-    self:CalculatePanelHeight()
-
     if(self.RaceRolesServer) then
         local realm = self.realm or GetRealmName() or ""
         local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
@@ -449,15 +462,9 @@ function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
 
     self:ApplyMythicPlusData(refreshData)
     self:ApplyRaidData(refreshData)
-
-    if(self.Comment and self.comment) then
-	    self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((self.comment and self.comment) or ""))
-    end
 end
 
 function RaiderIOInformationPanelMixin:ApplySpecificFillDataOnly(type, refreshData)
-    self:CalculatePanelHeight()
-
     if(self.RaceRolesServer) then
         self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION or "N/A") .. "-" .. (self.realm or GetRealmName() or "") .. " ")
         
@@ -485,9 +492,5 @@ function RaiderIOInformationPanelMixin:ApplySpecificFillDataOnly(type, refreshDa
     elseif(type == "raid") then
         self:ApplyRaidData(refreshData)
         
-    end
-
-    if(self.Comment and self.comment) then
-	    self.Comment:SetText(_G["COMMENTS_COLON"] .. " " .. ((self.comment and self.comment) or ""))
     end
 end

@@ -158,10 +158,11 @@ function ProgressMixin:OnEvent(event, ...)
 		if(isInitialLogin) then
 			self:RefreshAllData()
 			initialRefreshDone = true
+
 		end
 	elseif(event == "WEEKLY_REWARDS_UPDATE") then
 		if(self.characterSettings and self.characterSettings[playerGUID]) then
-			self:RefreshGreatVaultProgress()
+			self:RefreshAllData()
 
 		end
 	end
@@ -535,31 +536,104 @@ function ProgressOverviewMixin:OnLoad()
 			end
 		end
 
-		local mapID = self.currentRaidMapID
+		--local mapID = self.currentRaidMapID
 
-		if(data.raids and mapID) then
-
-			local journalInfo = miog:GetJournalDataForMapID(mapID)
-			local numBosses = #journalInfo.bosses
-			local playerInstanceData = data.raids.instances[mapID]
-
-			--[[
-			local totalNumBosses = 0
-			local text = ""
+		if(data.raids) then
+			--local journalInfo = miog:GetJournalDataForMapID(mapID)
+			--local numBosses = #journalInfo.bosses
+			--local playerInstanceData = data.raids.instances[mapID]
 			
 			for i = 1, 3, 1 do
 				local raidProgressFrame = i == 1 and frame.Identifiers.Normal or i == 2 and frame.Identifiers.Heroic or i == 3 and frame.Identifiers.Mythic
 
-				for k, v in pairs(self.currentRaidMapIDs) do
+				local totalNumBosses = 0
+				local totalNumKills = 0
+
+				local hasData = false
+
+				for _, mapID in pairs(self.currentRaidMapIDs) do
 					local journalInfo = miog:GetJournalDataForMapID(mapID)
-					local numBosses = #journalInfo.bosses
-					local playerInstanceData = data.raids.instances[mapID]
+
+					if(journalInfo) then
+						local numBosses = #journalInfo.bosses
+
+						totalNumBosses = totalNumBosses + numBosses
+
+						local playerInstanceData = data.raids.instances[mapID]
 					
+						if(playerInstanceData and playerInstanceData[i]) then
+							hasData = true
+							totalNumKills = totalNumKills + playerInstanceData[i].kills
+							--raidProgressFrame.Text:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
+						end
+					end
 				end
-			end]]
 
-			for i = 1, 3, 1 do
+				if(hasData) then
+					raidProgressFrame.Text:SetText(totalNumKills .. "/" .. totalNumBosses)
+					raidProgressFrame.Text:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+
+					raidProgressFrame:SetScript("OnEnter", function(selfFrame)
+						GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
+						GameTooltip_AddHighlightLine(GameTooltip, "Progress")
+
+						local validations = 0
+						local numInstances = 0
+
+						for mapID, mapData in pairs(data.raids.instances) do
+
+							if(mapData[i]) then
+								local journalInfo = miog:GetJournalDataForMapID(mapID)
+								numInstances = numInstances + 1
+
+								GameTooltip_AddBlankLineToTooltip(GameTooltip)
+								GameTooltip_AddHighlightLine(GameTooltip, journalInfo.instanceName)
+
+								if(mapData[i].validatedIngame) then
+									validations = validations + 1
+
+								end
+
+								for k, v in ipairs(mapData[i].bosses) do
+									if(v.id) then
+										local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
+
+										if(not name) then
+											if(not journalInfo.bosses[k]) then
+												journalInfo = miog:GetJournalDataForMapID(mapID)
+
+											end
+
+											name = journalInfo.bosses[k].name .. " kills"
+
+										end
+
+										GameTooltip:AddDoubleLine(name, v.count or v.quantity or 0)
+									end
+								end
+							end
+						end
+						
+						if(validations < numInstances) then
+							GameTooltip_AddBlankLineToTooltip(GameTooltip)
+							GameTooltip_AddNormalLine(GameTooltip, "This data has been pulled from RaiderIO, it may be not accurate.")
+							GameTooltip_AddNormalLine(GameTooltip, "Login with this character to request official data from Blizzard.")
+
+						end
+
+						GameTooltip:Show()
+					end)
+
+				else
+					raidProgressFrame.Text:SetText("0/" .. totalNumBosses)
+					raidProgressFrame.Text:SetTextColor(miog.CLRSCC.colors.gray:GetRGBA())
+					raidProgressFrame:SetScript("OnEnter", nil)
+					
+				end
+			end
+
+			--[[for i = 1, 3, 1 do
 				local raidProgressFrame = i == 1 and frame.Identifiers.Normal or i == 2 and frame.Identifiers.Heroic or i == 3 and frame.Identifiers.Mythic
 				
 				if(playerInstanceData and playerInstanceData[i]) then
@@ -608,7 +682,7 @@ function ProgressOverviewMixin:OnLoad()
 
 				end
 				
-			end
+			end]]
 		end
 
 		if(data.greatVault and data.greatVault.activities and #data.greatVault.activities > 0) then
