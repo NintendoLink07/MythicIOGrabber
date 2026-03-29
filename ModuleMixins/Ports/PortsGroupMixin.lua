@@ -9,7 +9,11 @@ PortsGroupMixin = {}
 
 function PortsGroupMixin:OnLoad()
     self.groups = {}
-    self.framePool = CreateFramePool("Button", self.Subgroup, "MIOG_PortsButtonTemplate", function(_, frame) frame.gridRow = nil frame.gridColumn = nil end)
+    self.framePool = CreateFramePool("Button", self.Subgroup, "MIOG_PortsButtonTemplate", function(_, frame) 
+        frame:Hide()
+        frame.gridRow = nil
+        frame.gridColumn = nil
+    end)
 
     local grid = self.Subgroup
 
@@ -41,6 +45,7 @@ function PortsGroupMixin:Setup(id, expansion)
         
         local frame = self.framePool:Acquire()
         frame:SetData({spellID = flyoutSpellID, isKnown = spellKnown})
+        frame:Show()
         frameW, frameH = frame:GetSize()
         
         tinsert(self.groups, frame)
@@ -76,11 +81,12 @@ function PortsGroupMixin:Setup(id, expansion)
 
         end
 
-
     else
         self:SetHeight(frameH * numOfRows + subgroup.childYPadding * (numOfRows - 1))
         
     end
+
+    self.Subgroup:MarkDirty()
 end
 
 ResizeStaticGridLayoutFrameMixin = CreateFromMixins(StaticGridLayoutFrameMixin);

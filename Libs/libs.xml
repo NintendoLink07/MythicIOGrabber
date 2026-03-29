@@ -2,7 +2,7 @@
 	<Script file="LibStub\LibStub.lua"/>
 	
 	<Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
-	<Include file="LibOpenRaid\lib.xml"/>
+	<!--<Include file="LibOpenRaid\lib.xml"/>!-->
 	<Include file="LibDeflate\lib.xml"/>
 	<Include file="AceComm-3.0\AceComm-3.0.xml"/>
 </Ui>

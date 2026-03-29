@@ -47,6 +47,8 @@ local function getCurrentCategoryID(panel)
 	end
 end
 
+miog.getCurrentCategoryID = getCurrentCategoryID
+
 local function getCurrentPanelAndCategoryID()
 	local panel = getCurrentPanel()
 	local categoryID = getCurrentCategoryID(panel)
@@ -951,7 +953,7 @@ local function refreshFilters()
 					local groupSetting = retrieveSetting("activities", data.filterID)
 					bossParent:SetShown(groupSetting ~= false and true or false)
 
-					local bossTable
+					local bossTable, bossIcons
 					
 					if(data.isPvE) then
 						local info = miog:GetGroupInfo(data.filterID)

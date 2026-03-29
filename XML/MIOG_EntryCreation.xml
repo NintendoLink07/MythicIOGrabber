@@ -148,7 +148,7 @@
                 </Frames>
             </EditBox>
 
-            <EditBox parentKey="VoiceChat" inherits="InputBoxTemplate" autoFocus="false" hidden="true">
+            <EditBox parentKey="VoiceChat2" inherits="InputBoxTemplate" autoFocus="false" hidden="true">
                 <Size x="80" y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Rating" relativePoint="BOTTOMLEFT" y="-12"/>
@@ -158,7 +158,7 @@
             <CheckButton parentKey="PrivateGroup" inherits="MIOG_MinimalCheckButtonTemplate">
                 <Size x="22" y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" x="-7" y="-3"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat2" relativePoint="BOTTOMLEFT" x="-7" y="-3"/>
                 </Anchors>
             </CheckButton>
 
@@ -222,7 +222,7 @@
                 <FontString parentKey="VoiceChatString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="Voice Chat" wordwrap="false">
 
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.VoiceChat" relativePoint="TOPLEFT" x="-5" />
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.VoiceChat2" relativePoint="TOPLEFT" x="-5" />
                     </Anchors>
                 </FontString>
                 

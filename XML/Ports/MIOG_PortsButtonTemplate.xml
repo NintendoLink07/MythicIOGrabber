@@ -24,6 +24,7 @@
         </Layers> 
 
         <Scripts>
+            <OnShow method="OnShow" />
             <OnLoad method="OnLoad" />
             <OnLeave function="GameTooltip_Hide" />
         </Scripts>

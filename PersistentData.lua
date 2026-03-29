@@ -169,16 +169,6 @@ for i = 0, #miog.SLOT_ID_INFO, 1 do
 end
 
 do
-	for k, v in pairs(miog.COLOR_THEMES) do
-		for i = 1, 5 do
-			local add = i * 0.05
-			v[i].r = v[i].r + add
-			v[i].g = v[i].g + add
-			v[i].b = v[i].b + add
-			
-		end
-	end
-
 	for k, v in pairs(miog.CLRSCC) do
 		if(type(v) == "string") then
 			miog.CLRSCC.colors[k] = CreateColorFromHexString(v)
@@ -186,7 +176,7 @@ do
 		end
 	end
 
-	miog.STRING_REPLACEMENTS["RAIDPROGRESS1FULL"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSFULL"]
+	--[[miog.STRING_REPLACEMENTS["RAIDPROGRESS1FULL"] = miog.STRING_REPLACEMENTS["NORMALRAIDPROGRESSFULL"]
 	miog.STRING_REPLACEMENTS["RAIDPROGRESS2FULL"] = miog.STRING_REPLACEMENTS["HEROICRAIDPROGRESSFULL"]
 	miog.STRING_REPLACEMENTS["RAIDPROGRESS3FULL"] = miog.STRING_REPLACEMENTS["MYTHICRAIDPROGRESSFULL"]
 	
@@ -211,6 +201,7 @@ do
 
 	miog.STRING_REPLACEMENTS["PVPRATING9FULL"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGFULL"]
 	miog.STRING_REPLACEMENTS["PVPRATING9SHORT"] = miog.STRING_REPLACEMENTS["PVPRATINGSOLOBGSHORT"]
+	]]
 
 end
 
@@ -1726,23 +1717,14 @@ function miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 				journalDB.abbreviatedName = miog.MAP_INFO[map].abbreviatedName
 				journalDB.horizontal = mapDB.horizontal
 				journalDB.vertical = mapDB.vertical
+				journalDB.achievementIDs = mapDB.achievementIDs
+				journalDB.bossIcons = mapDB.bossIcons
 
 				--journalDB.icon = miog.MAP_INFO[map].icon
 				--journalDB.fileName = miog.MAP_INFO[map].fileName
 				--journalDB.toastBG = miog.MAP_INFO[map].toastBG
 				--journalDB.pvp = miog.MAP_INFO[map].pvp
 			end
-		end
-	end
-end
-
-function miog:UpdateJournalDB()
-	local journalDB = database.pointers.journal
-
-	for index, journalInstanceInfo in pairs(journalDB) do
-		if(not journalInstanceInfo.icon and journalInstanceInfo.mapID) then
-			miog:IntegrateMapDataIntoJournal(journalInstanceInfo.journalInstanceID, journalInstanceInfo.mapID)
-
 		end
 	end
 end
@@ -1841,6 +1823,11 @@ function miog:SaveJournalInstanceBossData(journalInstanceID)
 
 	local bossIndex = 1
 	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
+
+	if(not bossName and journalDB.mapID > 0) then
+		EJ_SelectInstance(journalInstanceID)
+
+	end
 
 	if(bossName) then
 		journalDB.bosses = {}
@@ -1946,6 +1933,9 @@ function miog:CreateMapPointer(mapID)
 
 				mapDB.toastBG = mapInfo.toastBG
 				mapDB.pvp = mapInfo.pvp
+
+				mapDB.achievementIDs = mapInfo.achievementIDs
+				mapDB.bossIcons = mapInfo.bossIcons
 				
 			end
 
@@ -1975,14 +1965,14 @@ function miog:CreateMapPointer(mapID)
 end
 
 function miog:IntegrateJournalDataIntoMap(mapID, journalInstanceID)
-	local instanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
+	journalInstanceID = journalInstanceID or C_EncounterJournal.GetInstanceForGameMap(mapID)
 
-	if(instanceID) then
-		local journalDB = database.pointers.journal[instanceID]
+	if(journalInstanceID) then
+		local journalDB = database.pointers.journal[journalInstanceID]
 		local mapDB = database.pointers.map[mapID]
 
 		if(journalDB and mapDB) then
-			mapDB.journalInstanceID = instanceID
+			mapDB.journalInstanceID = journalInstanceID
 			mapDB.buttonImage1 = journalDB.buttonImage1
 			mapDB.buttonImage2 = journalDB.buttonImage2
 			mapDB.bgImage = journalDB.bgImage
@@ -2008,11 +1998,48 @@ function miog:LoadMapData(mapID, overwrite)
 end
 
 function miog:GetMapInfo(mapID)
-	return database.pointers.map[mapID] or miog:LoadMapData(mapID)
+	if(not database.pointers.map[mapID]) then
+		miog:LoadMapData(mapID)
+
+	elseif(not database.pointers.map[mapID].bosses) then
+		miog:IntegrateJournalDataIntoMap(mapID)
+
+	end
+
+	return database.pointers.map[mapID]
 
 end
+	
 
-function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, debug)
+local function findJournalInstanceIndex(journalInstanceID, isRaid)
+	EJ_SelectInstance(journalInstanceID)
+
+	local index = 1
+
+	for i = 1, isRaid and 1 or 2, 1 do
+		isRaid = isRaid or i == 1 and true or false
+
+		local journalInstanceID2, instanceName = EJ_GetInstanceByIndex(index, isRaid)
+
+		while instanceName do
+			if(journalInstanceID == journalInstanceID2) then
+				return index
+
+			end
+
+			index = index + 1
+			journalInstanceID2, instanceName = EJ_GetInstanceByIndex(index, isRaid)
+
+		end
+	end
+end
+
+function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, index)
+	if((not index or not tier) and (journalInstanceID == 1307 or journalInstanceID == 1314)) then
+		index = findJournalInstanceIndex(journalInstanceID)
+
+	end
+
 	database.pointers.journal[journalInstanceID] = {
 		instanceName = instanceName,
 		bgImage = bgImage,
@@ -2024,26 +2051,18 @@ function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, descripti
 		mapID = mapID,
 		isRaid = isRaid,
 		tier = tier,
+		index = index,
 	}
 
 	miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 	miog:RetrieveJournalInstanceBossData(journalInstanceID)
-	
-	--miog:IntegrateJournalDataIntoMap(mapID, journalInstanceID)
-end
 
-function miog:RetrieveJournalInstanceInfoFromIndex(index, isRaid)
-	local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, _ = EJ_GetInstanceByIndex(index, isRaid)
-
-	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, 2)
-
-	return database.pointers.journal[journalInstanceID]
 end
 
 function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 	local instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceInfo(journalInstanceID)
 
-	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, 3)
+	miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid)
 
 	return database.pointers.journal[journalInstanceID]
 end
@@ -2068,16 +2087,13 @@ function miog:CreateJournalDB()
 
 				EJ_SelectInstance(journalInstanceID)
 
-				if(not database.pointers.journal[journalInstanceID]) then
-					while instanceName do
+				while instanceName do
+					miog:LoadMapData(mapID)
+					miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, index)
 
-						miog:LoadMapData(mapID)
-						miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, 1)
+					index = index + 1
+					journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
 
-						index = index + 1
-						journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
-
-					end
 				end
 			end
 		end
@@ -2088,6 +2104,9 @@ function miog:GetJournalInstanceInfo(journalInstanceID)
 	if(not database.pointers.journal[journalInstanceID]) then
 		miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID)
 
+	elseif(not database.pointers.journal[journalInstanceID].bosses) then
+		miog:RetrieveJournalInstanceBossData(journalInstanceID)
+
 	end
 
 	return database.pointers.journal[journalInstanceID]
@@ -2096,6 +2115,7 @@ end
 
 function miog:GetJournalDB()
 	return miog.database.pointers.journal
+	
 end
 
 function miog:GetActivityDB()
@@ -2121,10 +2141,10 @@ function miog:IntegrateJournalDataIntoGroup(groupID)
 				groupDB.loreImage = journalDB.loreImage
 				groupDB.instanceName = journalDB.instanceName
 				groupDB.tier = journalDB.tier
+				groupDB.index = journalDB.index
 				groupDB.isRaid = journalDB.isRaid
 				groupDB.bosses = journalDB.bosses
 				groupDB.numOfBosses = journalDB.numOfBosses
-
 			end
 		end
 	end
@@ -2180,6 +2200,7 @@ function miog:IntegrateMapDataIntoActivity(activityID)
 		activityDB.pvp = mapDB.pvp
 		activityDB.horizontal = mapDB.horizontal
 		activityDB.vertical = mapDB.vertical
+		activityDB.bossIcons = mapDB.bossIcons
 
 	end
 end
@@ -2198,6 +2219,7 @@ function miog:IntegrateMapDataIntoGroup(groupID, mapID)
 			groupDB.pvp = mapDB.pvp
 			groupDB.horizontal = mapDB.horizontal
 			groupDB.vertical = mapDB.vertical
+			groupDB.bossIcons = mapDB.bossIcons
 
 		end
 	end
@@ -2350,30 +2372,12 @@ function miog:GetActivityInfo(activityID)
 	if(not database.pointers.activity[activityID]) then
 		miog:CreateActivity(activityID)
 
+	elseif(not database.pointers.activity[activityID].bosses) then
+		miog:IntegrateJournalDataIntoActivity(activityID)
+
 	end
 
 	return database.pointers.activity[activityID]
-end
-
-do
-	C_LFGList.RequestAvailableActivities()
-	
-	miog:CreateJournalDB()
-
-	--[[for _, activityID in pairs(manualData.activity) do
-		miog:CreateGroupAndSiblingActivitiesFromActivity(activityID, true)
-
-		tinsert(database.pointers.unlistedActivities, database.pointers.activity[activityID])
-	end]]
-
-	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
-		for _, activityID in ipairs(C_LFGList.GetAvailableActivities(categoryID)) do
-			miog:CreateGroupAndSiblingActivitiesFromActivity(activityID)
-
-		end
-	end
-
-	miog:UpdateJournalDB()
 end
 
 function miog:HasMapInfo(mapID)
@@ -2622,7 +2626,7 @@ miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 	[10] = {id = 232, expansion = 10, type="dungeon"},
 	[11] = {id = 242, expansion = 10, type="raid"},
 
-	[12] = {id = 244, seasonID = 16, type="dungeon"},
+	[12] = {id = 244, seasonID = 17, type="dungeon"},
 	[13] = {id = 246, expansion = 11, type="dungeon"},
 }
 

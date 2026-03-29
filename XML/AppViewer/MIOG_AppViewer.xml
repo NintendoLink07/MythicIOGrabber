@@ -250,6 +250,7 @@
                         <FontString parentKey="Title" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-4"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="RIGHT" y="-26"/>
                             </Anchors>
 
                             <Scripts>

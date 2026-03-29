@@ -36,11 +36,8 @@ end
 
 function ApplicantSingleMemberMixin:SetData(data)
 	self:ResetWithExpandIcon()
-
-    self.applicantID = data.applicantID
-    self.memberIdx = data.applicantIndex
     
-    local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(self.applicantID, self.memberIdx)
+    local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(data.applicantID, data.applicantIndex)
 
     local fullName, playerName = miog.createFullNameValuesFrom("unitName", name)
 
@@ -64,8 +61,7 @@ function ApplicantSingleMemberMixin:SetData(data)
     self:SetClass(class)
     self.Spec:SetTexture(miog.SPECIALIZATIONS[specID or 0].squaredIcon)
 
-    local comment = data.comment
-    self.Comment:SetShown(comment and comment ~= "")
+    self.Comment:SetShown(not data.comment == "")
     self.Comment:SetPoint("LEFT", self.Name, "LEFT", self.Name:GetStringWidth(), 4)
 	--self.Race:SetAtlas(miog.RACES[raceID])
 	self.Role:SetTexture(miog.C.STANDARD_FILE_PATH .."/infoIcons/" .. (assignedRole or "DAMAGER") .. "Icon.png")

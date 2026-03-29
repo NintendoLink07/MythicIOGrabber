@@ -78,38 +78,6 @@ miog.updateCurrencies = function()
 	end
 end
 
-miog.resetNewRaiderIOInfoPanel = function(panel)
-	for d = 1, 2, 1 do
-		local raidHeaderFrame = d == 1 and panel.Raids["Raid1Header"] or panel.Raids["Raid2Header"]
-		local raidBossesFrame = d == 1 and panel.Raids["Raid1"] or panel.Raids["Raid2"]
-
-		raidHeaderFrame.Icon:SetTexture(nil)
-		raidHeaderFrame.Name:SetText("")
-		raidHeaderFrame.Progress1:SetText("")
-		raidHeaderFrame.Progress2:SetText("")
-		
-		raidBossesFrame:Hide()
-
-		for k = 1, 12, 1 do
-			local bossFrame = raidBossesFrame["Boss" .. k]
-			bossFrame:Hide()
-			bossFrame.Icon:SetTexture(nil)
-			bossFrame.Icon:SetDesaturated(true)
-			bossFrame.Border:SetColorTexture(1,0,0,1)
-	
-		end
-	end
-
-	panel.PreviousData:SetText("")
-	panel.MainData:SetText("")
-	panel.MPlusKeys:SetText("")
-	panel.RaceRolesServer:SetText("")
-
-	if(panel.Comment) then
-		panel.Comment:SetText("")
-	end
-end
-
 miog.transformRaidData = function(originalData)
 	local RAID_DEFINITIONS = {}
 	local PLAYER_PROGRESS_BY_RAID = {}
@@ -1099,6 +1067,11 @@ miog.isMIOGHQLoaded = function()
 	return C_AddOns.IsAddOnLoaded("MythicIO - Resources")
 end
 
+function miog:OpenEncounterJournal(difficultyID, journalInstanceID, encounterID, sectionID, creatureID, itemID)
+	EncounterJournal_LoadUI();
+	EncounterJournal_OpenJournal(difficultyID, journalInstanceID, encounterID, sectionID, creatureID, itemID)
+end
+
 miog.refreshLastGroupTeleport = function(mapID)
 	if(not InCombatLockdown()) then
 		local teleportMap = mapID or MIOG_CharacterSettings.lastGroupMap
@@ -1107,12 +1080,13 @@ miog.refreshLastGroupTeleport = function(mapID)
 
 		local lastGroupTeleportButton = miog.MainTab.QueueInformation.LastGroup.TeleportButton
 
-		if(mapInfo and teleportSpellID) then
+		if(mapInfo and teleportSpellID and C_SpellBook.IsSpellInSpellBook(teleportSpellID)) then
 			local spellInfo = C_Spell.GetSpellInfo(teleportSpellID)
 			local desc = C_Spell.GetSpellDescription(teleportSpellID)
 
 			--lastGroupTeleportButton.Text:SetText(mapInfo.abbreviatedName or WrapTextInColorCode("MISSING", "FFFF0000"))
 			lastGroupTeleportButton:SetNormalTexture(spellInfo.iconID)
+
 			lastGroupTeleportButton:SetHighlightAtlas("communities-create-avatar-border-hover")
 			lastGroupTeleportButton:SetAttribute("type", "spell")
 			lastGroupTeleportButton:SetAttribute("spell", spellInfo.name)
@@ -1395,13 +1369,14 @@ end
 miog.getRaidSortData = getRaidSortData
 
 miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
-	local playerName, realm, comment, activityID
+	frame:Flush()
+
+	local playerName, realm, activityID
 
 	if(data.resultID) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 		
 		if(searchResultInfo) then
-			comment = searchResultInfo.comment
 			activityID = searchResultInfo.activityIDs[1]
 
 			if(searchResultInfo.leaderName) then
@@ -1409,11 +1384,16 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 				playerName, realm = miog.createSplitName(searchResultInfo.leaderName)
 			end
 		end
+
+		frame:SetOptionalData(searchResultInfo.comment)
+
 	elseif(data.applicantID) then
 		local applicantData = C_LFGList.GetApplicantInfo(data.applicantID)
 
 		if(applicantData) then
-			comment = applicantData.comment
+    		local name, class, localizedClass, level, itemLevel, honorlevel, tank, healer, damager, assignedRole, relationship, dungeonScore, pvpItemLevel, faction, raceID, specID, isLeaver  = C_LFGList.GetApplicantMemberInfo(data.applicantID, data.applicantIndex)
+
+			frame:SetOptionalData(applicantData.comment, {tank = tank, healer = healer, damager = damager}, raceID)
 			
 		end
 
@@ -1422,10 +1402,7 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 
 	end
 	
-	frame:Flush()
-	frame:SetPlayerData(playerName, realm)
-	frame:SetComment(comment)
-	frame:ApplyFillData(true)
+	frame:ApplyFillData(nil, true, playerName, realm)
 
 	local activityInfo = miog:GetActivityInfo(activityID)
 
@@ -1642,17 +1619,6 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
 end)
 
-miog.getCurrentCategoryID = function()
-	local currentPanel = LFGListFrame.activePanel:GetDebugName()
-	local categoryID = currentPanel == "LFGListFrame.SearchPanel" and LFGListFrame.SearchPanel.categoryID
-	or currentPanel == "LFGListFrame.ApplicationViewer" and C_LFGList.HasActiveEntryInfo() and miog:GetActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
-	LFGListFrame.CategorySelection.selectedCategory
-
-
-
-	return categoryID, currentPanel
-end
-
 miog.createSplitName = function(name)
 	local nameTable = miog.simpleSplit(name, "-")
 	local wasFullName = true
@@ -1696,81 +1662,6 @@ local function desaturateTexture(bool, texture)
 	
 	end
 end
-
-local function insertLFGInfo(activityID)
-	local entryInfo = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo()
-
-	if(entryInfo) then
-		local activityInfo = miog:GetActivityInfo(entryInfo.activityIDs[1])
-		miog.ApplicationViewer.InfoPanel.Background:SetTexture(activityInfo.horizontal or miog.ACTIVITY_BACKGROUNDS[activityInfo.categoryID])
-
-		miog.ApplicationViewer.TitleBar.FontString:SetText(entryInfo.name)
-		miog.ApplicationViewer.InfoPanel.Activity:SetText(activityInfo.fullName)
-
-		miog.ApplicationViewer.CreationSettings.PrivateGroupButton:SetChecked(entryInfo.privateGroup)
-
-		if(entryInfo.playstyle) then
-			local playStyleString = (activityInfo.isMythicPlusActivity and miog.PLAYSTYLE_STRINGS["mPlus"..entryInfo.playstyle]) or
-			(activityInfo.isMythicActivity and miog.PLAYSTYLE_STRINGS["mZero"..entryInfo.playstyle]) or
-			(activityInfo.isCurrentRaidActivity and miog.PLAYSTYLE_STRINGS["raid"..entryInfo.playstyle]) or
-			((activityInfo.isRatedPvpActivity or activityInfo.isPvpActivity) and miog.PLAYSTYLE_STRINGS["pvp"..entryInfo.playstyle])
-
-			miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = playStyleString
-
-		else
-			miog.ApplicationViewer.CreationSettings.Playstyle.tooltipText = ""
-
-		end
-
-		if(entryInfo.requiredDungeonScore and activityInfo.categoryID == 2 or entryInfo.requiredPvpRating and activityInfo.categoryID == (4 or 7 or 8 or 9)) then
-			miog.ApplicationViewer.CreationSettings.Rating.tooltipText = "Required rating: " .. entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating
-			miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText(entryInfo.requiredDungeonScore or entryInfo.requiredPvpRating)
-
-			miog.ApplicationViewer.CreationSettings.Rating.Texture:SetTexture(miog.C.STANDARD_FILE_PATH .. (entryInfo.requiredDungeonScore and "/infoIcons/skull.png" or entryInfo.requiredPvpRating and "/infoIcons/spear.png"))
-
-		else
-			miog.ApplicationViewer.CreationSettings.Rating.FontString:SetText("----")
-			miog.ApplicationViewer.CreationSettings.Rating.tooltipText = ""
-
-		end
-
-		if(entryInfo.requiredItemLevel > 0) then
-			miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText(entryInfo.requiredItemLevel)
-			miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = "Required itemlevel: " .. entryInfo.requiredItemLevel
-
-		else
-			miog.ApplicationViewer.CreationSettings.ItemLevel.FontString:SetText("---")
-			miog.ApplicationViewer.CreationSettings.ItemLevel.tooltipText = ""
-
-		end
-
-		miog.ApplicationViewer.CreationSettings.VoiceChatButton:SetChecked(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked())
-
-		desaturateTexture(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked(), miog.ApplicationViewer.CreationSettings.VoiceChatButton:GetNormalTexture())
-		desaturateTexture(entryInfo.privateGroup, miog.ApplicationViewer.CreationSettings.PrivateGroupButton:GetNormalTexture())
-		desaturateTexture(entryInfo.autoAccept, miog.ApplicationViewer.CreationSettings.AutoAcceptButton:GetNormalTexture())
-
-		if(entryInfo.isCrossFactionListing == true) then
-			miog.ApplicationViewer.TitleBar.Faction:SetTexture(2437241)
-
-		else
-			local playerFaction = UnitFactionGroup("player")
-			miog.ApplicationViewer.TitleBar.Faction:SetTexture(playerFaction == "Alliance" and 2173919 or playerFaction == "Horde" and 2173920)
-
-		end
-
-		if(entryInfo.comment ~= "") then
-			miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("Description: " .. entryInfo.comment)
-			miog.ApplicationViewer.InfoPanel.Description.Container:SetHeight(miog.ApplicationViewer.InfoPanel.Description.Container.FontString:GetStringHeight())
-
-		else
-			miog.ApplicationViewer.InfoPanel.Description.Container.FontString:SetText("")
-
-		end
-	end
-end
-
-miog.insertLFGInfo = insertLFGInfo
 
 local function ResolveCategoryFilters(categoryID, filters)
 	-- Dungeons ONLY display recommended groups.

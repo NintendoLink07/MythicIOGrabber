@@ -13,10 +13,8 @@ local panels
 local function setProgressPanelInfo(categoryID)
 	if(IsPlayerAtEffectiveMaxLevel()) then
 		local isDungeon = categoryID == 2
-		local isRaid = categoryID == 3 and miog.ProgressPanel:HasRaidInfo()
+		local isRaid = categoryID == 3
 		local isCorrectCategory = isDungeon or isRaid
-
-		miog.ProgressPanel:SetShown(isCorrectCategory)
 
 		if(isCorrectCategory) then
 			miog.ProgressPanel.MythicPlus:SetShown(isDungeon)
@@ -25,10 +23,14 @@ local function setProgressPanelInfo(categoryID)
 			local playerName, realm = miog.createSplitName(UnitFullName("player"))
 			
 			miog.ProgressPanel:Flush()
-			miog.ProgressPanel:SetPlayerData(playerName, realm)
-			miog.ProgressPanel:ApplySpecificFillDataOnly(isDungeon and "mplus" or "raid")
+			miog.ProgressPanel:ApplyFillData(isDungeon and "mplus" or "raid", false, playerName, realm)
+			miog.ProgressPanel:SetShown(isDungeon or isRaid and miog.ProgressPanel:HasRaidInfo())
+			
+		else
+			miog.ProgressPanel:Hide()
 
 		end
+
 	else
 		miog.ProgressPanel:Hide()
 
@@ -110,6 +112,7 @@ miog.setActivePanel = setActivePanel
 ]]
 miog.createFrames = function()
 
+	--- Fixed???
 	-- OnOpen usually generates an error and doesn't really do anything important, so mask it with a dummy function
 	--C_EncounterJournal.OnOpen = miog.dummyFunction
 
@@ -121,35 +124,25 @@ miog.createFrames = function()
 		MIOG_OpenInterfaceOptions()
 	end)
 
-	if(miog.F.LITE_MODE == true) then
-		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", LFGListFrame, "MIOG_Plugin")
-		miog.Plugin:SetPoint("TOPLEFT", PVEFrameLeftInset, "TOPRIGHT")
-		miog.Plugin:SetSize(LFGListFrame:GetWidth(), LFGListFrame:GetHeight() - PVEFrame.TitleContainer:GetHeight() - 7)
-		miog.Plugin:SetFrameStrata("HIGH")
+	
+	miog.createPVEFrameReplacement()
 
-		settingsButton:SetParent(PVEFrame)
-		settingsButton:SetFrameStrata("HIGH")
-		settingsButton:SetPoint("RIGHT", PVEFrameCloseButton, "LEFT", -2, 0)
-	else
-		miog.createPVEFrameReplacement()
+	miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
+	miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
+	miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -20, 5)
+	miog.Plugin:SetFrameStrata("HIGH")
 
-		miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
-		miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-		miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -20, 5)
-		miog.Plugin:SetFrameStrata("HIGH")
+	miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
+	miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
 
-		miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-		miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
+	--PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
+	--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
+	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
-		--PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
-		--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
-		PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
+	settingsButton:SetParent(miog.pveFrame2.TitleBar)
+	settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
 
-		settingsButton:SetParent(miog.pveFrame2.TitleBar)
-		settingsButton:SetPoint("RIGHT", miog.pveFrame2.TitleBar.CloseButton, "LEFT", -2, 0)
-
-		miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
-	end
+	miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 
 	miog.Plugin:SetScript("OnEnter", function()
 	

@@ -517,7 +517,7 @@ function ProgressOverviewMixin:OnLoad()
 		frame.GuildBannerBorderGlow:SetShown(data.guid == UnitGUID("player"))
 		
 		frame.Identifiers.ItemLevel.Text:SetText(data.itemLevel or 0)
-		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (282 - data.itemLevel) ^ 2 or 1):GetRGBA())
+		frame.Identifiers.ItemLevel.Text:SetTextColor(miog.createCustomColorForRating(data.itemLevel and data.itemLevel > 0 and 4000 - (289 - data.itemLevel) ^ 2 or 1):GetRGBA())
 
 		if(data.mythicPlus) then
 			frame.Identifiers.MythicPlusScore.Text:SetText(data.mythicPlus.score)
@@ -554,10 +554,8 @@ function ProgressOverviewMixin:OnLoad()
 				for _, mapID in pairs(self.currentRaidMapIDs) do
 					local journalInfo = miog:GetJournalDataForMapID(mapID)
 
-					if(journalInfo) then
-						local numBosses = #journalInfo.bosses
-
-						totalNumBosses = totalNumBosses + numBosses
+					if(journalInfo and journalInfo.bosses) then
+						totalNumBosses = totalNumBosses + #journalInfo.bosses
 
 						local playerInstanceData = data.raids.instances[mapID]
 					
@@ -1076,7 +1074,7 @@ end
 ProgressRaidMixin = CreateFromMixins(ProgressActivityMixin)
 
 function ProgressRaidMixin:GetAbbreviatedName(mapID)
-	local mapInfo = miog.MAP_INFO[mapID]
+	local mapInfo = miog:GetMapInfo(mapID)
 
 	if(mapInfo) then
 		return mapInfo.abbreviatedName
@@ -1085,10 +1083,10 @@ function ProgressRaidMixin:GetAbbreviatedName(mapID)
 end
 
 function ProgressRaidMixin:GetBackgroundImage(mapID)
-	local mapInfo = miog.MAP_INFO[mapID]
+	local mapInfo = miog:GetMapInfo(mapID)
 
 	if(mapInfo) then
-		return mapInfo.vertical
+		return mapInfo.vertical or mapI
 
 	end
 end
@@ -1114,8 +1112,8 @@ end
 function ProgressRaidMixin:CheckForAchievements(mapID)
 	local mapDifficultyData = {}
 
-	if(miog.MAP_INFO[mapID].achievementIDs) then
-		for index, achievementID in ipairs(miog.MAP_INFO[mapID].achievementIDs) do
+	if(miog:GetMapInfo(mapID).achievementIDs) then
+		for index, achievementID in ipairs(miog:GetMapInfo(mapID).achievementIDs) do
 			local difficultyIndex = ((index - 1) % 4)
 
 			if(difficultyIndex > 0) then
@@ -1165,7 +1163,7 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 				for _, mapID in ipairs(activityTable) do
 					if not raidData.instances[mapID] then
 						local instanceData = {}
-						local mapInfo = miog.MAP_INFO[mapID]
+						local mapInfo = miog:GetMapInfo(mapID)
 						local characterRaid = raiderIORaidData.character.raids[mapID]
 
 						if characterRaid then

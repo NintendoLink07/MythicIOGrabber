@@ -317,7 +317,16 @@ local function findFrames(fullName)
 end
 
 local function getKeystoneAbbreviatedName(challengeModeMapID)
-    return miog.MAP_INFO[miog.CHALLENGE_MODE_INFO[challengeModeMapID].mapID].abbreviatedName
+    local mapID = miog.CHALLENGE_MODE_INFO[challengeModeMapID].mapID
+
+    if(mapID) then
+        local mapInfo = miog:GetMapInfo(mapID)
+
+        if(mapInfo) then
+            return mapInfo.abbreviatedName
+
+        end
+    end
 end
 
 local function updateSpecificFrameData(fullName, key, data)

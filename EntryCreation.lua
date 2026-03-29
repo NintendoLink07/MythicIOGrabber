@@ -176,19 +176,6 @@ end
 	
 end]]
 
-function LFGListEntryCreation_SetTitleFromActivityInfo(self)
-	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
-	if(not self.selectedActivity or not self.selectedGroup or not self.selectedCategory) then
-		return;
-	end
-	local activityID = activeEntryInfo and activeEntryInfo.activityIDs[1] or (self.selectedActivity or 0);
-	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
-		--Is protected, first showed up in 11.0.2
-	--if((activityInfo and activityInfo.isMythicPlusActivity) or IsActivityLockedForCustomText(self.selectedCategory, self.selectedActivity)) then
-	--	C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle, self.generalPlaystyle);
-	--end
-end
-
 local function addActivityListToDropdown(list, rootDescription)
 	for k, v in ipairs(list) do
 		local activityButton = rootDescription:CreateRadio(v.name, function(data) return (data.groupID > 0 and data.groupID == LFGListFrame.EntryCreation.selectedGroup or data.activityID == LFGListFrame.EntryCreation.selectedActivity) and selectedExpansion == nil end, function(data)
@@ -621,6 +608,19 @@ function LFGListEntryCreation_UpdateAuthenticatedState(self)
 	LFGListFrame.EntryCreation.VoiceChat.EditBox:SetEnabled(isAuthenticated)
 end
 
+function LFGListEntryCreation_SetTitleFromActivityInfo(self)
+	local activeEntryInfo = C_LFGList.GetActiveEntryInfo();
+	if(not self.selectedActivity or not self.selectedGroup or not self.selectedCategory) then
+		return;
+	end
+	local activityID = activeEntryInfo and activeEntryInfo.activityIDs[1] or (self.selectedActivity or 0);
+	local activityInfo =  C_LFGList.GetActivityInfoTable(activityID);
+		--Is protected, first showed up in 11.0.2
+	--if((activityInfo and activityInfo.isMythicPlusActivity) or IsActivityLockedForCustomText(self.selectedCategory, self.selectedActivity)) then
+	--	C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle, self.generalPlaystyle);
+	--end
+end
+
 local function addIconInitializer(button, icon)
 	if(icon) then
 		button:AddInitializer(function(selfButton)
@@ -891,10 +891,10 @@ end
 
 miog.createEntryCreation = function()
 	local entryCreation = CreateFrame("Frame", "MythicIOGrabber_EntryCreation", miog.Plugin.InsertFrame, "MIOG_EntryCreation") ---@class Frame
+	entryCreation.selectedActivity = 22
 	entryCreation:GetParent().EntryCreation = entryCreation
 
 	entryCreation.Border:SetColorTexture(CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	entryCreation.selectedActivity = 0
 
 	entryCreation.ActivityDropDown:SetDefaultText("Select an activity")
 	entryCreation.DifficultyDropDown:SetDefaultText("Select a difficulty")
@@ -1067,7 +1067,7 @@ miog.createEntryCreation = function()
 	nameField:ClearAllPoints()
 	nameField:SetAutoFocus(false)
 	nameField:SetParent(entryCreation)
-	nameField:SetSize(entryCreation:GetWidth() - 15, 25)
+	nameField:SetSize(entryCreation:GetWidth() - 25, 25)
 	--nameField:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -80)
 	nameField:SetPoint(entryCreation.Name:GetPoint())
 	entryCreation.Name = nameField
@@ -1076,7 +1076,7 @@ miog.createEntryCreation = function()
 	local descriptionField = LFGListFrame.EntryCreation.Description
 	descriptionField:ClearAllPoints()
 	descriptionField:SetParent(entryCreation)
-	descriptionField:SetSize(entryCreation:GetWidth() - 20, 50)
+	descriptionField:SetSize(entryCreation:GetWidth() - 30, 50)
 	descriptionField:SetPoint("TOPLEFT", entryCreation.Name, "BOTTOMLEFT", 0, -20)
 	entryCreation.Description = descriptionField
 	
@@ -1090,10 +1090,11 @@ miog.createEntryCreation = function()
 	voiceChat.CheckButton:Hide()
 	voiceChat.Label:Hide()
 	voiceChat.EditBox:ClearAllPoints()
-	voiceChat.EditBox:SetPoint("LEFT", entryCreation.VoiceChat, "LEFT")
+	voiceChat.EditBox:SetPoint("LEFT", entryCreation.VoiceChat2, "LEFT")
 	--voiceChat:SetPoint("LEFT", frame.VoiceChat, "LEFT", -6, 0)
 	voiceChat:ClearAllPoints()
 	voiceChat:SetParent(entryCreation)
+	entryCreation.VoiceChat = voiceChat
 	
 	--miogDropdown.List:MarkDirty()
 	--miogDropdown:MarkDirty()

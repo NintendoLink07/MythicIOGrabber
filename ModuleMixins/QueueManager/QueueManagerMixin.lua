@@ -5,9 +5,21 @@ local dataProvider = CreateDataProvider()
 
 QueueManagerMixin = {}
 
+function QueueManagerMixin:FindFrame(name, value)
+	return dataProvider:FindByPredicate(function(data)
+		return data[name] and data[name] == value
+
+	end)
+end
+
+function QueueManagerMixin:RemoveFrame(name, value)
+	return dataProvider:RemoveByPredicate(function(data)
+		return data[name] and data[name] == value
+
+	end)
+end
+
 function QueueManagerMixin:UpdateFakeApplications()
-
-
 end
 
 function QueueManagerMixin:UpdateListing()
@@ -35,19 +47,21 @@ function QueueManagerMixin:UpdatePVEQueues()
 			end
 		
 			local activeID = select(18, GetLFGQueueStats(categoryID))
-			local isRF = categoryID == LE_LFG_CATEGORY_RF
+			local isRaidFinder = categoryID == LE_LFG_CATEGORY_RF
 
 			for queueID, queued in pairs(queuedList) do
 				local isCurrentlyActive = activeID == queueID
 				
-				if(isCurrentlyActive or isRF) then
-					dataProvider:Insert({
-						template = "MIOG_QueueManagerLFGFrameTemplate",
-						categoryID = categoryID,
-						queueID = queueID,
-						isMultiDungeon = categoryID == LE_LFG_CATEGORY_LFD and length > 1 or false,
-						isRaidFinder = isRF
-					})
+				if(isCurrentlyActive or isRaidFinder) then
+					if(not self:FindFrame("queueID", queueID)) then
+						dataProvider:Insert({
+							template = "MIOG_QueueManagerLFGFrameTemplate",
+							categoryID = categoryID,
+							queueID = queueID,
+							isMultiDungeon = categoryID == LE_LFG_CATEGORY_LFD and length > 1 or false,
+							isRaidFinder = isRaidFinder
+						})
+					end
 				end
 			end
 		end
@@ -185,8 +199,54 @@ function QueueManagerMixin:RegisterNecessaryEvents()
 end
 
 function QueueManagerMixin:OnEvent(...)
-	self:CheckQueues()
+	--local currentTime = GetTime()
 
+	--if(currentTime > lastUpdate + 0.1) then
+	--	lastUpdate = currentTime
+
+	--local event = ...
+
+	local event2 = ...
+
+	if(not InCombatLockdown()) then
+		if(event2 == "LFG_LIST_APPLICATION_STATUS_UPDATED") then --event == "LFG_LIST_SEARCH_RESULT_UPDATED"
+			local resultID, status = ...
+		
+			local frame = self:FindFrame("resultID", resultID)
+
+			if(frame and status == "applied") then
+				frame:Update()
+
+			else
+				self:UpdateGroupApplications()
+
+			end
+
+		elseif(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
+			self:UpdateGroupApplications()
+
+		elseif(event == "LFG_UPDATE" or event == "LFG_ROLE_CHECK_UPDATE" or event == "LFG_READY_CHECK_UPDATE" or event == "LFG_PROPOSAL_UPDATE" or event == "LFG_PROPOSAL_FAILED" or event == "LFG_PROPOSAL_SUCCEEDED" or event == "LFG_PROPOSAL_SHOW" or event == "LFG_QUEUE_STATUS_UPDATE") then
+			self:UpdatePVEQueues()
+
+		elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" or event == "LFG_LIST_APPLICANT_UPDATED") then
+			self:UpdateListing()
+
+		elseif(event == "UPDATE_BATTLEFIELD_STATUS" or event == "PVP_BRAWL_INFO_UPDATED" or event == "ZONE_CHANGED_NEW_AREA" or event == "ZONE_CHANGED") then
+			self:UpdatePVPQueues()
+			self:UpdateWorldPVPQueues()
+
+		elseif(event == "PET_BATTLE_QUEUE_STATUS") then
+			self:UpdatePetBattleQueue()
+
+		elseif(event == "LOBBY_MATCHMAKER_QUEUE_STATUS_UPDATE" or event == "LOBBY_MATCHMAKER_QUEUE_ABANDONED" or event == "LOBBY_MATCHMAKER_QUEUE_POPPED" or event == "LOBBY_MATCHMAKER_QUEUE_EXPIRED" or event == "LOBBY_MATCHMAKER_QUEUE_ERROR") then
+			self:UpdatePlunderstormQueue()
+
+		else
+			self:CheckQueues()
+
+		end
+	end
+	--end
 end
 
 function QueueManagerMixin:OnLoad()
@@ -205,13 +265,13 @@ function QueueManagerMixin:OnLoad()
 		end,
 	self);]]
 	
-	--hooksecurefunc(QueueStatusFrame, "Update", self.CheckQueues)
+	--hooksecurefunc(QueueStatusFrame, "Update", function() print("UPDATEEEE") end)
 
     dataProvider = CreateDataProvider()
     local view = CreateScrollBoxListLinearView(0, 0, 0, 0, 3)
 
 	local function Initializer(frame, data)
-		local backgroundImage, activityName, macrotext, timeInQueue, timeToMatch
+		--[[local backgroundImage, activityName, macrotext, timeInQueue, timeToMatch
 
 		if(data.template == "MIOG_QueueManagerLFGFrameTemplate") then
 			
@@ -220,75 +280,20 @@ function QueueManagerMixin:OnLoad()
 		elseif(data.template == "MIOG_QueueManagerApplicationFrameTemplate") then
 			
 		elseif(data.template == "MIOG_QueueManagerFramePVPTemplate") then
-			local status, mapName
-
-			if(data.type == "battlefield") then
-				status, mapName = GetBattlefieldStatus(data.index);
-				macrotext = "/click QueueStatusButton RightButton"
-				frame.type = "battlefield"
-
-				if(status and status ~= "none" and status ~= "error") then
-					timeInQueue = GetBattlefieldTimeWaited(data.index) / 1000
-					timeToMatch = GetBattlefieldEstimatedWaitTime(data.index) / 1000
-
-					backgroundImage = miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png"
-				end
-
-			elseif(data.type == "world") then
-				local queueID, averageWaitTime, queuedTime
-
-				status, mapName, queueID, _, averageWaitTime, queuedTime = GetWorldPVPQueueStatus(data.index)
-				macrotext = "/run BattlefieldMgrExitRequest(" .. queueID .. ")"
-				frame.type = "world"
-
-				timeInQueue = GetTime() - queuedTime
-				timeToMatch = averageWaitTime
-
-			elseif(data.type == "openworld") then
-				frame.type = "openworld"
-				macrotext = "/run HearthAndResurrectFromArea()"
-				mapName = GetRealZoneText()
-
-				timeInQueue = GetTime()
-				timeToMatch = -1
-
-			elseif(data.type == "petbattle") then
-				frame.type = "petbattle"
-				macrotext = "/run C_PetBattles.StopPVPMatchmaking()"
-				mapName = "Pet Battle"
-
-				local _, estimated, queuedTime = C_PetBattles.GetPVPMatchmakingInfo()
-
-				timeToMatch = estimated
-				timeInQueue = GetTime() - queuedTime
-				backgroundImage = "interface/petbattles/petbattlesqueue.blp"
-
-			elseif(data.type == "plunderstorm") then
-				local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
-
-				macrotext = "/run C_LobbyMatchmakerInfo.AbandonQueue()"
-				mapName = WOW_LABS_PLUNDERSTORM_CATEGORY
-				timeInQueue = GetTime() - queueTime
 			
-			end
-			
-			activityName = mapName
-
-			frame.index = data.index
-			frame.Wait:Show()
-		end
+		end]]
 
 		--[[if(isHQ) then
 			frame.Background:SetVertTile(false)
 			frame.Background:SetHorizTile(false)
 			frame.Background:SetTexture(backgroundImage, "CLAMP", "CLAMP")
 			
-		else]]
+		else
 			frame.Background:SetVertTile(true)
 			frame.Background:SetHorizTile(true)
 			frame.Background:SetTexture(backgroundImage, "MIRROR", "MIRROR")
 
-		--end
+		--end]]
 
 		frame:SetData(data)
     end

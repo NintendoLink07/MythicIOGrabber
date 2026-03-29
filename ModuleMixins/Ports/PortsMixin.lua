@@ -1,5 +1,7 @@
 local addonName, miog = ...
 
+local setupDone = false
+
 PortsMixin = {}
 
 local frameTable = {
@@ -16,7 +18,7 @@ local frameTable = {
     [12] = "Right",
 }
 
-function PortsMixin:OnLoad()
+function PortsMixin:Setup()
     for _, v in ipairs(miog.TELEPORT_FLYOUT_IDS) do
         local targetFrame
 
@@ -29,7 +31,7 @@ function PortsMixin:OnLoad()
 
             end
 
-        elseif(not v.seasonID) then
+        else
             targetFrame = self[frameTable[v.expansion]]["Groups" .. v.expansion]
 
         end
@@ -38,5 +40,13 @@ function PortsMixin:OnLoad()
             targetFrame:Setup(v.id, v.expansion)
             
         end
+    end
+end
+
+function PortsMixin:OnShow()
+    if(not setupDone) then
+        self:Setup()
+
+        setupDone = true
     end
 end

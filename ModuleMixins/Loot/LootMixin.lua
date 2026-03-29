@@ -4,10 +4,9 @@ LootMixin = {}
 
 local currentlySearching
 
-local instanceDB
 local bossDropdownList = {}
 
-local allRaidsJournalInstanceIDList, allDungeonsJournalInstanceIDList = {}, {}
+local allRaidsJournalInstanceIDList, allDungeonsJournalInstanceIDList, currentSeasonDungeonsIDList, currentSeasonRaidsIDList = {}, {}, {}, {}
 local defaultList = {}
 
 local lootQueue = {}
@@ -433,7 +432,17 @@ function LootMixin:LoadJournalInstance(journalInstanceID, tier, nameOrType)
         selectedJournalInstance = nil
         specialSelection = nameOrType
 
-        if(nameOrType ~= ALL) then
+        if(nameOrType == "SEASON-"..DUNGEONS) then
+            self:SetCategory(2)
+            lootQueue = currentSeasonDungeonsIDList
+            self.SearchBox:CreateFilter("instance", EJ_GetTierInfo(tier) .. " - " .. nameOrType, 1, function() self:LoadJournalInstance() self.InstanceDropdown:SignalUpdate() end)
+
+        elseif(nameOrType == "SEASON-"..RAIDS) then
+            self:SetCategory(3)
+            lootQueue = currentSeasonRaidsIDList
+            self.SearchBox:CreateFilter("instance", EJ_GetTierInfo(tier) .. " - " .. nameOrType, 1, function() self:LoadJournalInstance() self.InstanceDropdown:SignalUpdate() end)
+
+        elseif(nameOrType ~= ALL) then
             local isRaid = nameOrType == RAIDS
             self:SetCategory(isRaid and 3 or 2)
 
@@ -453,6 +462,10 @@ function LootMixin:LoadJournalInstance(journalInstanceID, tier, nameOrType)
     self:RequestLoot(4)
 end
 
+function LootMixin:LoadMultipleInstances(instanceTable)
+
+end
+
 local function setSpecialButtonTooltip(tooltip, elementDescription, name)
     local elementText = MenuUtil.GetElementText(elementDescription)
 
@@ -463,13 +476,201 @@ end
 
 function LootMixin:SetupInstanceMenu()
     self.InstanceDropdown:SetupMenu(function(dropdown, rootDescription)
-        if(instanceDB) then
-            local expansionButtons = {}
+        local instanceDB = miog:GetJournalDB()
 
-            for k, v in ipairs(miog.TIER_INFO) do
-                local expansionButton = rootDescription:CreateRadio(v.name, function(index) return index == selectedTier end, nil, k)
+        local expansionButtons = {}
 
-                expansionButton:AddInitializer(function(button, description, menu)
+        for k, v in ipairs(miog.TIER_INFO) do
+            local expansionButton = rootDescription:CreateRadio(v.name, function(index) return index == selectedTier end, nil, k)
+
+            expansionButton:AddInitializer(function(button, description, menu)
+                local leftTexture = button:AttachTexture();
+                leftTexture:SetSize(16, 16);
+                leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                leftTexture:SetTexture(v.icon);
+
+                button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                return button.fontString:GetUnboundedStringWidth() + 18 + 5
+            end)
+
+            expansionButtons[k] = expansionButton
+
+            local raidButton = expansionButtons[k]:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
+                self:LoadJournalInstance(nil, index, RAIDS)
+                
+            end, k)
+
+            raidButton:SetTooltip(function(tooltip, elementDescription)
+                setSpecialButtonTooltip(tooltip, elementDescription, v.name)
+
+            end);
+
+            allRaidsJournalInstanceIDList[k] = {}
+
+            local dungeonButton = expansionButtons[k]:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
+                self:LoadJournalInstance(nil, index, DUNGEONS)
+
+            end, k)
+
+            dungeonButton:SetTooltip(function(tooltip, elementDescription)
+                setSpecialButtonTooltip(tooltip, elementDescription, v.name)
+                
+            end);
+
+            allDungeonsJournalInstanceIDList[k] = {}
+        end
+
+        local currentSeason = rootDescription:CreateRadio("Current season", function(index) return index == selectedTier end, nil, 20)
+
+        local dungeonsGroups = C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentSeason)
+        local raidGroups = C_LFGList.GetAvailableActivityGroups(3, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.Recommended))
+
+        currentSeasonDungeonsIDList = {}
+        currentSeasonRaidsIDList = {}
+
+        local currentIndex = #miog.TIER_INFO + 1
+
+        if(#raidGroups > 0) then
+            local categoryButton = currentSeason:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
+                self:LoadJournalInstance(nil, index, "SEASON-" .. RAIDS)
+
+            end, currentIndex)
+        end
+
+        if(#dungeonsGroups > 0) then
+            local categoryButton = currentSeason:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
+                self:LoadJournalInstance(nil, index, "SEASON-" .. DUNGEONS)
+
+            end, currentIndex)
+        end
+
+        for i = 1, 2, 1 do
+            local isDungeon = i == 1
+            local title = isDungeon and DUNGEONS or RAIDS
+            local groups = isDungeon and dungeonsGroups or raidGroups
+
+            if(#groups > 0) then
+                currentSeason:CreateTitle(title)
+
+                table.sort(groups, function(id1, id2)
+                    local k1 = miog:GetGroupInfo(id1)
+                    local k2 = miog:GetGroupInfo(id2)
+
+                    if(k1.isRaid) then
+                        if(k2.isRaid) then
+                            return k1.index < k2.index
+
+                        else
+                            return true
+
+                        end
+
+                    else
+                        if(k2.isRaid) then
+                            return false
+                            
+                        else
+                            return k1.instanceName < k2.instanceName
+
+                        end
+
+                    end
+                end)
+
+                for k, v in ipairs(groups) do
+                    local groupInfo = miog:GetGroupInfo(v)
+
+                    if(groupInfo and groupInfo.journalInstanceID) then
+                        if(isDungeon) then
+                            tinsert(currentSeasonDungeonsIDList, groupInfo.journalInstanceID)
+
+                        else
+                            tinsert(currentSeasonRaidsIDList, groupInfo.journalInstanceID)
+
+                        end
+                        
+                        local instanceButton = currentSeason:CreateRadio(groupInfo.name, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
+                            self:LoadJournalInstance(journalInstanceID, currentIndex, groupInfo.name)
+
+                        end, groupInfo.journalInstanceID)
+
+                        instanceButton:AddInitializer(function(button, description, menu)
+                            local leftTexture = button:AttachTexture();
+                            leftTexture:SetSize(16, 16);
+                            leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
+                            leftTexture:SetTexture(groupInfo.icon);
+
+                            button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
+
+                            return button.fontString:GetUnboundedStringWidth() + 18 + 5
+                        end)
+                    end
+                end
+            end
+        end
+        
+        local finalInstanceList = {}
+
+        --for i = 1, 4000, 1 do
+        for k, v in pairs(instanceDB) do
+            if(v and v.tier) then
+                tinsert(finalInstanceList, v)
+
+            end
+        end
+
+        table.sort(finalInstanceList, function(k1, k2)
+            if(k1.isRaid) then
+                if(k2.isRaid) then
+                    return k1.index < k2.index
+
+                else
+                    return true
+
+                end
+
+            else
+                if(k2.isRaid) then
+                    return false
+                    
+                else
+                    return k1.instanceName < k2.instanceName
+
+                end
+
+            end
+        end)
+
+        local raidTitles, dungeonTitles = {}, {}
+
+        for k, v in ipairs(finalInstanceList) do
+            if(v and v.tier) then
+                local hasNoRaidTitle = v.isRaid and not raidTitles[v.tier]
+                local hasNoDungeonTitle = not v.isRaid and not dungeonTitles[v.tier]
+
+                if(hasNoRaidTitle) then
+                    raidTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(RAIDS)
+
+                elseif(hasNoDungeonTitle) then
+                    dungeonTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(DUNGEONS)
+                    
+                end
+                
+                if(v.isRaid) then
+                    tinsert(allRaidsJournalInstanceIDList[v.tier], v.journalInstanceID)
+                    
+                else
+                    tinsert(allDungeonsJournalInstanceIDList[v.tier], v.journalInstanceID)
+
+                end
+                
+                local instanceButton = expansionButtons[v.tier]:CreateRadio(v.instanceName, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
+                    self:LoadJournalInstance(journalInstanceID, v.tier, v.instanceName)
+
+                end, v.journalInstanceID)
+
+                instanceButton:AddInitializer(function(button, description, menu)
                     local leftTexture = button:AttachTexture();
                     leftTexture:SetSize(16, 16);
                     leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
@@ -479,131 +680,14 @@ function LootMixin:SetupInstanceMenu()
 
                     return button.fontString:GetUnboundedStringWidth() + 18 + 5
                 end)
-
-                expansionButtons[k] = expansionButton
-
-                local raidButton = expansionButtons[k]:CreateRadio(ALL .. " " .. RAIDS, function(index) return index == selectedTier and specialSelection == RAIDS end, function(index)
-                    self:LoadJournalInstance(nil, index, RAIDS)
-                    
-                end, k)
-
-                raidButton:SetTooltip(function(tooltip, elementDescription)
-                    setSpecialButtonTooltip(tooltip, elementDescription, v.name)
-
-                end);
-
-                allRaidsJournalInstanceIDList[k] = {}
-
-                local dungeonButton = expansionButtons[k]:CreateRadio(ALL .. " " .. DUNGEONS, function(index) return index == selectedTier and specialSelection == DUNGEONS end, function(index)
-                    self:LoadJournalInstance(nil, index, DUNGEONS)
-
-                end, k)
-
-                dungeonButton:SetTooltip(function(tooltip, elementDescription)
-                    setSpecialButtonTooltip(tooltip, elementDescription, v.name)
-                    
-                end);
-
-                allDungeonsJournalInstanceIDList[k] = {}
             end
+        end
 
-            local currentSeason = rootDescription:CreateRadio("Current season N/A", function(index) return index == selectedTier end, nil, 20)
+        --defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
 
-            local dungeonsGroups = C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentSeason)
-            local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentSeason)
+        if(#lootQueue == 0) then
+            self:LoadJournalInstance()
 
-            for i = 1, 2, 1 do
-                local isDungeon = i == 1
-                local groups = isDungeon and dungeonsGroups or raidGroups
-
-                if(#groups > 0) then
-                    currentSeason:CreateTitle(isDungeon and DUNGEONS or RAIDS)
-
-                    for k, v in ipairs(groups) do
-                        local groupInfo = miog:GetGroupInfo(v)
-
-                        if(groupInfo and groupInfo.journalInstanceID) then
-                            local instanceButton = currentSeason:CreateRadio(groupInfo.name, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
-                                self:LoadJournalInstance(journalInstanceID, groupInfo.tier, groupInfo.name)
-
-                            end, groupInfo.journalInstanceID)
-                        end
-                    end
-                end
-            end
-           
-            local finalInstanceList = {}
-
-            for i = 1, 4000, 1 do
-                local instanceInfo = instanceDB[i]
-
-                if(instanceInfo and instanceInfo.tier) then
-                    tinsert(finalInstanceList, instanceInfo)
-
-                end
-            end
-
-            table.sort(finalInstanceList, function(k1, k2)
-                if(k1.isRaid == k2.isRaid) then
-                    if(k1.isRaid) then
-                        return k1.journalInstanceID < k2.journalInstanceID
-
-                    else
-                        return k1.instanceName < k2.instanceName
-
-                    end
-                end
-
-                return k1.isRaid and true or k2.isRaid and false
-            end)
-
-            local raidTitles, dungeonTitles = {}, {}
-
-            for k, v in ipairs(finalInstanceList) do
-                if(v and v.tier) then
-                    local hasNoRaidTitle = v.isRaid and not raidTitles[v.tier]
-                    local hasNoDungeonTitle = not v.isRaid and not dungeonTitles[v.tier]
-
-                    if(hasNoRaidTitle) then
-                        raidTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(RAIDS)
-
-                    elseif(hasNoDungeonTitle) then
-                        dungeonTitles[v.tier] = expansionButtons[v.tier]:CreateTitle(DUNGEONS)
-                        
-                    end
-                    
-                    if(v.isRaid) then
-                        tinsert(allRaidsJournalInstanceIDList[v.tier], v.journalInstanceID)
-                        
-                    else
-                        tinsert(allDungeonsJournalInstanceIDList[v.tier], v.journalInstanceID)
-
-                    end
-                    
-                    local instanceButton = expansionButtons[v.tier]:CreateRadio(v.instanceName, function(journalInstanceID) return selectedJournalInstance == journalInstanceID end, function(journalInstanceID)
-                        self:LoadJournalInstance(journalInstanceID, v.tier, v.instanceName)
-
-                    end, v.journalInstanceID)
-
-                    instanceButton:AddInitializer(function(button, description, menu)
-                        local leftTexture = button:AttachTexture();
-                        leftTexture:SetSize(16, 16);
-                        leftTexture:SetPoint("LEFT", button, "LEFT", 16, 0);
-                        leftTexture:SetTexture(v.icon);
-
-                        button.fontString:SetPoint("LEFT", leftTexture, "RIGHT", 5, 0);
-
-                        return button.fontString:GetUnboundedStringWidth() + 18 + 5
-                    end)
-                end
-            end
-
-            --defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
-
-            if(#lootQueue == 0) then
-                self:LoadJournalInstance()
-
-            end
         end
     end)
 end
@@ -861,9 +945,7 @@ function LootMixin:SetupEncounterMenu()
 end
 
 function LootMixin:OnShow()
-    instanceDB = miog:GetJournalDB()
 
-    self:SetupInstanceMenu()
 end
 
 function LootMixin:OnLoad()
@@ -879,7 +961,6 @@ function LootMixin:OnLoad()
     self:RefreshSlots()
     self:RefreshClassesAndArmor()
     self:SetupEncounterMenu()
-    self:SetupInstanceMenu()
 
     self.SaveQueue:SetScript("OnClick", function(selfFrame)
         local checked = selfFrame:GetChecked()
@@ -941,6 +1022,8 @@ function LootMixin:OnLoad()
     end)
 
 	ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, self:GetParent():GetParent().ScrollBarArea.LootScrollBar)
+
+    self:SetupInstanceMenu()
 
     hooksecurefunc("EJ_SetLootFilter", function(classID, specID)
         self.DifficultyDropdown:SignalUpdate()

@@ -50,8 +50,7 @@ function RaiderIOInformationPanelMixin:OnLoadMPlus()
                     local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
                     local difficulty = 23
 
-                    --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                    EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+                    miog:OpenEncounterJournal(difficulty, instanceID)
 
                 end)
 
@@ -93,8 +92,8 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsF
             texture:SetScript("OnMouseDown", function()
                 local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
                 local difficulty = 16
-                --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+                miog:OpenEncounterJournal(difficulty, instanceID)
 
             end)
         end
@@ -102,34 +101,43 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsF
         raidHeaderFrame.Name:SetText(mapInfo.abbreviatedName .. (isMainsFrame and "[Main]" or ""))
 
         if(mapInfo.bosses) then
-            for i = 1, 10, 1 do
-                local currentBoss = "Boss" .. i
+            local bossIcons = mapInfo.bossIcons or {}
 
-                if(mapInfo.bosses[i]) then
-                    if(raidFrame.Bosses[currentBoss].Index) then
-                        raidFrame.Bosses[currentBoss].Index:SetText(i)
+            for i = 1, 10, 1 do
+                local bossFrame = raidFrame.Bosses["Boss" .. i]
+                local bossInfo = mapInfo.bosses[i]
+
+                if(bossInfo) then
+                    if(bossFrame.Index) then
+                        bossFrame.Index:SetText(i)
 
                     end
 
-                    raidFrame.Bosses[currentBoss].name = mapInfo.bosses[i].name
-                    raidFrame.Bosses[currentBoss].Icon:SetTexture(mapInfo.bosses[i].icon)
-                    raidFrame.Bosses[currentBoss].Icon:SetScript("OnMouseDown", function()
+                    bossFrame.name = bossInfo.name
+
+                    if(bossIcons[i]) then
+                        bossFrame.Icon:SetTexture(bossIcons[i].icon)
+
+                    end
+
+                    bossFrame.Icon:SetDesaturated(true)
+                    bossFrame.Icon:SetScript("OnMouseDown", function()
                         local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
                         local difficulty = 16
-                        EncounterJournal_OpenJournal(difficulty, instanceID, select(3, EJ_GetEncounterInfoByIndex(i, instanceID)), nil, nil, nil)
+
+                        miog:OpenEncounterJournal(difficulty, instanceID, bossInfo.journalEncounterID)
                     end)
 
-                    if(raidFrame.Bosses[currentBoss].Border) then
-                        raidFrame.Bosses[currentBoss].Border:SetColorTexture(1, 0, 0, 1);
+                    if(bossFrame.Border) then
+                        bossFrame.Border:SetColorTexture(1, 0, 0, 1);
 
                     end
 
-                    raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
 
-                    raidFrame.Bosses[currentBoss]:Show()
+                    bossFrame:Show()
 
                 else
-                    raidFrame.Bosses[currentBoss]:Hide()
+                    bossFrame:Hide()
 
                 end
             end
@@ -173,7 +181,7 @@ end
 
 function RaiderIOInformationPanelMixin:OnLoad(mode)
     self:SetMode(mode)
-	
+
     self.raidFrames = {}
     
     --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
@@ -186,15 +194,15 @@ function RaiderIOInformationPanelMixin:OnLoad(mode)
 end
 
 function RaiderIOInformationPanelMixin:Flush()
-    self.playerName = nil
-    self.realm = nil
-    self.region = nil
-
     self.mplusData = nil
     self.raidData = nil
-    self.realm = nil
-    self.roles = nil
-    self.race = nil
+
+    if(self.RaceRolesServer) then
+	    self.RaceRolesServer:SetText("")
+
+    end
+
+    self:SetComment()
 
     self:OnLoad(self.mode)
 end
@@ -227,37 +235,58 @@ function RaiderIOInformationPanelMixin:SetComment(comment)
     self:CalculatePanelHeight()
 end
 
-function RaiderIOInformationPanelMixin:SetFillData(mplusData, raidData, server, comment, roles, race)
-    self.mplusData = mplusData
-    self.raidData = raidData
-    self.realm = server
-    self.roles = roles
-    self.race = race
+function RaiderIOInformationPanelMixin:SetRace(raceID)
+    if(raceID) then
+        local text = self.RaceRolesServer:GetText() or ""
+        self.RaceRolesServer:SetText(text .. "|A:" .. miog.RACES[raceID] .. "|a ")
 
+    end
+end
+
+function RaiderIOInformationPanelMixin:AddRole(role)
+    if(role) then
+        local text = self.RaceRolesServer:GetText() or ""
+        self.RaceRolesServer:SetText(text .. role .. " ")
+
+    end
+end
+
+function RaiderIOInformationPanelMixin:SetRoles(rolesTable)
+    if(rolesTable) then
+        if(rolesTable.tank) then
+            self:AddRole(miog.C.TANK_TEXTURE)
+
+        end
+
+        if(rolesTable.healer) then
+            self:AddRole(miog.C.HEALER_TEXTURE)
+
+        end
+
+        if(rolesTable.damager) then
+            self:AddRole(miog.C.DPS_TEXTURE)
+
+        end
+    end
+end
+
+function RaiderIOInformationPanelMixin:SetServerData(realm)
+    realm = realm or GetRealmName() or ""
+    local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
+
+    local text = self.RaceRolesServer:GetText() or ""
+    self.RaceRolesServer:SetText(text .. (countryFlag and ("|T" .. countryFlag .. ":12:12|t" .. " ") or "") .. string.upper(miog.F.CURRENT_REGION or "") .. "-" .. realm .. "(" .. language .. ")")
+end
+
+function RaiderIOInformationPanelMixin:SetOptionalData(comment, rolesTable, raceID)
     self:SetComment(comment)
+    self:SetRace(raceID)
+    self:SetRoles(rolesTable)
+
 end
 
-function RaiderIOInformationPanelMixin:SetPlayerData(playerName, server, region)
-    self.playerName = playerName
-    self.realm = server
-    self.region = region
-end
-
-function RaiderIOInformationPanelMixin:SetOptionalData(comment, server, roles, race)
-    self.realm = server
-    self.roles = roles
-    self.race = race
-
-    self:SetComment(comment)
-end
-
-function RaiderIOInformationPanelMixin:RequestFillData()
-    self.mplusData = miog.getMPlusSortData(self.playerName, self.realm, self.region)
-    self.raidData = miog.getNewRaidSortData(self.playerName, self.realm, self.region)
-end
-
-function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
-    self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(self.playerName, self.realm, self.region)
+function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData, playerName, realm)
+    self.mplusData = not refreshData and self.mplusData or miog.getMPlusSortData(playerName, realm, miog.F.CURRENT_REGION)
 
     local done = {}
     local k = 1
@@ -268,7 +297,7 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
             local currentDungeon = self.MythicPlus["Dungeon" .. k]
 
             if(self.mplusData and self.mplusData[mapChallengeModeID]) then
-                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[mapChallengeModeID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, miog.F.IS_IN_DEBUG_MODE and 3 or self.mplusData[mapChallengeModeID].chests)) or 0, self.mplusData and self.mplusData[mapChallengeModeID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
+                currentDungeon.Level:SetText(WrapTextInColorCode(self.mplusData and (self.mplusData[mapChallengeModeID].level .. " " .. strrep(miog.C.RIO_STAR_TEXTURE, self.mplusData[mapChallengeModeID].chests)) or 0, self.mplusData and self.mplusData[mapChallengeModeID].chests > 0 and miog.C.GREEN_COLOR or miog.CLRSCC.red))
 
                 if(self.mplusData[mapChallengeModeID].level == 0) then
                     currentDungeon.Icon:SetDesaturation(0.7)
@@ -332,8 +361,8 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData)
 	end
 end
 
-function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
-    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(self.playerName, self.realm, self.region)
+function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData, playerName, realm)
+    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(playerName, realm)
 
 	local raidMapIDSet = {}
 	local mainRaidMapIDSet = {}
@@ -382,9 +411,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                             end
         
                                             if(nmd == 1 and raidMapIDSet[data.mapID] ~= true or nmd == 2 and mainRaidMapIDSet[data.mapID] ~= true) then
-                                                if(normalOrMainData.raids[data.mapID].isAwakened) then
-                                                    raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
-                                                end
+                                                raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
         
                                                 raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
         
@@ -399,8 +426,8 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
                                                     texture:SetScript("OnMouseDown", function()
                                                         local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
                                                         local difficulty = a == 1 and 14 or a == 2 and 15 or 16
-                                                        --difficultyID, instanceID, encounterID, sectionID, creatureID, itemID
-                                                        EncounterJournal_OpenJournal(difficulty, instanceID, nil, nil, nil, nil)
+
+                                                        miog:OpenEncounterJournal(difficulty, instanceID)
                                 
                                                     end)
                                                 end
@@ -435,62 +462,21 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData)
 	end
 end
 
-function RaiderIOInformationPanelMixin:ApplyFillData(refreshData)
+function RaiderIOInformationPanelMixin:ApplyFillData(type, refreshData, playerName, realm)
     if(self.RaceRolesServer) then
-        local realm = self.realm or GetRealmName() or ""
-        local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
+        self:SetServerData(realm)
 
-        self.RaceRolesServer:SetText((countryFlag and ("|T" .. countryFlag .. ":12:12|t" .. " ") or "") .. string.upper(miog.F.CURRENT_REGION or "") .. "-" .. realm .. "(" .. language .. ")")
-        
-        if(self.roles) then
-            if(self.roles.tank) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
-
-            end
-
-            if(self.roles.healer) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
-
-            end
-
-            if(self.roles.damager) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
-
-            end
-        end
     end
 
-    self:ApplyMythicPlusData(refreshData)
-    self:ApplyRaidData(refreshData)
-end
-
-function RaiderIOInformationPanelMixin:ApplySpecificFillDataOnly(type, refreshData)
-    if(self.RaceRolesServer) then
-        self.RaceRolesServer:SetText(string.upper(miog.F.CURRENT_REGION or "N/A") .. "-" .. (self.realm or GetRealmName() or "") .. " ")
+    if(type == "raid") then
+        self:ApplyRaidData(refreshData, playerName, realm)
         
-        if(self.roles) then
-            if(self.roles.tank) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.TANK_TEXTURE .. " ")
+    elseif(type == "mplus") then
+        self:ApplyMythicPlusData(refreshData, playerName, realm)
 
-            end
+    else
+        self:ApplyMythicPlusData(refreshData, playerName, realm)
+        self:ApplyRaidData(refreshData, playerName, realm)
 
-            if(self.roles.healer) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.HEALER_TEXTURE .. " ")
-
-            end
-
-            if(self.roles.damager) then
-                self.RaceRolesServer:SetText(self.RaceRolesServer:GetText() .. miog.C.DPS_TEXTURE .. " ")
-
-            end
-        end
-    end
-
-    if(type == "mplus") then
-        self:ApplyMythicPlusData(refreshData)
-        
-    elseif(type == "raid") then
-        self:ApplyRaidData(refreshData)
-        
     end
 end

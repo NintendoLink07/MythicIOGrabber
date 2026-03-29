@@ -1,25 +1,32 @@
-## [3.9.11](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.11) - 2026-03-22
+## [3.9.12](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.12) - 2026-03-29
+
+### Added
+
+- [Loot] Icons have been added to the current season category.
+
+- [Loot] All current raids have been added to the current season category.
 
 ### Fixed
 
-- Minor performance improvements.
+- [Progress] Raid background images are now assigned correctly.
 
-- Multiple errors regarding secret values have been fixed.
+- [ActiveQueues] All cards should now consume less cpu and be more responsive.
 
-- [Loot] Multiple errors when no difficulty was selected have been fixed.
+- [Ports] The current season' teleports should now be visible.
 
-- [AppViewer] Invite/decline buttons should now disappear when you're not allowed to invite/decline applicants.
+- [Ports] Teleports will now be saturated once they've been learned.
 
-- [Progress] All raids' progress is now counted instead of just Dreamrift.
+- [Loot] Resolved an issue where no instances will load when opening the menu quickly after the first loading screen.
+
+- The teleport button in the main window will now only be visible when you actually have the teleport spell in your spellbook.
+
+- Resolved an issue trying to determine the number of bosses of a raid.
+
+- Many secret values issues have been resolved.
+
+- Performance and loading times have been improved.
 
 ### Known issues
 
-- Many errors regarding secret values are popping up.
-I know why most errors exist and all of them should be fixed with v3.9.13.
-
-- Active queues' time to match / wait times are not formatted correctly (because of secret values).
-
-- [FilterManager] When logging in for the first time in a session boss icons are not visible.
-
-- [GroupOrganizer] The online / afk / dnd / offline indicator is currently not working.
-You can still hover over the players to check their status.
+- [FilterManager] The raid progress panel shows correct kill information but shows Dreamrift (and starting the weekly reset MQD aswell) as a separate raid when all of them are one tier.
+This will be fixed in the next update.

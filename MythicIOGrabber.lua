@@ -1,7 +1,7 @@
 local addonName, miog = ...
 _G.MythicIOGrabber = miog
 
-miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
+--miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
 miog.debug = {}
 
@@ -9,6 +9,19 @@ miog.referencePVPButtons = {}
 
 miog.debug.currentAverageExecuteTime = {}
 miog.debug.timer = nil
+
+local function loadBaseData()
+	C_LFGList.RequestAvailableActivities()
+	
+	miog:CreateJournalDB()
+
+	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
+		for _, activityID in ipairs(C_LFGList.GetAvailableActivities(categoryID)) do
+			miog:CreateGroupAndSiblingActivitiesFromActivity(activityID)
+
+		end
+	end
+end
 
 local function mainEvents(_, event, ...)
 	if(event == "PLAYER_LOGIN") then
@@ -35,8 +48,8 @@ local function mainEvents(_, event, ...)
 		end
 
 	elseif(event == "PLAYER_ENTERING_WORLD") then
-		miog.refreshLastGroupTeleport()
-		miog.checkAllSeasonalMapIDs()
+		--miog.checkAllSeasonalMapIDs()
+		loadBaseData()
 		
 		if(miog.pveFrame2) then
 			miog.MainFrame.TitleBar.RaiderIOLoaded:SetShown(not C_AddOns.IsAddOnLoaded("RaiderIO"))

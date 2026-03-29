@@ -685,6 +685,15 @@
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
 
+                            
+                    <!--<Frame parentKey="GroupCreator" inherits="MIOG_GroupCreator" frameStrata="HIGH">
+                        <Size x="400" />
+                        
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="30"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="30"/>
+                        </Anchors>
+                    </Frame>!-->
                 </Frames>
 
                 <Layers>

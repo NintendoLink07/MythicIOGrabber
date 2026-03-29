@@ -9,15 +9,14 @@ end
 
 function ApplicantMultiMemberMixin:SetData(data)
 	self:ResetWithExpandIcon()
-    self.applicantID = data.applicantID
 
-    local applicantData = C_LFGList.GetApplicantInfo(self.applicantID)
+    local applicantData = C_LFGList.GetApplicantInfo(data.applicantID)
 
     if(applicantData) then
         self.Players:SetText("(" .. applicantData.numMembers .. ") ")
 
         for i = 1, applicantData.numMembers do
-            local name, class = C_LFGList.GetApplicantMemberInfo(self.applicantID, i)
+            local name, class = C_LFGList.GetApplicantMemberInfo(data.applicantID, i)
             local _, playerName, realm = miog.createFullNameValuesFrom("unitName", name)
 
             local string = i == 1 and self.Players:GetText() or self.Players:GetText() .. ", "

@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources, 
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.11
+## Version: 3.9.12
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -22,7 +22,7 @@ UtilFunctions.lua
 PersistentData.lua
 UI.lua
 ActivityChecker.lua
-QueueManagement.lua
+##QueueManagement.lua
 
 SearchPanel.lua
 EntryCreation.lua
@@ -83,7 +83,7 @@ Mixins\TextureCellMixin.lua
 
 Mixins\AnchorSystemMixin.lua
 
-
+ModuleMixins\GroupCreator\GroupCreatorMixin.lua
 
 ModuleMixins\Loot\LootMixin.lua
 ModuleMixins\Loot\LootLineMixin.lua
@@ -97,9 +97,11 @@ ModuleMixins\AppViewer\ApplicantMixin.lua
 ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
 ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
 
-ModuleMixins\ReQueueMixin.lua
+##ModuleMixins\ReQueueMixin.lua
 ModuleMixins\QueueManager\QueueManagerMixin.lua
 ModuleMixins\QueueManager\QueueManagerFrameMixin.lua
+
+##ModuleMixins\QueueBuffer\QueueBufferMixin.lua
 
 ModuleMixins\Ports\PortsLogoMixin.lua
 ModuleMixins\Ports\PortsButtonMixin.lua
@@ -112,6 +114,8 @@ ModuleMixins\Ports\PortsMixin.lua
 ##
 ### XML
 ##
+
+XML\GroupCreator\MIOG_GroupCreator.xml
 
 XML\Ports\MIOG_PortsLogoTemplate.xml
 XML\Ports\MIOG_PortsButtonTemplate.xml

@@ -190,7 +190,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 			for k = 1, applicantData.numMembers do
 				local singleMember = parent:Insert(groupData[k])
 				singleMember:SetCollapsed(true, true, false)
-				singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID})
+				singleMember:Insert({template = "MIOG_NewRaiderIOInfoPanel", applicantID = applicantID, applicantIndex = k})
 
 			end
 		end

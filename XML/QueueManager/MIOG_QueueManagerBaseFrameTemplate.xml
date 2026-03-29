@@ -57,6 +57,7 @@
             
             </OnLeave>
             <OnLoad method="OnLoad" />
+            <OnHide method="OnHide" />
         </Scripts>
     </Button>
 </Ui>

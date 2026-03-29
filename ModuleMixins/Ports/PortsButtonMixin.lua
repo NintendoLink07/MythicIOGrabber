@@ -8,19 +8,21 @@ function PortsButtonMixin:OnLoad()
 
 end
 
-function PortsButtonMixin:SetData(data)
-    local spell = Spell:CreateFromSpellID(data.spellID)
+function PortsButtonMixin:CheckVisuals()
+    if(self.data) then
+        local isKnown = C_SpellBook.IsSpellInSpellBook(self.data.spellID)
 
-    spell:ContinueOnSpellLoad(function()
-        local spellInfo = C_Spell.GetSpellInfo(data.spellID)
-
-        self:SetAttribute("spell", spellInfo.name)
-        self:SetNormalTexture(spellInfo.iconID)
-
-        if(data.isKnown) then
+        local texture = self:GetNormalTexture()
+        
+        if(texture) then
+            texture:SetDesaturated(not isKnown)
+            
+        end
+        
+        if(isKnown) then
             self:SetHighlightAtlas("communities-create-avatar-border-hover")
             
-            local teleportInfo = miog.TELEPORT_SPELLS_TO_MAP_DATA[data.spellID]
+            local teleportInfo = miog.TELEPORT_SPELLS_TO_MAP_DATA[self.data.spellID]
             
             if(teleportInfo) then
                 local mapInfo = miog:GetMapInfo(teleportInfo.mapID)
@@ -31,13 +33,29 @@ function PortsButtonMixin:SetData(data)
 
             --else
                 --self.Text:SetText(WrapTextInColorCode("MISSING", "FFFF0000"))
-                --print(data.spellID, spellInfo.name)
+                --print(self.data.spellID, spellInfo.name)
 
             end
-        else
-            self:GetNormalTexture():SetDesaturated(true)
-
         end
+
+    end
+end
+
+function PortsButtonMixin:OnShow()
+    self:CheckVisuals()
+
+end
+
+function PortsButtonMixin:SetData(data)
+    self.data = data
+
+    local spell = Spell:CreateFromSpellID(data.spellID)
+
+    spell:ContinueOnSpellLoad(function()
+        local spellInfo = C_Spell.GetSpellInfo(data.spellID)
+
+        self:SetAttribute("spell", spellInfo.name)
+        self:SetNormalTexture(spellInfo.iconID)
 
         self:SetScript("OnEnter", function(selfButton)
             GameTooltip:SetOwner(selfButton, "ANCHOR_RIGHT")
@@ -46,5 +64,7 @@ function PortsButtonMixin:SetData(data)
 )
             GameTooltip:Show()
         end)
+
+        self:CheckVisuals()
     end)
 end

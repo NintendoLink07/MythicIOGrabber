@@ -1,0 +1,46 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_GroupCreator" mixin="GroupCreatorMixin" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="CategoryName" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" text="CATEGORY">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" />
+                        <Anchor point="TOPRIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMLEFT" y="-5"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMRIGHT" y="-5"/>
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="DifficultyDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.ActivityDropdown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="PlayStyleDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+            <OnLoad method="OnShow" />
+        </Scripts>
+    </Frame>
+</Ui>

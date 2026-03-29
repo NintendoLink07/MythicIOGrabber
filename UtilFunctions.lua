@@ -355,15 +355,15 @@ function miog:table_merge(...)
 end
 
 miog.retrieveAbbreviatedNameFromChallengeModeMap = function(challengeID)
-	local info = miog.CHALLENGE_MODE_INFO[challengeID]
+	local _, _, _, _, _, mapID = C_ChallengeMode.GetMapUIInfo(challengeID)
 
-	if(info) then
-		if(not info.abbreviatedName) then
-			local mapInfo = miog:GetMapInfo(info.mapID)
+	if(mapID) then
+		local mapInfo = miog:GetMapInfo(mapID)
+
+		if(mapInfo) then
+			MIOG_T = mapInfo
+
 			return mapInfo.abbreviatedName
-
-		else
-			return info.abbreviatedName
 
 		end
 	end

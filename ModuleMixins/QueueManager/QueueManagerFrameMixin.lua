@@ -10,50 +10,23 @@ function QueueManagerFrameMixin:OnLoad()
 
 end
 
-function QueueManagerFrameMixin:CancelTicker()
-    if(self.Ticker) then
-        self.Ticker:Cancel()
-        self.timer:SetToDefaults()
-
-    end
-end
-
 --implementation in child mixins
 function QueueManagerFrameMixin:SetTimerText()
 
 end
 
+function QueueManagerFrameMixin:SetTimerOnHold()
+    self.Age:SetText("On hold")
+    
+end
+
 function QueueManagerFrameMixin:SetTimerInfo(type, value1, value2)
-    self:CancelTicker()
-
-    if(type == "start") then
-        self.Ticker = C_Timer.NewTicker(1, function()
-            self.timer:SetTimeFromStart(value1, value2)
-            self:SetTimerText()
-        end)
-    elseif(type == "end") then
-        self.Ticker = C_Timer.NewTicker(1, function()
-            self.timer:SetTimeFromEnd(value1, value2)
-            self:SetTimerText()
-
-        end)
-    elseif(type == "span") then
-        self.Ticker = C_Timer.NewTicker(1, function()
-            self.timer:SetTimeSpan(value1, value2)
-            self:SetTimerText()
-
-            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
-        end)
-
-    else
-        self.Age:SetText("On hold")
-
-    end
+    
 end
 
 function QueueManagerFrameMixin:SetWaitInfo(timeToMatch)
-    self.Wait:SetText(timeToMatch ~= -1 and "(" .. timeToMatch .. ")" or "")
-    
+    self.Wait:SetText("(" .. SecondsToClock(timeToMatch) .. ")")
+
 end
 
 function QueueManagerFrameMixin:SetMacrotext()
@@ -63,14 +36,22 @@ end
 
 function QueueManagerFrameMixin:SetData(data)
     self.data = data
-    self:Init()
+    self:Update()
     self:SetMacrotext()
 
 end
 
 function QueueManagerFrameMixin:OnHide()
-    self:CancelTicker()
+    if(self.Ticker) then
+        self.Ticker:Cancel()
 
+    end
+
+    self.timer:SetToDefaults()
+    
+    --[[self.Name:SetText("")
+    self.Age:SetText("")
+    self.Wait:SetText("")]]
 end
 
 function QueueManagerFrameMixin:SetBackground(background)
@@ -89,27 +70,60 @@ end
 
 QueueManagerLFGFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
-function QueueManagerLFGFrameMixin:SetTimerText()
-    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+function QueueManagerLFGFrameMixin:GetTimerFunction(currentTime, value)
+    return function()
+        if(not self.Ticker or self.Ticker:IsCancelled()) then
+            self.Ticker = C_Timer.NewTicker(1, function()
+                local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(self.data.categoryID, self.data.queueID)
 
+                if(hasData) then
+                    if(queuedTime and not issecretvalue(queuedTime)) then
+                        value = value + 1
+
+                        local calc = currentTime + value
+
+                        self.timer:SetTimeSpan(queuedTime, calc)
+                        self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
+
+                        local currentWait = myWait > 0 and myWait or averageWait
+                        self:SetWaitInfo(currentWait)
+
+                    end
+                end
+            end)
+        end
+    end
 end
 
-function QueueManagerLFGFrameMixin:Init()
+function QueueManagerLFGFrameMixin:SetTimerInfo()
+    local currentTime = GetTime()
+    local value = 0
+    
+    local timerFunc = self:GetTimerFunction(currentTime, value)
+
+    if(not self.Ticker or self.Ticker:IsCancelled()) then
+        self.Ticker = C_Timer.NewTicker(1, timerFunc)
+        
+    end
+
+    timerFunc()
+end
+
+function QueueManagerLFGFrameMixin:Update()
     local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLeveKWl, expansionLevel, groupID, fileID, difficulty, maxPlayers, description, isHoliday, bonusRep, minPlayersDisband, isTimewalker, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(self.data.queueID)
     local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(self.data.categoryID, self.data.queueID)
 
     local activityName = self.data.isMultiDungeon and MULTIPLE_DUNGEONS or name
-    
+
     if(hasData) then
         if(queuedTime) then
             if(not issecretvalue(queuedTime)) then
-                self:SetTimerInfo("end", queuedTime, GetTime())
+                self:SetTimerInfo()
 
             end
         end
 
         timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
-        --self:SetWaitInfo(timeToMatch)
 
         local totalNumOfPlayers = maxPlayers - tankNeeds - healerNeeds - dpsNeeds
 
@@ -118,10 +132,6 @@ function QueueManagerLFGFrameMixin:Init()
             activityName = "(" .. (totalNumOfPlayers / maxPlayers * 100) .. "%) " .. activityName
 
         end
-
-    else
-        self:SetTimerInfo()
-
     end
 
     self:SetBackground(miog:GetImageForMapID(mapID) or fileID)
@@ -199,7 +209,7 @@ function QueueManagerLFGFrameMixin:OnEnter()
         GameTooltip:AddLine(string.format(LFG_LIST_TOOLTIP_MEMBERS, totalTanks + totalHealers + totalDPS - tankNeeds - healerNeeds - dpsNeeds, totalTanks - tankNeeds, totalHealers - healerNeeds, totalDPS - dpsNeeds))
 
         if (queuedTime > 0) then
-            GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(GetTime() - queuedTime)))
+            GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToClock(GetTime() - queuedTime)))
 
         end
 
@@ -214,23 +224,23 @@ function QueueManagerLFGFrameMixin:OnEnter()
             GameTooltip:AddLine("Wait times:")
 
             if (myWaitOk) then
-                GameTooltip:AddLine(string.format("~ |cffffffff%s|r", myWait))
+                GameTooltip:AddLine(string.format("~ |cffffffff%s|r", SecondsToClock(myWait)))
             end
 
             if (averageWaitOk) then
-                GameTooltip:AddLine(string.format("Ø |cffffffff%s|r", averageWait))
+                GameTooltip:AddLine(string.format("Ø |cffffffff%s|r", SecondsToClock(averageWait)))
             end
 
             if (tankWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", tankWait))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Tank:14:14|a |cffffffff%s|r", SecondsToClock(tankWait)))
             end
 
             if (healerWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", healerWait))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-Healer:14:14|a |cffffffff%s|r", SecondsToClock(healerWait)))
             end
 
             if (damageWaitOk) then
-                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", damageWait))
+                GameTooltip:AddLine(string.format("|A:GO-icon-role-Header-DPS:14:14|a |cffffffff%s|r", SecondsToClock(damageWait)))
             end
 
         end
@@ -266,12 +276,37 @@ end
 
 QueueManagerApplicationFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
-function QueueManagerApplicationFrameMixin:SetTimerText()
-    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+function QueueManagerApplicationFrameMixin:GetTimerFunction(currentTime, value)
+    return function()
+        local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(self.data.resultID)
 
+        if(appDuration and not issecretvalue(appDuration)) then
+            value = value - 1
+
+            local calc = currentTime - value
+
+            self.timer:SetTimeFromStart(calc, appDuration)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        end
+    end
 end
 
-function QueueManagerApplicationFrameMixin:Init()
+function QueueManagerApplicationFrameMixin:SetTimerInfo()
+    local currentTime = GetTime()
+    local value = 0
+
+    local timerFunc = self:GetTimerFunction(currentTime, value)
+
+    if(not self.Ticker or self.Ticker:IsCancelled()) then
+        self.Ticker = C_Timer.NewTicker(1, timerFunc)
+        
+    end
+
+    timerFunc()
+end
+
+function QueueManagerApplicationFrameMixin:Update()
     local searchResultInfo = C_LFGList.GetSearchResultInfo(self.data.resultID)
 
     if(not issecrettable(searchResultInfo)) then
@@ -296,27 +331,21 @@ function QueueManagerApplicationFrameMixin:Init()
             self.Name:SetTextColor(1, 1, 1, 1)
             self.Name:SetText(activityName)
 
-        else
+        elseif(self.Name:GetText()) then
             self.Name:SetTextColor(1, 0, 0, 1)
-            self.Name:SetText(self.Name:GetText() .. " - " .. reason[2])
+            self.Name:SetText(activityName .. " - " .. reason[2])
 
         end
 
         self.Wait:Hide()
 
         if(isFakeApp) then
-            if(not issecrettable(searchResultInfo)) then
-                self:SetAlpha(0.5)
-                self:SetTimerInfo("start", searchResultInfo.age, GetTime())
+            --self:SetAlpha(0.5)
+            --self:SetTimerInfo(true)
 
-            end
         else
-		    local resultID, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(self.data.resultID)
+            self:SetTimerInfo()
 
-            if(appDuration and not issecretvalue(appDuration)) then
-                self:SetTimerInfo("start", GetTime(), appDuration)
-
-            end
         end
 
         self:SetBackground(activityInfo.horizontal)
@@ -343,13 +372,142 @@ end
 
 QueueManagerPVPFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
+function QueueManagerPVPFrameMixin:GetBattlefieldTimerFunction()
+    return function()
+        local queuedTime = GetBattlefieldTimeWaited(self.data.index) / 1000
+
+        if(queuedTime and not issecretvalue(queuedTime)) then
+            self.timer:SetTimeFromStart(GetTime(), queuedTime)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        end
+    end
+end
+
+function QueueManagerPVPFrameMixin:GetWorldPVPTimerFunction()
+    return function()
+        local _, _, _, _, _, queuedTime = GetWorldPVPQueueStatus(self.data.index)
+
+        if(queuedTime and not issecretvalue(queuedTime)) then
+            self.timer:SetTimeFromStart(GetTime(), queuedTime)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        end
+    end
+end
+
+function QueueManagerPVPFrameMixin:GetPetBattleTimerFunction()
+    return function()
+        local _, _, queuedTime = C_PetBattles.GetPVPMatchmakingInfo()
+
+        if(queuedTime and not issecretvalue(queuedTime)) then
+            self.timer:SetTimeFromStart(GetTime(), queuedTime)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        end
+    end
+end
+
+function QueueManagerPVPFrameMixin:GetPlunderstormTimerFunction()
+    return function()
+        local queuedTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
+
+        if(queuedTime and not issecretvalue(queuedTime)) then
+            self.timer:SetTimeFromStart(GetTime(), queuedTime)
+            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+        end
+    end
+end
+
+function QueueManagerPVPFrameMixin:SetTimerInfo(type)
+    if(not self.Ticker or self.Ticker:IsCancelled()) then
+        self.Ticker = C_Timer.NewTicker(1,
+            type == "battlefield" and self:GetBattlefieldTimerFunction() or
+            type == "world" and self:GetWorldPVPTimerFunction() or
+            type == "petbattle" and self:GetPetBattleTimerFunction() or
+            type == "plunderstorm" and self:GetPlunderstormTimerFunction()
+        
+        )
+
+    end
+end
+
+function QueueManagerPVPFrameMixin:Update()
+    local status, mapName
+
+    local timeInQueue, timeToMatch
+
+    if(self.data.type == "battlefield") then
+        status, mapName = GetBattlefieldStatus(self.data.index);
+        self.macrotext = "/click QueueStatusButton RightButton"
+        self.type = "battlefield"
+
+        if(status and status ~= "none" and status ~= "error") then
+            self:SetTimerInfo("battlefield")
+            self:SetWaitTime(GetBattlefieldEstimatedWaitTime(self.data.index) / 1000)
+
+            self:SetBackground(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
+
+        end
+
+    elseif(self.data.type == "world") then
+        local queueID, averageWaitTime, queuedTime
+
+        status, mapName, queueID, _, averageWaitTime, queuedTime = GetWorldPVPQueueStatus(self.data.index)
+        self.macrotext = "/run BattlefieldMgrExitRequest(" .. queueID .. ")"
+        self:SetTimerInfo("world")
+        self:SetWaitTime(averageWaitTime)
+        self.type = "world"
+
+        timeInQueue = GetTime() - queuedTime
+        timeToMatch = averageWaitTime
+
+    elseif(self.data.type == "openworld") then
+        self.type = "openworld"
+        self.macrotext = "/run HearthAndResurrectFromArea()"
+        self.Age:SetText("")
+        mapName = GetRealZoneText()
+
+        timeInQueue = GetTime()
+        timeToMatch = -1
+
+    elseif(self.data.type == "petbattle") then
+        self.type = "petbattle"
+        self.macrotext = "/run C_PetBattles.StopPVPMatchmaking()"
+
+        local _, estimated, queuedTime = C_PetBattles.GetPVPMatchmakingInfo()
+        self:SetTimerInfo("petbattle")
+        self:SetWaitTime(estimated)
+        mapName = "Pet Battle"
+
+
+        --timeToMatch = estimated
+        --timeInQueue = GetTime() - queuedTime
+
+        self:SetBackground("interface/petbattles/petbattlesqueue.blp")
+
+    elseif(self.data.type == "plunderstorm") then
+        --local queueTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
+
+        self.macrotext = "/run C_LobbyMatchmakerInfo.AbandonQueue()"
+        self:SetTimerInfo("plunderstorm")
+        mapName = WOW_LABS_PLUNDERSTORM_CATEGORY
+        --timeInQueue = GetTime() - queueTime
+    
+    end
+
+    self.Name:SetText(mapName)
+    self.Wait:Show()
+end
+
 function QueueManagerPVPFrameMixin:SetTimerText()
     self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
 
 end
 
 function QueueManagerPVPFrameMixin:OnEnter()
-    local index = self.index
+    local index = self.data.index
     local type = self.type
 
     local mapName, queuedTime, estimatedTime, role, teamSize, assignedSpec
@@ -395,12 +553,12 @@ function QueueManagerPVPFrameMixin:OnEnter()
     GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
     if(queuedTime and queuedTime > 0) then
-        GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToTime(queuedTime, false, false, 1, false)))
+        GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToClock(queuedTime, false, false, 1, false)))
 
     end
 
     if(estimatedTime and estimatedTime > 0) then
-        GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToTime(estimatedTime, false, false, 1, false)))
+        GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToClock(estimatedTime, false, false, 1, false)))
 
     end
 
@@ -418,12 +576,39 @@ end
 
 QueueManagerListingFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
-function QueueManagerListingFrameMixin:SetTimerText()
-    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+function QueueManagerListingFrameMixin:GetTimerFunction(currentTime, value)
+    return function()
+        if(C_LFGList.HasActiveEntryInfo()) then
+            local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 
+            if(activeEntryInfo.duration and not issecretvalue(activeEntryInfo.duration)) then
+                value = value - 1
+
+                local calc = currentTime - value
+
+                self.timer:SetTimeFromStart(calc, activeEntryInfo.duration)
+                self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+
+            end
+        end
+    end
 end
 
-function QueueManagerListingFrameMixin:Init()
+function QueueManagerListingFrameMixin:SetTimerInfo()
+    local currentTime = GetTime()
+    local value = 0
+    
+    local timerFunc = self:GetTimerFunction(currentTime, value)
+
+    if(not self.Ticker or self.Ticker:IsCancelled()) then
+        self.Ticker = C_Timer.NewTicker(1, timerFunc)
+        
+    end
+
+    timerFunc()
+end
+
+function QueueManagerListingFrameMixin:Update()
     local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
 
     if(activeEntryInfo) then
@@ -434,18 +619,15 @@ function QueueManagerListingFrameMixin:Init()
             self:SetBackground(activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png")
 
             local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-            activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numApplicants .. ")"
+            activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numActiveApplicants .. ")"
+            self.Name:SetText(activityName)
             
         end
 
-        if(not issecretvalue(activeEntryInfo.duration)) then
-            self:SetTimerInfo("start", activeEntryInfo.duration, GetTime())
-
-        end
+        self:SetTimerInfo()
 
         self.Wait:Hide()
         self.macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
-        self.Name:SetText(activityName)
     end
 end
 
