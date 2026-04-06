@@ -664,7 +664,7 @@ miog.retrieveCurrentRaidActivityIDs = function(sort)
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
 			local activityInfo = miog:GetActivityInfo(activityID)
 
-			tinsert(raidActivities, justIDs and activityID or {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
+			tinsert(raidActivities, {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
 		end
 
 		if(sort and #raidActivities > 1) then
@@ -1601,7 +1601,7 @@ miog.getGroupLeader = function()
 	end
 end
 
-hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
+--[[hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
 	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
 	LFGListFrame.SearchPanel.FilterButton:Hide()
@@ -1617,7 +1617,7 @@ hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
 	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
 	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
 	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
-end)
+end)]]
 
 miog.createSplitName = function(name)
 	local nameTable = miog.simpleSplit(name, "-")

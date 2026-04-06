@@ -2035,8 +2035,8 @@ local function findJournalInstanceIndex(journalInstanceID, isRaid)
 end
 
 function miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, tier, index)
-	if((not index or not tier) and (journalInstanceID == 1307 or journalInstanceID == 1314)) then
-		index = findJournalInstanceIndex(journalInstanceID)
+	if(not index and mapID and mapID > 0) then
+		index = findJournalInstanceIndex(journalInstanceID, isRaid)
 
 	end
 
@@ -2277,7 +2277,7 @@ function miog:CreateGroup(groupID, overwrite)
 		if(groupID > 0 and (overwrite or not database.pointers.groups[groupID])) then
 			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
 
-			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, categoryID = categoryID, activities = C_LFGList.GetAvailableActivities(_, groupID), bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons}
+			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, activities = C_LFGList.GetAvailableActivities(nil, groupID), bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons}
 		end
 	end
 end
@@ -2306,7 +2306,7 @@ function miog:AggregateActivityInfoForGroup(groupID)
 	local groupDB = database.pointers.groups[groupID]
 
 	if(groupDB) then
-		local activities = C_LFGList.GetAvailableActivities(_, groupID)
+		local activities = C_LFGList.GetAvailableActivities(nil, groupID)
 
 		for _, activityID in pairs(activities) do
 			miog:CreateActivity(activityID)
@@ -2324,7 +2324,7 @@ end
 
 function miog:CreateGroupWithActivities(groupID)
 	if(groupID) then
-		if(groupID > 0 and (overwrite or not database.pointers.groups[groupID])) then
+		if(groupID > 0 and not database.pointers.groups[groupID]) then
 			miog:CreateGroup(groupID)
 			miog:AggregateActivityInfoForGroup(groupID)
 
@@ -2424,21 +2424,9 @@ function miog:GetJournalInstanceIDFromMapID(mapID)
 end
 
 function miog:GetJournalInstanceIDFromActivityID(activityID)
-	local journalInstanceID
+	local activityInfo = miog:GetActivityInfo(activityID)
 
-	if(not database.pointers.activity[activityID]) then
-		
-
-	else
-		if(not database.pointers.activity[mapID].journalInstanceID) then
-
-		else
-			journalInstanceID = database.pointers.activity[mapID] and database.pointers.activity[mapID].journalInstanceID
-
-		end
-	end
-
-	return journalInstanceID
+	return activityInfo.journalInstanceID
 end
 
 function miog:GetJournalDataForMapID(mapID)
@@ -2460,11 +2448,6 @@ end
 
 function miog:GetJournalDataForActivityID(activityID)
 	if(activityID) then
-		if(not miog:HasActivityInfo(activityID)) then
-			miog:GetActivityInfo(activityID)
-
-		end
-
 		local journalInstanceID = miog:GetJournalInstanceIDFromActivityID(activityID)
 
 		if(journalInstanceID) then
@@ -2918,44 +2901,6 @@ local function getItemLevelForStepCount(steps, offset)
 	end
 
 	return itemLevel, arrayIndex
-end
-
-local function getItemLevelIncreaseViaSteps(steps, argIndex)
-	--[[if(steps >= 4 and steps % 4 == 0) then
-		return steps / 4 * fullStep, 0
-
-	else
-		local ilvl = 0
-		local negative = steps < 0 and true or false
-		local index = negative and 4 or 1
-		local quarterIndex
-
-		local forLoopLength = steps %
-
-		for i = negative and -1 or argIndex and argIndex > 0 and argIndex or 1, steps, negative and -1 or 1 do
-			if(negative) then
-				ilvl = ilvl - quarterSteps[index]
-
-				index = index - 1
-
-				if(i == 0) then
-					index = 4
-
-				end
-			else
-				if(i%4 == 0) then
-					index = 1
-					
-				end
-
-				ilvl = ilvl + quarterSteps[index]
-
-				index = index + 1
-			end
-		end
-
-		return ilvl, index % 4
-	end]]
 end
 
 for seasonID, seasonalData in pairs(miog.ITEM_LEVEL_DATA) do

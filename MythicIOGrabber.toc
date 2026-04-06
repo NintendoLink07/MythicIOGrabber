@@ -13,8 +13,6 @@
 ## X-Wago-ID: EGPXd3G1
 ## X-Website: https://github.com/NintendoLink07/MythicIOGrabber
 
-Libs\libs.xml
-
 MythicIOGrabber.lua
 PVEFrame2.lua
 
@@ -25,7 +23,7 @@ ActivityChecker.lua
 ##QueueManagement.lua
 
 SearchPanel.lua
-EntryCreation.lua
+###EntryCreation.lua
 SharedFunctions.lua
 FilterManager.lua
 GroupOrganizer.lua

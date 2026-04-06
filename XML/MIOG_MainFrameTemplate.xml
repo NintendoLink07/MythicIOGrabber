@@ -264,13 +264,13 @@
 
             <Frame parentKey="Currency" inherits="ContainerFrameCurrencyBorderTemplate, HorizontalLayoutFrame">
                 <KeyValues>
-                    <KeyValue key="spacing" value="11" type="number"/>
-			        <KeyValue key="align" value="bottom" type="string"/>
+                    <KeyValue key="spacing" value="9" type="number"/>
+			        <KeyValue key="align" value="center" type="string"/>
                 </KeyValues>
 
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
                 </Anchors>
 
                 <Layers>
@@ -569,10 +569,12 @@
 
                             <Frame parentKey="Information" inherits="VerticalLayoutFrame">
                                 <Anchors>
-                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3" x="-3"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="1"/>
                                 </Anchors>
 
                                 <KeyValues>
+                                    <KeyValue key="bottomPadding" value="2" type="number" />
+                                    <KeyValue key="rightPadding" value="3" type="number" />
                                     <KeyValue key="spacing" value="12" type="number" />
 			                        <KeyValue key="childLayoutDirection" value="bottomToTop" type="string"/>
                                 </KeyValues>
@@ -673,27 +675,23 @@
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
                                 </Anchors>
                             </Frame>
+                            
+                            <Frame parentKey="GroupCreator" inherits="MIOG_GroupCreator" frameStrata="HIGH">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>
+                                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
+                                </Anchors>
+                            </Frame>
                         </Frames>
                     </Frame>
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
-                    <!--<Frame parentKey="Teleports" inherits="MIOG_Teleports" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="Ports" inherits="MIOG_Ports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
-
-                            
-                    <!--<Frame parentKey="GroupCreator" inherits="MIOG_GroupCreator" frameStrata="HIGH">
-                        <Size x="400" />
-                        
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="30"/>
-                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="30"/>
-                        </Anchors>
-                    </Frame>!-->
                 </Frames>
 
                 <Layers>

@@ -353,7 +353,7 @@ local function updateSpecificFrameData(fullName, key, data)
                 end
             end
 
-            raidViewFrame:SetOnlineStatus(isOnline, isAfk, isDnd)
+            raidViewFrame:SetOnlineStatus(isOnline)
 
         elseif(key == "itemLevel") then
             for k, v in pairs(listViewFrame.cells) do
@@ -1306,74 +1306,6 @@ local function groupManagerEvents(_, event, ...)
             --updateSpecificFrameData(fullName, "online", unitID)
         end
 	end
-end
-
-local customPlayerPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
-UnitPopupManager:RegisterMenu("MIOG_PLAYER", customPlayerPopupMenu);
-function customPlayerPopupMenu.GetEntries()
-    return {
-		UnitPopupRaidTargetButtonMixin,
-		UnitPopupInteractSubsectionTitle,
-		UnitPopupInspectButtonMixin,
-		UnitPopupAchievementButtonMixin,
-		UnitPopupTradeButtonMixin, 
-		UnitPopupFollowButtonMixin,
-		UnitPopupOtherSubsectionTitle,
-		UnitPopupVoiceChatButtonMixin,
-		UnitPopupEnterEditModeMixin,
-    }
-end
-
-local customPartyPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
-UnitPopupManager:RegisterMenu("MIOG_PARTY", customPartyPopupMenu);
-function customPartyPopupMenu:GetEntries()
-    return {
-        UnitPopupRaidTargetButtonMixin,
-        UnitPopupRafSummonButtonMixin,
-        UnitPopupRafGrantLevelButtonMixin,
-        UnitPopupAddFriendButtonMixin,
-        UnitPopupAddFriendMenuButtonMixin,
-		UnitPopupInteractSubsectionTitle,
-        UnitPopupMenuFriendlyPlayerInteract, -- Submenu
-		UnitPopupOtherSubsectionTitle,
-		UnitPopupVoiceChatButtonMixin,
-		UnitPopupEnterEditModeMixin,
-        UnitPopupReportInWorldButtonMixin,
-    }
-end
-
-local openBlizzardRaidFrame = CreateFromMixins(UnitPopupButtonBaseMixin);
-
-openBlizzardRaidFrame.OnClick = function()
-	ToggleFriendsFrame(3)
-end
-openBlizzardRaidFrame.GetText = function()
-	return "Open Blizzard's raid frame"
-end
-
-local customRaidPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
-UnitPopupManager:RegisterMenu("MIOG_RAID", customRaidPopupMenu);
-function customRaidPopupMenu:GetEntries()
-    return {
-        UnitPopupSetRaidLeaderButtonMixin,
-        UnitPopupSetRaidAssistButtonMixin, 
-        UnitPopupSetRaidMainTankButtonMixin,
-        UnitPopupSetRaidMainAssistButtonMixin,
-        UnitPopupSetRaidDemoteButtonMixin,
-        UnitPopupLootPromoteButtonMixin,
-        UnitPopupOtherSubsectionTitle,
-        UnitPopupVoiceChatButtonMixin,
-        UnitPopupMovePlayerFrameButtonMixin,
-        UnitPopupMoveTargetFrameButtonMixin,
-        UnitPopupEnterEditModeMixin,
-        UnitPopupReportGroupMemberButtonMixin,
-        UnitPopupCopyCharacterNameButtonMixin,
-        UnitPopupPvpReportAfkButtonMixin,
-        UnitPopupVoteToKickButtonMixin,
-        UnitPopupSetRaidRemoveButtonMixin,
-        UnitPopupSubsectionSeperatorMixin,
-        openBlizzardRaidFrame,
-    }
 end
 
 local function loadClassSpecPanel()

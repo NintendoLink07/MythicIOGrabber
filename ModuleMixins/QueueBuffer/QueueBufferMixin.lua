@@ -18,7 +18,7 @@ function QueueBufferMixin:OnEvent(event, ...)
 
                 print("DELETED", searchResultInfo.name, resultID)
                 
-            elseif(not searchResultInfo.isDelisted and appStatus == failed and oldStatus == "none") then
+            elseif(not searchResultInfo.isDelisted and appStatus == "failed" and oldStatus == "none") then
                 self.queue[searchResultInfo.partyGUID] = {timestamp = GetTime()}
 
                 print("QUEUED", searchResultInfo.name, resultID)

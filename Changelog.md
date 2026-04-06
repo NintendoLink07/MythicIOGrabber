@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+
+
+## [3.9.13] - 2026-04-07
+
+### Fixed
+
+- [AppViewer] The timer now correctly resets when you relist your group.
+
+
+
+
 ## [3.9.12] - 2026-03-29
 
 ### Added

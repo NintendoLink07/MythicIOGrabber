@@ -90,16 +90,8 @@ local function getItemClassSubClassName(itemID, classID, subclassID)
     end
 end
 
-function replace_char3(pos, str, r)
-    return table.concat{str:sub(1,pos-1), r, str:sub(pos+1)}
-end
-
-function replace_char2(pos, str, r)
+local function replace_char2(pos, str, r)
     return ("%s%s%s"):format(str:sub(1,pos-1), r, str:sub(pos+1))
-end
-
-function replace_char1(pos, str, r)
-    return str:sub(1, pos-1) .. r .. str:sub(pos+1)
 end
 
 function LootItemMixin:CalculateConfidence(value, origLen, places)

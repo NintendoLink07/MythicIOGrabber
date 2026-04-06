@@ -13,11 +13,7 @@ local function openSearchPanel(categoryID, filters, dontSearch)
 
 	end
 
-	LFGListFrame.CategorySelection.selectedCategory = categoryID
-	LFGListFrame.CategorySelection.selectedFilters = filters or 0
-
 	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
-	
 	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
 
 	if(not dontSearch) then
@@ -31,27 +27,27 @@ end
 
 miog.openSearchPanel = openSearchPanel
 
+
+--rewrite category buttons for correct filters ?!
 local function createCategoryButtons(categoryID, type, rootDescription)
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
 
 	for i = 1, categoryInfo.separateRecommended and 2 or 1, 1 do
 		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, false), function()
-			local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
+			--local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
+			local filters = (categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and Enum.LFGListFilter.PvP or categoryInfo.separateRecommended and (i == 1 and Enum.LFGListFilter.Recommended or i == 2 and Enum.LFGListFilter.NotRecommended) or 0
+
+			print(filters, categoryID, categoryInfo.separateRecommended)
+			
+			LFGListFrame.CategorySelection.selectedCategory = categoryID
+			LFGListFrame.CategorySelection.selectedFilters = filters
 
 			if(type == "search") then
 				openSearchPanel(categoryID, filters)
 				
 			else
-				LFGListFrame.CategorySelection.selectedCategory = categoryID
-				LFGListFrame.CategorySelection.selectedFilters = filters
+				LFGListEntryCreation_Show(LFGListFrame.EntryCreation, LFGListFrame.baseFilters, categoryID, filters);
 
-				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters, LFGListFrame.baseFilters)
-
-				LFGListCategorySelectionStartGroupButton_OnClick(LFGListFrame.EntryCreation)
-				
-				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation);
-
-				miog.initializeActivityDropdown(filters)
 			end
 	
 			if(miog.pveFrame2.selectedTabFrame) then
@@ -62,15 +58,16 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 			miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
 		end)
 
-		local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
-
 		categoryButton:SetTooltip(function(tooltip, elementDescription)
+			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+
 			if(not canUse) then
 				GameTooltip_SetTitle(tooltip, failureReason);
+
 			end
 		end)
 
-		categoryButton:SetEnabled(canUse)
+		categoryButton:SetEnabled(C_LFGInfo.CanPlayerUsePremadeGroup())
 	end
 end
 

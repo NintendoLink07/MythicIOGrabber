@@ -304,7 +304,7 @@ function AppViewer:OnEvent(event, ...)
 				
 				if(queueTimer) then
 					queueTimer:Cancel()
-					
+					queueTimer = nil
 				end
 			else
 				MIOG_NewSettings.queueUpTime = MIOG_NewSettings.queueUpTime > 0 and MIOG_NewSettings.queueUpTime or GetTimePreciseSec()
@@ -387,8 +387,6 @@ end
 
 function AppViewer:OnLoad()
 	CallbackRegistryMixin.OnLoad(self)
-    --local view = Mixin(CreateScrollBoxListTreeListView(0, 0, 0, 0, 0, 6), TreeListViewMultiSpacingMixin)
-	--view:SetDepthSpacing()
     local view = CreateScrollBoxListTreeListView(3, 0, 0, 0, 0, 6)
     self.view = view
 
@@ -417,57 +415,6 @@ function AppViewer:OnLoad()
 
 	view:SetElementFactory(CustomFactory)
 	self.ScrollBox:Init(view)
-
-	--[[local tableBuilder = CreateTableBuilder(nil, TableBuilderMixin)
-    tableBuilder:SetHeaderContainer(self.SortHeader)
-
-    local function ElementDataProvider(elementData, ...)
-        return elementData
-
-    end
-
-    tableBuilder:SetDataProvider(ElementDataProvider)
-
-    local function ElementDataTranslator(elementData, ...)
-        return elementData
-
-    end
-
-    ScrollUtil.RegisterTableBuilder(self.ScrollBox, tableBuilder, ElementDataTranslator)
-    
-    tableBuilder:Reset()
-
-    local column0 = tableBuilder:AddColumn()
-    column0:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 1)
-    column0:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-
-    local column1 = tableBuilder:AddColumn()
-    column1:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "Role", "role", 2)
-    column1:ConstructCells("Frame", "MIOG_AppViewerTextureCellTemplate", "role")
-
-    local column2 = tableBuilder:AddColumn()
-    column2:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 3)
-    column2:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-
-    local column3 = tableBuilder:AddColumn()
-    column3:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "#1", "rating", 3)
-    column3:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-
-    local column4 = tableBuilder:AddColumn()
-    column4:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "#2", "primary", 3)
-    column4:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-
-    local column5 = tableBuilder:AddColumn()
-    column5:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "I-Lvl", "secondary", 3)
-    column5:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-	
-    local column6 = tableBuilder:AddColumn()
-    column6:ConstructHeader("Button", "MIOG_HeaderSortButtonTemplate", "", "", 1)
-    column6:ConstructCells("Frame", "MIOG_AppViewerTextCellTemplate")
-
-    tableBuilder:Arrange()
-
-	self.SortHeader:Reload()]]
 
 	self.ScrollBox:SetDataProvider(treeDataProvider)
 	self.SortButtons:RegisterDataProvider(treeDataProvider, "applicantID")

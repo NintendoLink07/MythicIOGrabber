@@ -123,8 +123,6 @@ function QueueManagerLFGFrameMixin:Update()
             end
         end
 
-        timeToMatch = myWait and myWait > -1 and myWait or averageWait and averageWait > -1 and averageWait or -1
-
         local totalNumOfPlayers = maxPlayers - tankNeeds - healerNeeds - dpsNeeds
 
         if(totalNumOfPlayers > 1) then
@@ -176,7 +174,7 @@ function QueueManagerLFGFrameMixin:OnEnter()
         GameTooltip:AddLine("Max level dungeon")
         
     else
-        GameTooltip:AddLine(isScaling and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
+        GameTooltip:AddLine(isScalingDungeon and "Scales with level (" .. string.format("%d - %d", minLevel, maxLevel) .. ")" or "Doesn't scale with level")
 
     end
 
@@ -314,15 +312,7 @@ function QueueManagerApplicationFrameMixin:Update()
 
         self.categoryID = activityInfo.categoryID
 
-        if(isFakeApp) then
-            self.macrotext = "idkwhatilldoherebutillfigureitout"
-
-        else
-            self.macrotext = "/run C_LFGList.CancelApplication(" .. self.data.resultID .. ")"
-
-        end
-
-        activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
+        local activityName = searchResultInfo.name .. " - " .. (WrapTextInColorCode(activityInfo.fullName or "", CreateColor(1, 0.82, 0):GenerateHexColor()))
 
         local eligible, reasonID = miog.filter.checkIfSearchResultIsEligible(self.data.resultID, true)
         local reason = miog.INELIGIBILITY_REASONS[reasonID]
@@ -339,14 +329,16 @@ function QueueManagerApplicationFrameMixin:Update()
 
         self.Wait:Hide()
 
-        if(isFakeApp) then
+        --if(isFakeApp) then
             --self:SetAlpha(0.5)
             --self:SetTimerInfo(true)
+            --self.macrotext = "idkwhatilldoherebutillfigureitout"
 
-        else
+        --else
+            self.macrotext = "/run C_LFGList.CancelApplication(" .. self.data.resultID .. ")"
             self:SetTimerInfo()
 
-        end
+        --end
 
         self:SetBackground(activityInfo.horizontal)
     end
@@ -426,8 +418,8 @@ function QueueManagerPVPFrameMixin:SetTimerInfo(type)
             type == "battlefield" and self:GetBattlefieldTimerFunction() or
             type == "world" and self:GetWorldPVPTimerFunction() or
             type == "petbattle" and self:GetPetBattleTimerFunction() or
-            type == "plunderstorm" and self:GetPlunderstormTimerFunction()
-        
+            type == "plunderstorm" and self:GetPlunderstormTimerFunction() or
+            function() end
         )
 
     end
@@ -534,6 +526,10 @@ function QueueManagerPVPFrameMixin:OnEnter()
 
         estimatedTime = estimated
         queuedTime = GetTime() - queued
+
+    else
+        mapName = ""
+
     end
 
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -553,12 +549,12 @@ function QueueManagerPVPFrameMixin:OnEnter()
     GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
     if(queuedTime and queuedTime > 0) then
-        GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToClock(queuedTime, false, false, 1, false)))
+        GameTooltip:AddLine(string.format("Queued for: |cffffffff%s|r", SecondsToClock(queuedTime)))
 
     end
 
     if(estimatedTime and estimatedTime > 0) then
-        GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToClock(estimatedTime, false, false, 1, false)))
+        GameTooltip:AddLine(string.format("Average wait time: |cffffffff%s|r", SecondsToClock(estimatedTime)))
 
     end
 
@@ -619,8 +615,7 @@ function QueueManagerListingFrameMixin:Update()
             self:SetBackground(activityInfo.horizontal or activityInfo.groupFinderActivityGroupID == 0 and miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/dungeon.png")
 
             local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-            activityName = (unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numActiveApplicants .. ")"
-            self.Name:SetText(activityName)
+            self.Name:SetText((unitID == "player" and "Your Listing" or ((unitName or "Unknown") .. "'s Listing")) .. " (" .. numActiveApplicants .. ")")
             
         end
 

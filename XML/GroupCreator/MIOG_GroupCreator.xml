@@ -5,23 +5,87 @@
             <Layer level="OVERLAY">
                 <FontString parentKey="CategoryName" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" text="CATEGORY">
                     <Anchors>
-                        <Anchor point="TOPLEFT" />
-                        <Anchor point="TOPRIGHT"/>
+                        <Anchor point="TOP" y="-11"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <!--<Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Label" inherits="QuestFont_Huge" text="START_A_GROUP">
+                    <Anchors>
+                        <Anchor point="TOP" x="-3" y="-35"/>
+                    </Anchors>
+                    <Color r="1.0" g="0.82" b="0"/>
+                    <Shadow>
+                        <Offset>
+                            <AbsDimension x="1" y="-1"/>
+                        </Offset>
+                        <Color r="0" g="0" b="0"/>
+                    </Shadow>
+                </FontString>
+                <FontString parentKey="NameLabel" inherits="GameFontNormalLeft" text="LFG_LIST_TITLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="20" y="-120"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="DescriptionLabel" inherits="GameFontNormalLeft" text="LFG_LIST_DETAILS">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.NameLabel" x="0" y="-50"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
 
         <Frames>
-            <DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate">
+            <Frame parentKey="WorkingCover" hidden="true" frameLevel="14" enableMouse="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="-5" y="-24"/>
+                    <Anchor point="BOTTOMRIGHT" x="-5" y="2"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background" setAllPoints="true">
+                            <Color r="0" g="0" b="0" a="0.7"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="Label" inherits="GameFontNormalLarge" text="LFG_LIST_CREATING_ENTRY">
+                            <Size x="300" y="0"/>
+                            <Anchors>
+                                <Anchor point="BOTTOM" relativeKey="$parent" relativePoint="CENTER" x="0" y="25"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Frame parentKey="Spinner" inherits="SpinnerTemplate">
+                        <Size x="30" y="30"/>
+                        <Anchors>
+                            <Anchor point="CENTER"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+
+            <DropdownButton parentKey="GroupDropdown" inherits="WowStyle1DropdownTemplate">
                 <Size y="25" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMLEFT" y="-5"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.CategoryName" relativePoint="BOTTOMRIGHT" y="-5"/>
+                    <Anchor point="TOPLEFT" y="-30"/>
+                    <Anchor point="TOPRIGHT" y="-30"/>
                 </Anchors>
             </DropdownButton>
 
-            <DropdownButton parentKey="DifficultyDropdown" inherits="WowStyle1DropdownTemplate">
+            <DropdownButton parentKey="ActivityDropdown" inherits="WowStyle1DropdownTemplate">
+                <Size y="25" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.GroupDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.GroupDropdown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                </Anchors>
+            </DropdownButton>
+
+            <DropdownButton parentKey="PlayStyleDropdown" inherits="WowStyle1DropdownTemplate">
                 <Size y="25" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.ActivityDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
@@ -29,18 +93,132 @@
                 </Anchors>
             </DropdownButton>
 
-            <DropdownButton parentKey="PlayStyleDropdown" inherits="WowStyle1DropdownTemplate">
-                <Size y="25" />
+            <Frame parentKey="ItemLevel" inherits="LFGListRequirementTemplate">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMLEFT" y="-2"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.DifficultyDropdown" relativePoint="BOTTOMRIGHT" y="-2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PlayStyleDropdown" relativePoint="BOTTOMLEFT" y="-180"/>
                 </Anchors>
-            </DropdownButton>
+                <KeyValues>
+                    <KeyValue key="label" value="LFG_LIST_ITEM_LEVEL_REQ" type="global"/>
+                    <KeyValue key="numeric" value="true" type="boolean"/>
+                    <KeyValue key="instructions" value="LFG_LIST_ITEM_LEVEL_INSTR_SHORT" type="global"/>
+                    <KeyValue key="validateFunc" value="LFGListUtil_ValidateLevelReq" type="global"/>
+                    <KeyValue key="tabCategory" value="ENTRY_CREATION" type="string"/>
+                </KeyValues>
+            </Frame>
+            <Frame parentKey="PvpItemLevel" inherits="LFGListRequirementTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ItemLevel"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="LFG_LIST_ITEM_LEVEL_PVP" type="global"/>
+                    <KeyValue key="numeric" value="true" type="boolean"/>
+                    <KeyValue key="instructions" value="LFG_LIST_ITEM_LEVEL_PVP_INSTR_SHORT" type="global"/>
+                    <KeyValue key="validateFunc" value="LFGListUtil_ValidatePvPLevelReq" type="global"/>
+                    <KeyValue key="tabCategory" value="ENTRY_CREATION" type="string"/>
+                </KeyValues>
+            </Frame>
+            <Frame parentKey="PVPRating" inherits="LFGListRequirementTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PlayStyleDropdown" relativePoint="BOTTOMLEFT" y="-280"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="GROUP_FINDER_PVP_RATING_REQ_LABEL" type="global"/>
+                    <KeyValue key="numeric" value="true" type="boolean"/>
+                    <KeyValue key="tabCategory" value="ENTRY_CREATION" type="string"/>
+                    <KeyValue key="validateFunc" value="LFGListUtil_ValidatePvpRatingReq" type="global"/>
+                </KeyValues>
+            </Frame>
+            <Frame parentKey="MythicPlusRating" inherits="LFGListRequirementTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.PVPRating"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="GROUP_FINDER_MYTHIC_RATING_REQ_LABEL" type="global"/>
+                    <KeyValue key="numeric" value="true" type="boolean"/>
+                    <KeyValue key="tabCategory" value="ENTRY_CREATION" type="string"/>
+                    <KeyValue key="validateFunc" value="LFGListUtil_ValidateMythicPlusRatingReq" type="global"/>
+                </KeyValues>
+            </Frame>
+            <Frame parentKey="VoiceChat" inherits="LFGListRequirementTemplate">
+                <KeyValues>
+                    <KeyValue key="maxLetters" value="31" type="number"/>
+                    <KeyValue key="secureReferenceStr" value="LFGListCreationVoiceChat" type="string"/>
+                    <KeyValue key="hideLockButton" value="true" type="boolean"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ItemLevel" relativePoint="BOTTOMLEFT" x="0" y="-3"/>
+                </Anchors>
+                <KeyValues>
+                    <KeyValue key="label" value="LFG_LIST_VOICE_CHAT" type="global"/>
+                    <KeyValue key="instructions" value="LFG_LIST_VOICE_CHAT_INSTR" type="global"/>
+                    <KeyValue key="tabCategory" value="ENTRY_CREATION" type="string"/>
+                </KeyValues>
+            </Frame>
+            <Frame parentKey="CrossFactionGroup" inherits="LFGListOptionCheckButtonTemplate">
+                <KeyValues>
+                    <KeyValue key="label" value="LFG_LIST_CROSS_FACTION" type="global"/>
+                    <KeyValue key="tooltip" value="LFG_LIST_CROSS_FACTION_TOOLTIP" type="global"/>
+                    <KeyValue key="disableTooltip" value="LFG_LIST_CROSS_FACTION_DISABLE_TOOLTIP" type="global"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" x="0" y="-3"/>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="PrivateGroup" inherits="LFGListOptionCheckButtonTemplate">
+                <KeyValues>
+                    <KeyValue key="label" value="LFG_LIST_PRIVATE" type="global"/>
+                    <KeyValue key="tooltip" value="LFG_LIST_PRIVATE_TOOLTIP" type="global"/>
+                </KeyValues>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.VoiceChat" relativePoint="BOTTOMLEFT" x="220" y="-3"/>
+                </Anchors>
+            </Frame>
+            <Button parentKey="ListGroupButton" inherits="LFGListMagicButtonTemplate" text="LIST_GROUP" motionScriptsWhileDisabled="true">
+                <Size x="135" y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-3" y="4"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick function="LFGListEntryCreationListGroupButton_OnClick"/>
+                    <OnEnter>
+                        if ( self.errorText ) then
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                            GameTooltip:SetText(self.errorText, nil, nil, nil, nil, true);
+                            GameTooltip:Show();
+                        end
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide"/>
+                </Scripts>
+                <Frames>
+                    <Button parentKey="DisableStateClickButton" mixin="LFGListCreateGroupDisabledStateButtonMixin" setAllPoints="true" hidden="true">
+                        <Scripts>
+                            <OnClick method="OnClick"/>
+                            <OnEnter method="OnEnter"/>
+                            <OnLeave function="GameTooltip_Hide"/>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Button>
+            <Frame parentKey="LeaverBadge" inherits="LfgListLeaverBadgeTemplate">
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.ListGroupButton" relativePoint="LEFT" x="-6"/>
+                </Anchors>
+            </Frame>
+            <Button parentKey="CancelButton" inherits="LFGListMagicButtonTemplate" text="BACK">
+                <Size x="135" y="22"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" x="-3" y="4"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick function="LFGListEntryCreationCancelButton_OnClick"/>
+                </Scripts>
+            </Button>
         </Frames>
 
+        !-->
         <Scripts>
             <OnLoad method="OnLoad" />
-            <OnLoad method="OnShow" />
+            <OnShow method="OnShow" />
         </Scripts>
     </Frame>
 </Ui>

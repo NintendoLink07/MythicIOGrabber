@@ -67,13 +67,13 @@ local function setActivePanel(_, panel)
 		miog.ApplicationViewer:Show()
 		miog.Plugin:Hide()
 	else
-		miog.Plugin:Show()
-
 		if(panel == LFGListFrame.SearchPanel) then
+			miog.Plugin:Show()
 			miog.SearchPanel:Show()
 
 		elseif(panel == LFGListFrame.EntryCreation) then
-			miog.EntryCreation:Show()
+			miog.GroupCreator:Show()
+			miog.Plugin:Hide()
 			
 		else
 			miog.Plugin:Hide()
@@ -156,7 +156,7 @@ miog.createFrames = function()
 	
 	--miog.ApplicationViewer = miog.createApplicationViewer()
 	miog.SearchPanel = miog.createSearchPanel()
-	miog.EntryCreation = miog.createEntryCreation()
+	--miog.EntryCreation = miog.createEntryCreation()
 	miog.FilterManager = miog.loadFilterManager()
 	
 	--miog.loadInspectManagement()
@@ -189,6 +189,6 @@ miog.createFrames = function()
 	panels = {
 		miog.ApplicationViewer,
 		miog.SearchPanel,
-		miog.EntryCreation,
+		miog.GroupCreator,
 	}
 end

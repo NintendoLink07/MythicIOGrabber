@@ -511,7 +511,7 @@ local function updateEntryCreation()
 end
 
 hooksecurefunc("LFGListEntryCreation_Select", function(_, filters, categoryID, groupID, activityID)
-	updateEntryCreation()
+	--updateEntryCreation()
 end)
 
 local function selectKeystoneOrFirst()
@@ -569,6 +569,7 @@ end
 
 miog.initializeActivityDropdown = initializeActivityDropdown
 
+--[[
 function LFGListEntryCreationActivityFinder_Accept(self)
 	if ( self.selectedActivity ) then
 		LFGListEntryCreation_Select(LFGListFrame.EntryCreation, nil, nil, nil, self.selectedActivity);
@@ -620,6 +621,7 @@ function LFGListEntryCreation_SetTitleFromActivityInfo(self)
 	--	C_LFGList.SetEntryTitle(self.selectedActivity, self.selectedGroup, self.selectedPlaystyle, self.generalPlaystyle);
 	--end
 end
+]]
 
 local function addIconInitializer(button, icon)
 	if(icon) then

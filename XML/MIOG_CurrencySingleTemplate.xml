@@ -2,7 +2,7 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_CurrencySingleTemplate" inherits="ResizeLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="fixedHeight" value="16" type="number" />
+            <KeyValue key="fixedHeight" value="14" type="number" />
             <KeyValue key="leftPadding" value="4" type="number" />
         </KeyValues>
 
@@ -13,7 +13,7 @@
                         <KeyValue key="layoutIndex" value="1" type="number" />
                     </KeyValues>
 
-                    <Size x="12" y="12" />
+                    <Size x="11" y="11" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
                     </Anchors>
@@ -33,7 +33,7 @@
                     </KeyValues>
 
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="1"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT"/>
                     </Anchors>
                 </FontString>
             </Layer>

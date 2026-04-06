@@ -13,6 +13,10 @@ local lootQueue = {}
 local multiQueue = false
 local showOnlyItems = false
 
+local searchText = ""
+
+local updateTimer
+
 local dataProvider
 local numBossesShown = 0
 local categoryID = 0
@@ -102,8 +106,8 @@ end
 function LootMixin:ShowOnlyItemsFromCurrentJournalInstance(numLoot, encounterData)
     local isMissingData = false
     local hasNoInstanceSelected = not selectedJournalInstance
-    local needsInstanceAbbreviation = hasNoEncounterSelected and multiQueue or hasNoInstanceSelected
     local hasNoEncounterSelected = not selectedEncounter
+    local needsInstanceAbbreviation = hasNoEncounterSelected and multiQueue or hasNoInstanceSelected
 
     local GetLoot = C_EncounterJournal.GetLootInfoByIndex
     local GetItemLevel = C_Item.GetDetailedItemLevelInfo
@@ -141,7 +145,7 @@ function LootMixin:ShowEverythingFromCurrentJournalInstance(numLoot, encounterDa
     local noEncounterSelected = not selectedEncounter
 
     local instanceNodes, bossNodes = {}, {}
-    instanceNode, bossNode = nil, nil
+    local instanceNode, bossNode = nil, nil
 
     local parentNode
 
@@ -612,7 +616,26 @@ function LootMixin:SetupInstanceMenu()
         
         local finalInstanceList = {}
 
-        --for i = 1, 4000, 1 do
+        --[[for tier = 1, GetNumExpansions() do
+			EJ_SelectTier(tier)
+			
+			for shouldBeRaid = 0, 1 do
+				local isRaid = shouldBeRaid == 1
+
+				local index = 1
+				local journalInstanceID = EJ_GetInstanceByIndex(index, isRaid)
+
+				while instanceName do
+                    tinsert(finalInstanceList, miog:GetJournalInstanceInfo(journalInstanceID))
+
+					index = index + 1
+					journalInstanceID = EJ_GetInstanceByIndex(index, isRaid)
+
+
+                end
+            end
+        end]]
+
         for k, v in pairs(instanceDB) do
             if(v and v.tier) then
                 tinsert(finalInstanceList, v)
@@ -683,8 +706,6 @@ function LootMixin:SetupInstanceMenu()
             end
         end
 
-        --defaultList = miog:table_merge({}, allDungeonsJournalInstanceIDList[#allDungeonsJournalInstanceIDList], allRaidsJournalInstanceIDList[#allRaidsJournalInstanceIDList])
-
         if(#lootQueue == 0) then
             self:LoadJournalInstance()
 
@@ -710,7 +731,7 @@ function LootMixin:UpdateAfterCompletion()
         self.ProgressBar:SetMinMaxSmoothedValue(0, waitTime)
 
         updateTimer = C_Timer.NewTicker(0.25, function()
-            current = finishedAt - GetTimePreciseSec()
+            local current = finishedAt - GetTimePreciseSec()
             self.ProgressBar:SetSmoothedValue(waitTime - current)
 
             if(GetTimePreciseSec() - lastInfo > waitTime) then
@@ -832,7 +853,7 @@ function LootMixin:RefreshSlots()
                 selectedItemSubClass = data.subclass
                 C_EncounterJournal.SetSlotFilter(data.slot)
 
-                dropdown:CloseMenu()
+                --dropdown:CloseMenu()
 
                 self:RequestLoot(9)
             end, {slot = i, class = nil, subclass = nil})
@@ -864,7 +885,7 @@ function LootMixin:RefreshSlots()
                     selectedItemSubClass = data.subclass
                     C_EncounterJournal.SetSlotFilter(data.slot)
                     
-                    dropdown:CloseMenu()
+                    --dropdown:CloseMenu()
 
                     self:RequestLoot(12)
 

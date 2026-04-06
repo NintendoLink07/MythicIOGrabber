@@ -38,7 +38,7 @@ function PortsGroupMixin:Setup(id, expansion)
         self.Icon:SetTexture(expInfo.icon)
     end
 
-    local frameW, frameH
+    local frameH
 
     for i = 1, numSlots, 1 do
         local flyoutSpellID, _, spellKnown, spellName, _ = GetFlyoutSlotInfo(id, i)
@@ -46,7 +46,7 @@ function PortsGroupMixin:Setup(id, expansion)
         local frame = self.framePool:Acquire()
         frame:SetData({spellID = flyoutSpellID, isKnown = spellKnown})
         frame:Show()
-        frameW, frameH = frame:GetSize()
+        _, frameH = frame:GetSize()
         
         tinsert(self.groups, frame)
     end
@@ -55,7 +55,7 @@ function PortsGroupMixin:Setup(id, expansion)
     local firstRow, numOfRows
     
     if(totalNumOfSlots > maxNumberOfFramesInARow) then
-        firstRow, secondRow = floor(totalNumOfSlots / 2), ceil(totalNumOfSlots / 2)
+        firstRow = floor(totalNumOfSlots / 2)
         numOfRows = 2
 
     else

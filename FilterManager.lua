@@ -105,10 +105,12 @@ end
 local function HasRemainingSlotsForBattleResurrection(resultID, playerSpaceLeft)
 	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
 
-	for fileName, v in pairs(roles) do
-		if((fileName == "PALADIN" or fileName == "DEATHKNIGHT" or fileName == "WARLOCK" or fileName == "DRUID") and v > 0) then
-			return true
+	if(roles) then
+		for fileName, v in pairs(roles) do
+			if((fileName == "PALADIN" or fileName == "DEATHKNIGHT" or fileName == "WARLOCK" or fileName == "DRUID") and v > 0) then
+				return true
 
+			end
 		end
 	end
 
@@ -145,10 +147,12 @@ end
 local function HasRemainingSlotsForBloodlust(resultID, playerSpaceLeft)
 	local roles = C_LFGList.GetSearchResultMemberCounts(resultID)
 
-	for fileName, v in pairs(roles) do
-		if((fileName == "HUNTER" or fileName == "SHAMAN" or fileName == "MAGE" or fileName == "EVOKER") and v > 0) then
-			return true
+	if(roles) then
+		for fileName, v in pairs(roles) do
+			if((fileName == "HUNTER" or fileName == "SHAMAN" or fileName == "MAGE" or fileName == "EVOKER") and v > 0) then
+				return true
 
+			end
 		end
 	end
 

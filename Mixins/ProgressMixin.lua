@@ -66,21 +66,23 @@ function ProgressMixin:RequestAccountCharacters()
 	local specID = GetSpecializationInfo(GetSpecialization())
 	local itemLevel = select(2, GetAverageItemLevel())
 
-	local playerSettings = self.characterSettings[playerGUID]
+	if(playerGUID) then
+		local playerSettings = self.characterSettings[playerGUID]
 
-	if(not playerSettings) then
-		self.characterSettings[playerGUID] = {guid = playerGUID, name = name, realmName = realmName, fileName = englishClass, specID = specID, itemLevel = itemLevel,}
+		if(not playerSettings) then
+			self.characterSettings[playerGUID] = {guid = playerGUID, name = name, realmName = realmName, fileName = englishClass, specID = specID, itemLevel = itemLevel,}
 
-	else
-		playerSettings.name = name
-		playerSettings.realmName = realmName
-		playerSettings.fileName = englishClass
-		playerSettings.guid = playerGUID
+		else
+			playerSettings.name = name
+			playerSettings.realmName = realmName
+			playerSettings.fileName = englishClass
+			playerSettings.guid = playerGUID
 
-		--Only player stats
-		playerSettings.specID = specID
-		playerSettings.itemLevel = itemLevel
+			--Only player stats
+			playerSettings.specID = specID
+			playerSettings.itemLevel = itemLevel
 
+		end
 	end
 
 	for guid, v in pairs(charList) do
@@ -1086,7 +1088,7 @@ function ProgressRaidMixin:GetBackgroundImage(mapID)
 	local mapInfo = miog:GetMapInfo(mapID)
 
 	if(mapInfo) then
-		return mapInfo.vertical or mapI
+		return mapInfo.vertical
 
 	end
 end
