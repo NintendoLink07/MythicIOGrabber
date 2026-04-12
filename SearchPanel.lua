@@ -494,13 +494,10 @@ local function createDataProviderWithUnsortedData()
 						end
 
 					end
-					
-					local hasOwnTemplate = miog.MAP_ID_TEMPLATES[mapID]
 
 					local mainFrame = treeDataProvider:Insert(
 						{
-							hasOwnTemplate = hasOwnTemplate,
-							template = hasOwnTemplate or isRaid and "MIOG_SearchPanelGenericRaidListingTemplate" or isDungeon and "MIOG_SearchPanelDungeonListingTemplate" or "MIOG_SearchPanelResultFrameTemplate",
+							template = isRaid and "MIOG_SearchPanelGenericRaidListingTemplate" or isDungeon and "MIOG_SearchPanelDungeonListingTemplate" or "MIOG_SearchPanelResultFrameTemplate",
 							name = searchResultInfo.leaderName,
 							primary = primarySortAttribute,
 							appStatus = appStatus,
@@ -1091,6 +1088,9 @@ end
 miog.createSearchPanel = function()
 	local searchPanel = CreateFrame("Frame", "MythicIOGrabber_SearchPanel", miog.Plugin.InsertFrame, "MIOG_SearchPanel")
 
+	-- needed for _DoSearch check for previousSearchText
+	searchPanel:GetParent().EntryCreation = miog.GroupCreator
+
 	searchPanel.SignUpButton:SetPoint("LEFT", miog.Plugin.FooterBar.Back, "RIGHT")
 	searchPanel.SignUpButton:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -1158,7 +1158,7 @@ miog.createSearchPanel = function()
 	LFGListFrame.SearchPanel.AutoCompleteFrame = autoCompleteFrame
 	searchPanel.AutoCompleteFrame = autoCompleteFrame
 
-	searchPanel.StartSearch:SetScript("OnClick", function( )
+	searchPanel.StartSearch:SetScript("OnClick", function()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
 	end)

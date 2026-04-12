@@ -450,7 +450,7 @@ local function refreshDungeonList()
 				dungeonID = dungeonID,
 				difficultyID = difficultyID,
 				icon = miog.LFG_ID_INFO[dungeonID] and miog.LFG_ID_INFO[dungeonID].icon or miog:GetMapInfo(mapID) and miog:GetMapInfo(mapID).icon or fileID or miog.EXPANSIONS[expLevel].logo or nil,
-				expansionLevel = miog:GetMapInfo(mapID) and miog:GetMapInfo(mapID).tier or expLevel,
+				expansionLevel = miog:GetMapInfo(mapID) and miog:GetMapInfo(mapID).tier and miog:GetMapInfo(mapID).tier - 1 or expLevel,
 			})
 		end
 
@@ -466,7 +466,7 @@ local function refreshDungeonList()
 			or fileID
 			or miog.EXPANSIONS[expLevel].logo
 			or nil,
-			expansionLevel = miog:GetMapInfo(mapID) and miog:GetMapInfo(mapID).tier or expLevel,
+			expansionLevel = miog:GetMapInfo(mapID) and miog:GetMapInfo(mapID).tier and miog:GetMapInfo(mapID).tier - 1 or expLevel,
 		})
 
 		

@@ -72,25 +72,21 @@ QueueManagerLFGFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
 function QueueManagerLFGFrameMixin:GetTimerFunction(currentTime, value)
     return function()
-        if(not self.Ticker or self.Ticker:IsCancelled()) then
-            self.Ticker = C_Timer.NewTicker(1, function()
-                local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(self.data.categoryID, self.data.queueID)
+        local hasData, leaderNeeds, tankNeeds, healerNeeds, dpsNeeds, totalTanks, totalHealers, totalDPS, instanceType, instanceSubType, instanceName, averageWait, tankWait, healerWait, damageWait, myWait, queuedTime = GetLFGQueueStats(self.data.categoryID, self.data.queueID)
 
-                if(hasData) then
-                    if(queuedTime and not issecretvalue(queuedTime)) then
-                        value = value + 1
+        if(hasData) then
+            if(queuedTime and not issecretvalue(queuedTime)) then
+                value = value + 1
 
-                        local calc = currentTime + value
+                local calc = currentTime + value
 
-                        self.timer:SetTimeSpan(queuedTime, calc)
-                        self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
+                self.timer:SetTimeSpan(queuedTime, calc)
+                self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
 
-                        local currentWait = myWait > 0 and myWait or averageWait
-                        self:SetWaitInfo(currentWait)
+                local currentWait = myWait > 0 and myWait or averageWait
+                self:SetWaitInfo(currentWait)
 
-                    end
-                end
-            end)
+            end
         end
     end
 end
@@ -364,61 +360,75 @@ end
 
 QueueManagerPVPFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 
-function QueueManagerPVPFrameMixin:GetBattlefieldTimerFunction()
+function QueueManagerPVPFrameMixin:GetBattlefieldTimerFunction(currentTime, value)
     return function()
-        local queuedTime = GetBattlefieldTimeWaited(self.data.index) / 1000
+        local timeInQueue = GetBattlefieldTimeWaited(self.data.index) / 1000
 
-        if(queuedTime and not issecretvalue(queuedTime)) then
-            self.timer:SetTimeFromStart(GetTime(), queuedTime)
+        if(timeInQueue and not issecretvalue(timeInQueue)) then
+            self.timer:SetTimeFromStart(GetTime(), timeInQueue)
             self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
 
         end
     end
 end
 
-function QueueManagerPVPFrameMixin:GetWorldPVPTimerFunction()
+function QueueManagerPVPFrameMixin:GetWorldPVPTimerFunction(currentTime, value)
     return function()
         local _, _, _, _, _, queuedTime = GetWorldPVPQueueStatus(self.data.index)
 
         if(queuedTime and not issecretvalue(queuedTime)) then
-            self.timer:SetTimeFromStart(GetTime(), queuedTime)
-            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+            value = value + 1
+
+            local calc = currentTime + value
+
+            self.timer:SetTimeSpan(queuedTime, calc)
+            self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
 
         end
     end
 end
 
-function QueueManagerPVPFrameMixin:GetPetBattleTimerFunction()
+function QueueManagerPVPFrameMixin:GetPetBattleTimerFunction(currentTime, value)
     return function()
         local _, _, queuedTime = C_PetBattles.GetPVPMatchmakingInfo()
 
         if(queuedTime and not issecretvalue(queuedTime)) then
-            self.timer:SetTimeFromStart(GetTime(), queuedTime)
-            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+            value = value + 1
 
+            local calc = currentTime + value
+
+            self.timer:SetTimeSpan(queuedTime, calc)
+            self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
         end
     end
 end
 
-function QueueManagerPVPFrameMixin:GetPlunderstormTimerFunction()
+function QueueManagerPVPFrameMixin:GetPlunderstormTimerFunction(currentTime, value)
     return function()
         local queuedTime = C_LobbyMatchmakerInfo.GetQueueStartTime();
 
         if(queuedTime and not issecretvalue(queuedTime)) then
-            self.timer:SetTimeFromStart(GetTime(), queuedTime)
-            self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+            value = value + 1
+
+            local calc = currentTime + value
+
+            self.timer:SetTimeSpan(queuedTime, calc)
+            self.Age:SetText(SecondsToClock(self.timer:GetElapsedDuration()))
 
         end
     end
 end
 
 function QueueManagerPVPFrameMixin:SetTimerInfo(type)
+    local currentTime = GetTime()
+    local value = 0
+
     if(not self.Ticker or self.Ticker:IsCancelled()) then
         self.Ticker = C_Timer.NewTicker(1,
-            type == "battlefield" and self:GetBattlefieldTimerFunction() or
-            type == "world" and self:GetWorldPVPTimerFunction() or
-            type == "petbattle" and self:GetPetBattleTimerFunction() or
-            type == "plunderstorm" and self:GetPlunderstormTimerFunction() or
+            type == "battlefield" and self:GetBattlefieldTimerFunction(currentTime, value) or
+            type == "world" and self:GetWorldPVPTimerFunction(currentTime, value) or
+            type == "petbattle" and self:GetPetBattleTimerFunction(currentTime, value) or
+            type == "plunderstorm" and self:GetPlunderstormTimerFunction(currentTime, value) or
             function() end
         )
 
@@ -437,7 +447,7 @@ function QueueManagerPVPFrameMixin:Update()
 
         if(status and status ~= "none" and status ~= "error") then
             self:SetTimerInfo("battlefield")
-            self:SetWaitTime(GetBattlefieldEstimatedWaitTime(self.data.index) / 1000)
+            self:SetWaitInfo(GetBattlefieldEstimatedWaitTime(self.data.index) / 1000)
 
             self:SetBackground(miog.C.STANDARD_FILE_PATH .. "/backgrounds/horizontal/pvpbattleground.png")
 
@@ -449,7 +459,7 @@ function QueueManagerPVPFrameMixin:Update()
         status, mapName, queueID, _, averageWaitTime, queuedTime = GetWorldPVPQueueStatus(self.data.index)
         self.macrotext = "/run BattlefieldMgrExitRequest(" .. queueID .. ")"
         self:SetTimerInfo("world")
-        self:SetWaitTime(averageWaitTime)
+        self:SetWaitInfo(averageWaitTime)
         self.type = "world"
 
         timeInQueue = GetTime() - queuedTime
@@ -470,7 +480,7 @@ function QueueManagerPVPFrameMixin:Update()
 
         local _, estimated, queuedTime = C_PetBattles.GetPVPMatchmakingInfo()
         self:SetTimerInfo("petbattle")
-        self:SetWaitTime(estimated)
+        self:SetWaitInfo(estimated)
         mapName = "Pet Battle"
 
 

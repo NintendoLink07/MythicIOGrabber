@@ -7,11 +7,25 @@ and this project adheres to [Semantic Versioning].
 
 
 
-## [3.9.13] - 2026-04-07
+## [3.9.13] - 2026-04-12
+
+### Changed
+
+- [GroupCreator] The group creator has been rewritten and uses more of Blizzard's native solutions to minimize secret value manipulation.
 
 ### Fixed
 
+- The activity queue dropdown should now be usable again.
+
+- [ActiveQueues] Fixed errors regarding timers counting down correctly.
+
 - [AppViewer] The timer now correctly resets when you relist your group.
+
+- [FilterManager] Raid progress panel now updates correctly.
+
+- [SearchPanel] Raid progress is now shown correctly.
+
+- Small load times and performance improvements.
 
 
 
@@ -4936,7 +4950,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.12..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13..HEAD
+[3.9.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13
 [3.9.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.12
 [3.9.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.11
 [3.9.10b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.10b

@@ -7,27 +7,6 @@ local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
 }
 
-local function openSearchPanel(categoryID, filters, dontSearch)
-	if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
-		LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-
-	end
-
-	LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
-	LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-
-	if(not dontSearch) then
-		LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-
-	else
-		miog.SearchPanel.Status:Hide()
-
-	end
-end
-
-miog.openSearchPanel = openSearchPanel
-
-
 --rewrite category buttons for correct filters ?!
 local function createCategoryButtons(categoryID, type, rootDescription)
 	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
@@ -36,15 +15,26 @@ local function createCategoryButtons(categoryID, type, rootDescription)
 		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, false), function()
 			--local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
 			local filters = (categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and Enum.LFGListFilter.PvP or categoryInfo.separateRecommended and (i == 1 and Enum.LFGListFilter.Recommended or i == 2 and Enum.LFGListFilter.NotRecommended) or 0
-
-			print(filters, categoryID, categoryInfo.separateRecommended)
 			
 			LFGListFrame.CategorySelection.selectedCategory = categoryID
 			LFGListFrame.CategorySelection.selectedFilters = filters
 
 			if(type == "search") then
-				openSearchPanel(categoryID, filters)
-				
+				if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
+					LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+
+				end
+
+				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
+				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+
+				if(not dontSearch) then
+					LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+
+				else
+					miog.SearchPanel.Status:Hide()
+
+				end
 			else
 				LFGListEntryCreation_Show(LFGListFrame.EntryCreation, LFGListFrame.baseFilters, categoryID, filters);
 
@@ -489,17 +479,66 @@ local function createPVEFrameReplacement()
 	queueRolePanel.Damager.Icon:SetDesaturated(not damagerAvailable)
 
 	miog.pveFrame2.TitleBar.CreateGroupButton.Text:SetText("Create")
-	miog.pveFrame2.TitleBar.CreateGroupButton:SetScript("OnClick", function(selfButton)
-		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.CreateGroupButton, function(ownerRegion, rootDescription)
-	
-			rootDescription:CreateTitle("Create Groups");
 
-			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-				createCategoryButtons(categoryID, "entry", rootDescription)
+	local function createFindButton(rootDescription, categoryID, filters)
+		local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+		-- set to pve or pvp, depending on category
+		-- blizzard does it by the player changing to the pvp or pve panel
+		local baseFilters = (categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and 8 or 4;
+
+		rootDescription:CreateButton(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, filters, false), function()
+			if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
+				LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
+				LFGListCategorySelection_SelectCategory(LFGListFrame.CategorySelection, categoryID, filters)
 
 			end
 
+			LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, baseFilters)
+			LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+			LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+		end)
+
+	end
+
+	local function createStartButton(rootDescription, categoryID, filters)
+		local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+		-- set to pve or pvp, depending on category
+		-- blizzard does it by the player changing to the pvp or pve panel
+		local baseFilters = (categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and 8 or 4;
+		local allFilters = bit.bor(baseFilters, filters);
+
+		if (filters ~= 0 and #C_LFGList.GetAvailableActivities(categoryID, nil, allFilters) == 0) then
+			return false;
+
+		end
+
+		rootDescription:CreateButton(LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, filters, false), function()
+			LFGListCategorySelection_SelectCategory(LFGListFrame.CategorySelection, categoryID, filters)
+			LFGListEntryCreation_Show(LFGListFrame.EntryCreation, baseFilters, categoryID, filters)
+		end)
+	end
+
+	local currentMenu
+
+	miog.pveFrame2.TitleBar.CreateGroupButton:SetScript("OnClick", function(selfButton)
+		currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.CreateGroupButton, function(ownerRegion, rootDescription)
+			rootDescription:CreateTitle(COMMUNITIES_CREATE_GROUP);
 			rootDescription:SetTag("MIOG_FINDGROUP")
+
+			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
+				local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
+
+				if(categoryInfo.separateRecommended) then
+					createStartButton(rootDescription, categoryID, Enum.LFGListFilter.Recommended)
+					createStartButton(rootDescription, categoryID, Enum.LFGListFilter.NotRecommended)
+
+				else
+					createStartButton(rootDescription, categoryID, 0)
+
+				end
+			end
 		end)
 
 		if(currentMenu) then
@@ -513,17 +552,24 @@ local function createPVEFrameReplacement()
 
 	miog.pveFrame2.TitleBar.FindGroupButton.Text:SetText("Find")
 	miog.pveFrame2.TitleBar.FindGroupButton:SetScript("OnClick", function(selfButton)
-		local currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.FindGroupButton, function(ownerRegion, rootDescription)
+		currentMenu = MenuUtil.CreateContextMenu(miog.pveFrame2.TitleBar.FindGroupButton, function(ownerRegion, rootDescription)
 	
-			rootDescription:CreateTitle("Find Groups");
-			
-			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
+			rootDescription:CreateTitle(FIND_A_GROUP);
+			rootDescription:SetTag("MIOG_FINDGROUP")
 
 			for _, categoryID in ipairs(miog.CUSTOM_CATEGORY_ORDER) do
-				createCategoryButtons(categoryID, "search", rootDescription)
+				local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
 
+				if(categoryInfo.separateRecommended) then
+					createFindButton(rootDescription, categoryID, Enum.LFGListFilter.Recommended)
+					createFindButton(rootDescription, categoryID, Enum.LFGListFilter.NotRecommended)
+
+				else
+					createFindButton(rootDescription, categoryID, 0)
+
+				end
 			end
-			rootDescription:SetTag("MIOG_FINDGROUP")
+			
 		end)
 
 		if(currentMenu) then

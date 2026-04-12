@@ -161,6 +161,91 @@ end
 
 miog.calculateWeightedScore = calculateWeightedScore
 
+local function getBlizzardDifficulty(raiderIODifficulty)
+	if(raiderIODifficulty == 1) then
+		return 14
+
+	elseif(raiderIODifficulty == 2) then
+		return 15
+
+	elseif(raiderIODifficulty == 3) then
+		return 16
+
+	end
+end
+
+function miog:GetActiveRaidTierInfos()
+	return miog.ACTIVE_RAID_TIER_INFOS
+end
+
+function miog:GetRaidProgress(playerName, realm, region)
+	local profile = miog.getRaiderIOProfile(playerName, realm, region)
+
+	if(profile and profile.raidProfile) then
+		local raidData = {
+			currentCharacter = {
+				raids = {},
+				weight = 0,
+				hasProgress = false,
+			},
+			mainCharacter = {
+				raids = {},
+				weight = 0,
+				hasProgress = false,
+			}
+		}
+
+		local profileProgress = profile.raidProfile.raidProgress
+
+		for i = 1, #profileProgress, 1 do
+			local raidProgress = profileProgress[i]
+			local currentTable = raidProgress.isMainProgress and raidData.mainCharacter or raidData.currentCharacter
+
+			currentTable.raids[i] = {
+				mainMapID = raidProgress.raid.mapId,
+				mapIDs = raidProgress.raid.dungeon.instance_map_ids,
+				shortName = raidProgress.raid.shortName,
+				bossCount = raidProgress.raid.bossCount,
+				difficulties = {}
+			}
+
+			currentTable.hasProgress = true
+
+			local difficultyProgress = raidProgress.progress
+
+			for j = 1, #difficultyProgress, 1 do
+				local y = difficultyProgress[j]
+				local weight = calculateWeightedScore(y.difficulty, y.kills, raidProgress.raid.bossCount, raidProgress.current)
+
+				local difficultyEntry = {
+					difficulty = y.difficulty,
+					difficultyID = getBlizzardDifficulty(y.difficulty),
+					current = raidProgress.current,
+					kills = y.kills,
+					cleared = y.cleared,
+					weight = weight,
+					parsedString = y.kills .. "/" .. raidProgress.raid.bossCount,
+					bosses = {}
+				}
+
+				local bossProgress = y.progress
+
+				for a = 1, #bossProgress, 1 do
+					local b = bossProgress[a]
+					difficultyEntry.bosses[a] = {killed = b.killed, count = b.count}
+
+				end
+
+				tinsert(currentTable.raids[i].difficulties, difficultyEntry)
+				currentTable.weight = currentTable.weight + weight
+
+			end
+		end
+
+		return raidData
+	end
+end
+
 miog.getRaidProgress = function(playerName, realm, region)
     local profile = miog.getRaiderIOProfile(playerName, realm, region)
     if not (profile and profile.raidProfile) then return end
@@ -833,7 +918,7 @@ local function getNewRaidSortData(playerName, realm, region, existingProfile)
 
 	local profile = existingProfile or miog.getRaiderIOProfile(playerName, realm, region)
 
-	if(profile and profile.raidProfile)then
+	if(profile and profile.raidProfile) then
 		raidData = {
 			character = { raids = {}, ordered = {}, progressWeight = 0 },
 			main = { raids = {}, ordered = {}, progressWeight = 0 }

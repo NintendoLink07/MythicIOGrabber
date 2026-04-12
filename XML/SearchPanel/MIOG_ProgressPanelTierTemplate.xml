@@ -33,7 +33,7 @@
 
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT">
-                            <Size x="80" />
+                            <Size x="120" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="3" />
                             </Anchors>
@@ -42,7 +42,7 @@
                         <FontString parentKey="Progress1" font="GameFontHighlight" justifyH="LEFT">
                             <Size x="40" />
                             <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT"/>
+                                <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="LEFT" x="120"/>
                             </Anchors>
                         </FontString>
 

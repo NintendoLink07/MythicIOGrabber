@@ -52,9 +52,11 @@ end
     - `table`: The table to print
 --]]
 miog.printTableAsLines = function(table)
-	for k, v in pairs(table) do
-		print(k, v)
-		
+	if(table) then
+		for k, v in pairs(table) do
+			print(k, v)
+			
+		end
 	end
 end
 
@@ -332,8 +334,6 @@ miog.retrieveAbbreviatedNameFromChallengeModeMap = function(challengeID)
 		local mapInfo = miog:GetMapInfo(mapID)
 
 		if(mapInfo) then
-			MIOG_T = mapInfo
-
 			return mapInfo.abbreviatedName
 
 		end

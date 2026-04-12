@@ -601,6 +601,11 @@ for k = 2, 30, 1 do
 
 end
 
+miog.ACTIVE_RAID_TIER_INFOS = {
+	[1] = {mapIDs = {2912, 2939, 2913}},
+
+}
+
 miog.GROUP_ACTIVITY_ID_INFO = {
 	[280] = {abbreviatedName="STRTS", mapID = "2441", challengeModeID=391, fileName="tazavesh_streets"},
 	[281] = {abbreviatedName="GMBT", mapID = "2441", challengeModeID=392, fileName="tazavesh_gambit"},
@@ -658,6 +663,14 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 			{icon = "interface/icons/inv_120_raid_voidspire_dragonduo.blp"},
 			{icon = "interface/icons/inv_120_raid_voidspire_paladintrio.blp"},
 			{icon = "interface/icons/inv_120_raid_voidspire_alleria.blp"},
+		},
+	},
+	[403] = {
+		abbreviatedName = "MQD",
+		mapID = 2913,
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_marchonqueldanas_lightvoidphoenix.blp"},
+			{icon = "interface/icons/inv_120_raid_marchonqueldanas_lura.blp"},
 		},
 	},
 	[404] = {
@@ -1445,7 +1458,22 @@ miog.MAP_INFO = {
 			61299,
 		}
 	},
-	[2913] = {abbreviatedName = "MQD", fileName = "darkwell"},
+	[2913] = {abbreviatedName = "MQD", fileName = "darkwell",
+		bossIcons = {
+			{icon = "interface/icons/inv_120_raid_marchonqueldanas_lightvoidphoenix.blp"},
+			{icon = "interface/icons/inv_120_raid_marchonqueldanas_lura.blp"},
+		},
+		achievementIDs = {
+			61300,
+			61301,
+			61302,
+			61303,
+			61304,
+			61305,
+			61306,
+			61307,
+		}
+	},
 	[2930] = {abbreviatedName = "MN", fileName = "midnight"},
 	[2939] = {abbreviatedName = "DR", fileName = "riftofaln",
 		bossIcons = {
@@ -1588,15 +1616,15 @@ for k, v in ipairs(miog.PVP_BRACKET_INFO) do
 end
 
 miog.CUSTOM_CATEGORY_ORDER = {
-	[1] = 1,
-	[2] = 2,
-	[3] = 3,
-	[4] = 121,
-	[5] = 4,
-	[6] = 7,
-	[7] = 9,
-	[8] = 8,
-	[9] = 6,
+	1,
+	2,
+	3,
+	121,
+	4,
+	--7,
+	9,
+	--8,
+	6,
 }
 
 local database = {

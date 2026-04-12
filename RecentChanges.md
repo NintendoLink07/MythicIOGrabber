@@ -1,32 +1,19 @@
-## [3.9.12](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.12) - 2026-03-29
+## [3.9.13](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13) - 2026-04-12
 
-### Added
+### Changed
 
-- [Loot] Icons have been added to the current season category.
-
-- [Loot] All current raids have been added to the current season category.
+- [GroupCreator] The group creator has been rewritten and uses more of Blizzard's native solutions to minimize secret value manipulation.
 
 ### Fixed
 
-- [Progress] Raid background images are now assigned correctly.
+- The activity queue dropdown should now be usable again.
 
-- [ActiveQueues] All cards should now consume less cpu and be more responsive.
+- [ActiveQueues] Fixed errors regarding timers counting down correctly.
 
-- [Ports] The current season' teleports should now be visible.
+- [AppViewer] The timer now correctly resets when you relist your group.
 
-- [Ports] Teleports will now be saturated once they've been learned.
+- [FilterManager] Raid progress panel now updates correctly.
 
-- [Loot] Resolved an issue where no instances will load when opening the menu quickly after the first loading screen.
+- [SearchPanel] Raid progress is now shown correctly.
 
-- The teleport button in the main window will now only be visible when you actually have the teleport spell in your spellbook.
-
-- Resolved an issue trying to determine the number of bosses of a raid.
-
-- Many secret values issues have been resolved.
-
-- Performance and loading times have been improved.
-
-### Known issues
-
-- [FilterManager] The raid progress panel shows correct kill information but shows Dreamrift (and starting the weekly reset MQD aswell) as a separate raid when all of them are one tier.
-This will be fixed in the next update.
+- Small load times and performance improvements.

@@ -2,8 +2,6 @@ local addonName, miog = ...
 
 RaiderIOInformationPanelMixin = {}
 
-MIOG_FAILSAFE_SEASON_ID = 13
-
 function RaiderIOInformationPanelMixin:HasRaidInfo()
     return self.raidInfo and #self.raidInfo > 0
 end
@@ -21,8 +19,8 @@ end
 
 function RaiderIOInformationPanelMixin:RetrieveRelevantGroups()
     self.mythicPlusInfo = self:GetAndSortMythicPlus()
-    self.raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
-
+    --self.raidInfo = miog.retrieveCurrentRaidActivityIDs(true)
+    self.raidInfo = miog:GetActiveRaidTierInfos()
 end
 
 function RaiderIOInformationPanelMixin:OnLoadMPlus()
@@ -66,9 +64,125 @@ function RaiderIOInformationPanelMixin:SetMode(mode)
     self.mode = mode
 end
 
-function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsFrame) --mapID
+function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapIDs, isMainsFrame) --mapID
     local raidHeaderFrame = raidFrame.Header
 
+    local totalBosses = 0
+    local overallBossIndex = 1
+    local firstMap = mapIDs[1]
+    local firstMapInfo = miog:GetMapInfo(firstMap)
+    local mapText = firstMapInfo.abbreviatedName
+
+    for mapIndex, mapID in ipairs(mapIDs) do
+        local firstLoop = mapIndex == 1
+        local mapInfo = firstLoop and firstMapInfo or miog:GetMapInfo(mapID)
+
+        if(mapInfo) then
+            mapText = firstLoop and mapText or mapText .. "/" .. mapInfo.abbreviatedName
+
+            totalBosses = totalBosses + mapInfo.numOfBosses
+
+            if(mapInfo.bosses) then
+                for i = 1, 10, 1 do
+                    local bossFrame = raidFrame.Bosses["Boss" .. overallBossIndex]
+                    local bossInfo = mapInfo.bosses[i]
+
+                    if(bossInfo) then
+                        if(bossFrame.Index) then
+                            bossFrame.Index:SetText(overallBossIndex)
+
+                        end
+
+                        if(mapInfo.bossIcons[i]) then
+                            bossFrame.Icon:SetTexture(mapInfo.bossIcons[i].icon)
+
+                        end
+
+                        bossFrame.Icon:SetDesaturated(true)
+                        bossFrame.Icon:SetScript("OnMouseDown", function()
+                            local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+                            local difficulty = 16
+
+                            miog:OpenEncounterJournal(difficulty, instanceID, bossInfo.journalEncounterID)
+                        end)
+
+                        if(bossFrame.Border) then
+                            bossFrame.Border:SetColorTexture(1, 0, 0, 1);
+
+                        end
+
+                        overallBossIndex = overallBossIndex + 1
+
+                        bossFrame:Show()
+
+                    else
+                        bossFrame:Hide()
+
+                    end
+                end
+
+                --[[local bossIcons = mapInfo.bossIcons or {}
+
+                for i = 1, 10, 1 do
+                    local bossFrame = raidFrame.Bosses["Boss" .. i]
+                    local bossInfo = mapInfo.bosses[i]
+
+                    if(bossInfo) then
+                        if(bossFrame.Index) then
+                            bossFrame.Index:SetText(i)
+
+                        end
+
+                        bossFrame.name = bossInfo.name
+
+                        if(bossIcons[i]) then
+                            bossFrame.Icon:SetTexture(bossIcons[i].icon)
+
+                        end
+
+                        bossFrame.Icon:SetDesaturated(true)
+                        bossFrame.Icon:SetScript("OnMouseDown", function()
+                            local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+                            local difficulty = 16
+
+                            miog:OpenEncounterJournal(difficulty, instanceID, bossInfo.journalEncounterID)
+                        end)
+
+                        if(bossFrame.Border) then
+                            bossFrame.Border:SetColorTexture(1, 0, 0, 1);
+
+                        end
+
+
+                        bossFrame:Show()
+
+                    else
+                        bossFrame:Hide()
+
+                    end
+                end]]
+            end
+        end
+    end
+            
+    raidHeaderFrame.Progress1:SetText(WrapTextInColorCode("0/" .. totalBosses, miog.CLRSCC.red))
+    raidHeaderFrame.Progress2:SetText(WrapTextInColorCode("0/" .. totalBosses, miog.CLRSCC.red))
+
+    raidHeaderFrame.Icon:SetTexture(firstMapInfo.icon)
+    raidHeaderFrame.Icon:SetScript("OnMouseDown", function()
+        local instanceID = C_EncounterJournal.GetInstanceForGameMap(firstMap)
+        local difficulty = 16
+
+        miog:OpenEncounterJournal(difficulty, instanceID)
+
+    end)
+
+    raidHeaderFrame.Name:SetText(mapText .. (isMainsFrame and "[Main]" or ""))
+
+    raidFrame:Show()
+
+
+    --[[
     local mapInfo = miog:GetMapInfo(mapID)
 
     if(mapInfo) then
@@ -144,48 +258,36 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapID, isMainsF
         end
 
         raidFrame:Show()
-    end
+    end]]
 end
 
 function RaiderIOInformationPanelMixin:OnLoadRaid()
-    local raidCounter = 1
-
-    local firstID
-
     for k = 1, 2, 1 do
         local data = self.raidInfo[k]
+        local raidFrame = self.Raids["Raid" .. k]
 
         if(data) then
-            local raidFrame = self.Raids["Raid" .. raidCounter]
+            local mapID = data.mapIDs[1]
+            self:SetupRaidFrame(raidFrame, data.mapIDs)
 
-            if(raidFrame) then
-                self:SetupRaidFrame(raidFrame, data.mapID)
+            self.raidFrames[mapID] = raidFrame
 
-                raidCounter = raidCounter + 1
+        else
+            raidFrame:Hide()
 
-                if(k == 1) then
-                    firstID = data.mapID
-
-                end
-
-                self.raidFrames[data.mapID] = raidFrame
-            end
         end
     end
 
-    if(self.Raids["Raid" .. raidCounter] and firstID) then
-        self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], firstID, true) --main's raid frame
+    --if(self.Raids["Raid" .. raidCounter] and self.raidInfo[1]) then
+        --self:SetupRaidFrame(self.Raids["Raid" .. raidCounter], self.raidInfo[1].mapIDs, true) --main's raid frame
 
-    end
+    --end
 end
 
 function RaiderIOInformationPanelMixin:OnLoad(mode)
     self:SetMode(mode)
 
     self.raidFrames = {}
-    
-    --self.seasonID = C_MythicPlus.GetCurrentSeason() > 0 and C_MythicPlus.GetCurrentSeason() or MIOG_FAILSAFE_SEASON_ID
-    self.seasonID = MIOG_FAILSAFE_SEASON_ID
 
     self:RetrieveRelevantGroups()
 
@@ -362,96 +464,42 @@ function RaiderIOInformationPanelMixin:ApplyMythicPlusData(refreshData, playerNa
 end
 
 function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData, playerName, realm)
-    self.raidData = not refreshData and self.raidData or miog.getNewRaidSortData(playerName, realm)
-
-	local raidMapIDSet = {}
-	local mainRaidMapIDSet = {}
-    local hasIcon = self.Raids.Raid1.Header.Icon
+    self.raidData = not refreshData and self.raidData or miog:GetRaidProgress(playerName, realm)
 
     if(self.raidData) then
-        local raidCounter = 1
+        for i = 1, 2, 1 do
+            local progress = i == 1 and self.raidData.currentCharacter or self.raidData.mainCharacter
 
-        for k = 1, 2, 1 do
-            local data = self.raidInfo[k]
-
-
-	    --for k, data in ipairs(self.raidInfo) do
-            if(data) then
-                for nmd = 1, 2, 1 do
-                    local raidFrame = nmd == 1 and self.raidFrames[data.mapID] or self.Raids["Raid3"]
+            if(progress.hasProgress) then
+                for _, tierProgressInfo in ipairs(progress.raids) do
+                    local raidFrame = self.raidFrames[tierProgressInfo.mainMapID]
+                    local bossDone = {}
+                    local progressFrames = {}
 
                     if(raidFrame) then
-                        local raidHeaderFrame = raidFrame.Header
-                        local normalOrMainData = nmd == 1 and self.raidData.character or self.raidData.main
+                        for _, difficultyInfo in miog.rpairs(tierProgressInfo.difficulties) do
+                            for bossIndex, bossInfo in ipairs(difficultyInfo.bosses) do
+                                if(not bossDone[bossIndex] and bossInfo.killed) then
+                                    local bossFrame = raidFrame.Bosses["Boss" .. bossIndex]
 
-                        if(normalOrMainData.raids[data.mapID]) then
-                            local bossesDone = {}
-        
-                            for i = 1, 2, 1 do
-                                local currentTable = i == 1 and normalOrMainData.raids[data.mapID].awakened or normalOrMainData.raids[data.mapID].regular
-        
-                                if(currentTable) then
-                                    for a = 3, 1, -1 do
-                                        if(currentTable.difficulties[a]) then
-                                            for z = 1, 10, 1 do
-                                                if(currentTable.difficulties[a].bosses[z] and not bossesDone[z]) then
-                                                    local currentBoss = "Boss" .. z
-        
-                                                    if(currentTable.difficulties[a].bosses[z].killed) then
-                                                        if(raidFrame.Bosses[currentBoss].Border) then
-                                                            raidFrame.Bosses[currentBoss].Border:SetColorTexture(miog.DIFFICULTY[a].miogColors:GetRGBA());
-        
-                                                        end
-        
-                                                        raidFrame.Bosses[currentBoss].Icon:SetDesaturated(false)
-                                                        bossesDone[z] = true
-                                        
-                                                    end
-                                                end
-                                            end
-        
-                                            if(nmd == 1 and raidMapIDSet[data.mapID] ~= true or nmd == 2 and mainRaidMapIDSet[data.mapID] ~= true) then
-                                                raidHeaderFrame.Name:SetText(normalOrMainData.raids[data.mapID].shortName)
-        
-                                                raidHeaderFrame.Progress1:SetText(WrapTextInColorCode(currentTable.difficulties[a].parsedString, miog.DIFFICULTY[a].color))
-        
-                                                if(currentTable.difficulties[a-1]) then
-                                                    raidHeaderFrame.Progress2:SetText(WrapTextInColorCode(currentTable.difficulties[a-1].parsedString, miog.DIFFICULTY[a-1].color))
-        
-                                                end
-        
-                                                local texture = hasIcon and raidHeaderFrame.Icon or raidFrame.Background
+                                    if(bossFrame.Border) then
+                                        bossFrame.Border:SetColorTexture(miog.DIFFICULTY[difficultyInfo.difficulty].miogColors:GetRGBA());
 
-                                                if(texture) then
-                                                    texture:SetScript("OnMouseDown", function()
-                                                        local instanceID = C_EncounterJournal.GetInstanceForGameMap(data.mapID)
-                                                        local difficulty = a == 1 and 14 or a == 2 and 15 or 16
+                                    end
 
-                                                        miog:OpenEncounterJournal(difficulty, instanceID)
+                                    bossFrame.Icon:SetDesaturated(false)
+                                    bossDone[bossIndex] = bossInfo.killed
+
+                                end
+                            end
+
+                            if(not progressFrames[1] or not progressFrames[2]) then
+                                local progressFrame = not progressFrames[1] and raidFrame.Header.Progress1 or not progressFrames[2] and raidFrame.Header.Progress2
                                 
-                                                    end)
-                                                end
-        
-                                                if(nmd == 1) then
-                                                    raidMapIDSet[data.mapID] = true
-        
-                                                elseif(nmd == 2) then
-                                                    mainRaidMapIDSet[data.mapID] = true
-        
-                                                end
-        
-                                                raidCounter = raidCounter + 1
-        
-        
-                                            end
-                                        end
-                                    end
-                                else
-                                    for z = 1, 10, 1 do
-                                        local currentBoss = "Boss" .. z
-                                        raidFrame.Bosses[currentBoss].Icon:SetDesaturated(true)
-        
-                                    end
+                                if(progressFrame) then
+                                    progressFrame:SetText(WrapTextInColorCode(difficultyInfo.parsedString, miog.DIFFICULTY[difficultyInfo.difficulty].color))
+
+                                    tinsert(progressFrames, progressFrame)
                                 end
                             end
                         end
@@ -459,7 +507,7 @@ function RaiderIOInformationPanelMixin:ApplyRaidData(refreshData, playerName, re
                 end
             end
         end
-	end
+    end
 end
 
 function RaiderIOInformationPanelMixin:ApplyFillData(type, refreshData, playerName, realm)

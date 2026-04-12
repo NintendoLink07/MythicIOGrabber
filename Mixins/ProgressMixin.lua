@@ -1215,11 +1215,9 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 	end
 end
 
---/run MIOG_NewSettings.progressData = nil
-
 function ProgressRaidMixin:LoadActivities()
 	if(not self.activities or #self.activities == 0) then
-		local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+		local groups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
 		local raidTable = {}
 
 		for k, v in ipairs(groups) do
@@ -1227,11 +1225,8 @@ function ProgressRaidMixin:LoadActivities()
 			local activityID = activities[#activities]
 			local name, order = C_LFGList.GetActivityGroupInfo(v)
 			local activityInfo = miog:GetActivityInfo(activityID)
-			local mapID = activityInfo.mapID
 
-			miog:GetMapInfo(mapID)
-
-			tinsert(raidTable, {name = name, order = order, activityID = activityID, mapID = mapID})
+			tinsert(raidTable, {name = name, order = order, activityID = activityID, mapID = activityInfo.mapID})
 		end
 
 		self.activities = raidTable
