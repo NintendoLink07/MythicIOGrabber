@@ -1,7 +1,6 @@
 local addonName, miog = ...
 
-local playerGUID = UnitGUID("player")
-local fullPlayerName = UnitFullName("player")
+local playerGUID
 local initialRefreshDone = false
 
 local currentScrollBar
@@ -14,6 +13,15 @@ local pvpActivities = {
 	7,
 	9,
 }
+
+local function getPlayerGUID()
+	if(not playerGUID) then
+		playerGUID = UnitGUID("player")
+
+	end
+	
+	return playerGUID
+end
 
 ProgressSettingsConnectMixin = {}
 
@@ -62,21 +70,23 @@ function ProgressMixin:RequestAccountCharacters()
 		end
 	end
 
-	local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(playerGUID)
+	local playersGUID = getPlayerGUID()
+
+	local localizedClass, englishClass, localizedRace, englishRace, sex, name, realmName = GetPlayerInfoByGUID(playersGUID)
 	local specID = GetSpecializationInfo(GetSpecialization())
 	local itemLevel = select(2, GetAverageItemLevel())
 
-	if(playerGUID) then
-		local playerSettings = self.characterSettings[playerGUID]
+	if(playersGUID) then
+		local playerSettings = self.characterSettings[playersGUID]
 
 		if(not playerSettings) then
-			self.characterSettings[playerGUID] = {guid = playerGUID, name = name, realmName = realmName, fileName = englishClass, specID = specID, itemLevel = itemLevel,}
+			self.characterSettings[playersGUID] = {guid = playersGUID, name = name, realmName = realmName, fileName = englishClass, specID = specID, itemLevel = itemLevel,}
 
 		else
 			playerSettings.name = name
 			playerSettings.realmName = realmName
 			playerSettings.fileName = englishClass
-			playerSettings.guid = playerGUID
+			playerSettings.guid = playersGUID
 
 			--Only player stats
 			playerSettings.specID = specID
@@ -127,7 +137,7 @@ function ProgressMixin:RefreshGreatVaultProgress()
 		resetTime = resetTime,
 	}
 
-	self.characterSettings[playerGUID].greatVault = {
+	self.characterSettings[getPlayerGUID()].greatVault = {
 		hasRewardOnReset = hasRewardOnReset,
 		resetTime = resetTime,
 		canClaimRewards = C_WeeklyRewards.CanClaimRewards(),
@@ -163,7 +173,7 @@ function ProgressMixin:OnEvent(event, ...)
 
 		end
 	elseif(event == "WEEKLY_REWARDS_UPDATE") then
-		if(self.characterSettings and self.characterSettings[playerGUID]) then
+		if(self.characterSettings and self.characterSettings[getPlayerGUID()]) then
 			self:RefreshAllData()
 
 		end
@@ -351,8 +361,10 @@ function ProgressOverviewMixin:CheckLockoutExpiration()
 end
 
 function ProgressOverviewMixin:RefreshLockouts()
-    if(self.characterSettings and self.characterSettings[playerGUID]) then
-		self.characterSettings[playerGUID].lockouts = {}
+	local playersGUID = getPlayerGUID()
+
+    if(self.characterSettings and self.characterSettings[playersGUID]) then
+		self.characterSettings[playersGUID].lockouts = {}
 
 		for index = 1, GetNumSavedInstances(), 1 do
 			local name, lockoutId, reset, difficultyId, locked, extended, instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress, extendDisabled, instanceId = GetSavedInstanceInfo(index)
@@ -375,7 +387,7 @@ function ProgressOverviewMixin:RefreshLockouts()
 					local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(instanceId)
 					local _, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, _ = EJ_GetInstanceInfo(journalInstanceID)
 
-					tinsert(self.characterSettings[playerGUID].lockouts, {
+					tinsert(self.characterSettings[playersGUID].lockouts, {
 						id = lockoutId,
 						name = name,
 						difficulty = difficultyId,
@@ -397,7 +409,7 @@ function ProgressOverviewMixin:RefreshLockouts()
 		for i = 1, GetNumSavedWorldBosses(), 1 do
 			local name, worldBossID, reset = GetSavedWorldBossInfo(i)
 
-			tinsert(self.characterSettings[playerGUID].lockouts, {
+			tinsert(self.characterSettings[playersGUID].lockouts, {
 				id = worldBossID,
 				name = name,
 				isWorldBoss = true,
@@ -455,30 +467,6 @@ function ProgressOverviewMixin:LoadActivities()
 	end
 end
 
-local function sortOverviewCharacters(k1, k2)
-	if(k1.guid == playerGUID) then
-		return true
-		
-	elseif(k2.guid == playerGUID) then
-		return false
-
-	elseif(k1.sortWeight ~= k2.sortWeight) then
-		return k1.sortWeight > k2.sortWeight
-
-	elseif(k1.itemLevel and k2.itemLevel) then
-		return k1.itemLevel > k2.itemLevel
-
-	elseif(k1.itemLevel) then
-		return true
-
-	elseif(k2.itemLevel) then
-		return false
-
-	end
-
-	return k1.name > k2.name
-end
-
 function ProgressOverviewMixin:RefreshActivities()
 	self:LoadActivities()
 
@@ -496,7 +484,35 @@ function ProgressOverviewMixin:RefreshActivities()
 			provider:Insert(v)
 		end
 
-		provider:SetSortComparator(sortOverviewCharacters)
+		local playersGUID = getPlayerGUID()
+
+		provider:SetSortComparator(function(k1, k2)
+			if(k1.guid == playersGUID) then
+				return true
+				
+			elseif(k2.guid == playersGUID) then
+				return false
+
+			elseif(k1.sortWeight ~= k2.sortWeight) then
+				return k1.sortWeight > k2.sortWeight
+
+			elseif(k1.itemLevel and k2.itemLevel) then
+				return k1.itemLevel > k2.itemLevel
+
+			elseif(k1.itemLevel) then
+				return true
+
+			elseif(k2.itemLevel) then
+				return false
+
+			elseif(k1.name and k2.name) then
+				return k1.name > k2.name
+
+			else
+				return k1.guid < k2.guid
+
+			end
+		end)
 		
 		self.ScrollBox:SetDataProvider(provider)
 	end
@@ -886,7 +902,7 @@ function ProgressDungeonMixin:UpdateSingleCharacterMythicPlusProgress(guid)
 		
 		local resilientLevel = 99
 
-		if guid == playerGUID then
+		if(guid == getPlayerGUID()) then
 			dungeonData.score = C_ChallengeMode.GetOverallDungeonScore()
 			dungeonData.validatedIngame = true
 
@@ -999,27 +1015,6 @@ function ProgressDungeonMixin:LoadActivities()
 	end
 end
 
-local function sortMythicPlusCharacters(k1, k2)
-	if(k1.guid == playerGUID) then
-		return true
-
-	elseif(k2.guid == playerGUID) then
-		return false
-
-	elseif(k1.mythicPlus.score and k2.mythicPlus.score) then
-		return k1.mythicPlus.score > k2.mythicPlus.score
-
-	elseif(k1.mythicPlus.score) then
-		return true
-
-	elseif(k2.mythicPlus.score) then
-		return false
-
-	end
-
-	return k1.name > k2.name
-end
-
 function ProgressDungeonMixin:UpdateAllCharactersProgressData()
 	self:LoadActivities()
 
@@ -1033,7 +1028,32 @@ function ProgressDungeonMixin:UpdateAllCharactersVisibleData()
 	self:UpdateAllCharactersProgressData()
 
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortMythicPlusCharacters)
+	local playersGUID = getPlayerGUID()
+
+	provider:SetSortComparator(function(k1, k2)
+		if(k1.guid == playersGUID) then
+			return true
+
+		elseif(k2.guid == playersGUID) then
+			return false
+
+		elseif(k1.mythicPlus.score and k2.mythicPlus.score) then
+			return k1.mythicPlus.score > k2.mythicPlus.score
+
+		elseif(k1.mythicPlus.score) then
+			return true
+
+		elseif(k2.mythicPlus.score) then
+			return false
+
+		elseif(k1.name and k2.name) then
+			return k1.name > k2.name
+
+		else
+			return k1.guid < k2.guid
+
+		end
+	end)
 
 	for guid, v in pairs(self.characterSettings) do
 		v.guid = guid
@@ -1151,7 +1171,7 @@ function ProgressRaidMixin:UpdateSingleCharacterRaidProgress(guid)
 
 		local activityTable = self.activities
 
-		if guid == playerGUID then
+		if(guid == getPlayerGUID()) then
 			for _, mapID in ipairs(activityTable) do
 				raidData.instances[mapID] = self:CheckForAchievements(mapID)
 
@@ -1269,7 +1289,30 @@ function ProgressRaidMixin:UpdateAllCharactersVisibleData()
 	self:UpdateAllCharactersProgressData()
 
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortMythicPlusCharacters)
+	provider:SetSortComparator(function(k1, k2)
+		if(k1.guid == playersGUID) then
+			return true
+
+		elseif(k2.guid == playersGUID) then
+			return false
+
+		elseif(k1.raids.progressWeight and k2.raids.progressWeight) then
+			return k1.raids.progressWeight > k2.raids.progressWeight
+
+		elseif(k1.raids.progressWeight) then
+			return true
+
+		elseif(k2.raids.progressWeight) then
+			return false
+
+		elseif(k1.name and k2.name) then
+			return k1.name > k2.name
+
+		else
+			return k1.guid < k2.guid
+
+		end
+	end)
 
 	for guid, v in pairs(self.characterSettings) do
 		v.guid = guid
@@ -1341,7 +1384,7 @@ function ProgressPVPMixin:UpdateSingleCharacterPVPProgress(guid)
     local charData = self.characterSettings[guid]
 	local pvpData = {}
 
-    if(guid == playerGUID) then
+    if(guid == getPlayerGUID()) then
 		local highestRating = 0
 
 		pvpData.brackets = {}
@@ -1395,7 +1438,30 @@ function ProgressPVPMixin:UpdateAllCharactersVisibleData()
 	self:UpdateAllCharactersProgressData()
 
 	local provider = CreateDataProvider()
-	provider:SetSortComparator(sortMythicPlusCharacters)
+	provider:SetSortComparator(function(k1, k2)
+		if(k1.guid == playersGUID) then
+			return true
+
+		elseif(k2.guid == playersGUID) then
+			return false
+
+		elseif(k1.pvp.rating and k2.pvp.rating) then
+			return k1.pvp.rating > k2.pvp.rating
+
+		elseif(k1.pvp.rating) then
+			return true
+
+		elseif(k2.pvp.rating) then
+			return false
+
+		elseif(k1.name and k2.name) then
+			return k1.name > k2.name
+
+		else
+			return k1.guid < k2.guid
+
+		end
+	end)
 
 	for guid, v in pairs(self.characterSettings) do
 		v.guid = guid

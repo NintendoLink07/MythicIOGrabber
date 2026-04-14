@@ -1,19 +1,7 @@
-## [3.9.13](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13) - 2026-04-12
-
-### Changed
-
-- [GroupCreator] The group creator has been rewritten and uses more of Blizzard's native solutions to minimize secret value manipulation.
+## [3.9.13a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13a) - 2026-04-14
 
 ### Fixed
 
-- The activity queue dropdown should now be usable again.
+- [Progress] An issue has been resolved trying to sort the character list unavailable data.
 
-- [ActiveQueues] Fixed errors regarding timers counting down correctly.
-
-- [AppViewer] The timer now correctly resets when you relist your group.
-
-- [FilterManager] Raid progress panel now updates correctly.
-
-- [SearchPanel] Raid progress is now shown correctly.
-
-- Small load times and performance improvements.
+- [Progress] Raid progress characters should now be sorted by their progress and pvp characters by their highest rating.

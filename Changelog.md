@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning].
 
 
 
+## [3.9.13a] - 2026-04-14
+
+### Fixed
+
+- [Progress] An issue has been resolved trying to sort the character list unavailable data.
+
+- [Progress] Raid progress characters should now be sorted by their progress and pvp characters by their highest rating.
+
+
+
+
 ## [3.9.13] - 2026-04-12
 
 ### Changed
@@ -4950,7 +4961,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13a..HEAD
+[3.9.13a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13a
 [3.9.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13
 [3.9.12]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.12
 [3.9.11]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.11
