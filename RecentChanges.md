@@ -2,6 +2,6 @@
 
 ### Fixed
 
-- [Progress] An issue has been resolved trying to sort the character list unavailable data.
+- [Progress] An issue has been resolved trying to sort the character list with unavailable data.
 
 - [Progress] Raid progress characters should now be sorted by their progress and pvp characters by their highest rating.
