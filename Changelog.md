@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.13b] - 2026-04-25
+
+### Fixed
+
+- Fixed an issue trying to set colors in a loop.
+
+
+
 
 ## [3.9.13a] - 2026-04-14
 

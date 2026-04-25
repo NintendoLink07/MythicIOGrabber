@@ -422,7 +422,7 @@ local function updateClassPanel()
             currentClassFrame.layoutIndex = -classIndex
             currentClassFrame.Icon:SetDesaturated(false)
             currentClassFrame.Icon:SetAlpha(0.85)
-            currentClassFrame:SetBackdropBorderColor(r, g, b, 0.85)
+            --currentClassFrame:SetBackdropBorderColor(r, g, b, 0.85)
             currentClassFrame.FontString:SetText(numOfClasses)
 
         else
@@ -430,7 +430,7 @@ local function updateClassPanel()
             currentClassFrame.layoutIndex = classIndex
             currentClassFrame.Icon:SetDesaturated(true)
             currentClassFrame.Icon:SetAlpha(0.4)
-            currentClassFrame:SetBackdropBorderColor(r, g, b, 0.4)
+            --currentClassFrame:SetBackdropBorderColor(r, g, b, 0.4)
             currentClassFrame.FontString:SetText("")
 
             currentClassFrame.Specializations:Hide()
@@ -1451,7 +1451,7 @@ miog.loadGroupOrganizer = function()
     --createColumn("Repair", "MIOG_GroupOrganizerTextCellTemplate", "durability", true, 1)
     createColumn("M+", "MIOG_GroupOrganizerTextCellTemplate", "score", true, 0.8)
     createColumn("Raid", "MIOG_GroupOrganizerTextCellTemplate", "progress", true, 1.15)
-    createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
+    --createColumn("Key", "MIOG_GroupOrganizerTextCellTemplate", "keylevel", true, 1.35)
     tableBuilder:Arrange()
 
     loadClassSpecPanel()
