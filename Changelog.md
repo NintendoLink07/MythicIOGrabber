@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.13c] - 2026-05-17
+
+### Fixed
+
+- [AppViewer] Fixed an issue where the applicant ID was no longer available to invite / decline an applicant.
+
+
+
+
 ## [3.9.13b] - 2026-04-25
 
 ### Fixed
@@ -4969,7 +4978,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13b..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13c..HEAD
+[3.9.13c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13c
 [3.9.13b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13b
 [3.9.13a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13a
 [3.9.13]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13

@@ -1,5 +1,5 @@
-## [3.9.13b](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13b) - 2026-04-25
+## [3.9.13c](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13c) - 2026-05-17
 
 ### Fixed
 
-- Fixed an issue trying to set colors in a loop.
+- [AppViewer] Fixed an issue where the applicant ID was no longer available to invite / decline an applicant.

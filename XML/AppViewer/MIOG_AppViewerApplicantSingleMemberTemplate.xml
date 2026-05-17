@@ -33,7 +33,8 @@
 
                 <Scripts>
                     <OnClick>
-			            C_LFGList.DeclineApplicant(self:GetParent().applicantID)
+                        local data = self:GetParent():GetData()
+			            C_LFGList.InviteApplicant(data.applicantID)
 
                     </OnClick>
                 </Scripts>
@@ -50,7 +51,8 @@
 
                 <Scripts>
                     <OnClick>
-			            C_LFGList.InviteApplicant(self:GetParent().applicantID)
+                        local data = self:GetParent():GetData()
+			            C_LFGList.InviteApplicant(data.applicantID)
 
                     </OnClick>
                 </Scripts>
