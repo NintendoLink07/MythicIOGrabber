@@ -1,5 +1,7 @@
-## [3.9.13c](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13c) - 2026-05-17
+## [3.9.14](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.14) - 2026-06-15
 
 ### Fixed
 
-- [AppViewer] Fixed an issue where the applicant ID was no longer available to invite / decline an applicant.
+- [GroupManager] Rightclick menu's should now work again.
+
+- Some background changes / prep for version 4.0

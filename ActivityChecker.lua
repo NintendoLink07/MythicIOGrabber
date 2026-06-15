@@ -186,12 +186,13 @@ local function getRegularDungeonLists(dungeonList)
 	if(lfdList) then
 		for _, dungeonID in pairs(lfdList) do
 			local isAvailableForAll, isAvailableForPlayer, hideIfNotJoinable = IsLFGDungeonJoinable(dungeonID);
-			--local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, _, isHolidayDungeon, _, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
+			local name, typeID, subtypeID, minLevel, maxLevel, recLevel, minRecLevel, maxRecLevel, expLevel, groupID, fileID, difficultyID, maxPlayers, _, isHolidayDungeon, _, minPlayers, isTimewalkingDungeon, name2, minGearLevel, isScalingDungeon, mapID = GetLFGDungeonInfo(dungeonID)
 
 			--local isFollowerDungeon = dungeonID >= 0 and C_LFGInfo.IsLFGFollowerDungeon(dungeonID)
 
 			if(isAvailableForAll and (isAvailableForPlayer or not hideIfNotJoinable)) then
 				tinsert(dungeonList, dungeonID)
+
 			end
 		end
 	end
@@ -508,6 +509,8 @@ end
 local selectedDungeonsList = {}
 
 local function setupQueueDropdown(rootDescription)
+	refreshDungeonList()
+
 	for k, v in ipairs(indicesList) do
 		local isSpecific = k == indices["SPECIFIC"]
 		local isRaidFinder = k == indices["RAIDFINDER"]
@@ -650,8 +653,6 @@ local function activityEvents(_, event, ...)
     elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		refreshDungeonList()
 
-    --elseif(event == "GROUP_ROSTER_UPDATE") then
-		--refreshDungeonList()
     end
 
 	--miog.updateDropDown()

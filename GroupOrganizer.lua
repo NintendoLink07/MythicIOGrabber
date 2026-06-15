@@ -1308,6 +1308,72 @@ local function groupManagerEvents(_, event, ...)
 	end
 end
 
+local customPlayerPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
+UnitPopupManager:RegisterMenu("MIOG_PLAYER", customPlayerPopupMenu);
+function customPlayerPopupMenu.GetEntries()
+    return {
+		UnitPopupInteractSubsectionTitle,
+		UnitPopupInspectButtonMixin,
+		UnitPopupAchievementButtonMixin,
+		UnitPopupTradeButtonMixin, 
+		UnitPopupFollowButtonMixin,
+		UnitPopupOtherSubsectionTitle,
+		UnitPopupVoiceChatButtonMixin,
+		UnitPopupEnterEditModeMixin,
+    }
+end
+
+local customPartyPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
+UnitPopupManager:RegisterMenu("MIOG_PARTY", customPartyPopupMenu);
+function customPartyPopupMenu:GetEntries()
+    return {
+        UnitPopupRafSummonButtonMixin,
+        UnitPopupRafGrantLevelButtonMixin,
+        UnitPopupAddFriendButtonMixin,
+        UnitPopupAddFriendMenuButtonMixin,
+		UnitPopupInteractSubsectionTitle,
+        UnitPopupMenuFriendlyPlayerInteract, -- Submenu
+		UnitPopupOtherSubsectionTitle,
+		UnitPopupVoiceChatButtonMixin,
+		UnitPopupEnterEditModeMixin,
+        UnitPopupReportInWorldButtonMixin,
+    }
+end
+
+local openBlizzardRaidFrame = CreateFromMixins(UnitPopupButtonBaseMixin);
+
+openBlizzardRaidFrame.OnClick = function()
+	ToggleFriendsFrame(3)
+end
+openBlizzardRaidFrame.GetText = function()
+	return "Open Blizzard's raid frame"
+end
+
+local customRaidPopupMenu = CreateFromMixins(UnitPopupTopLevelMenuMixin)
+UnitPopupManager:RegisterMenu("MIOG_RAID", customRaidPopupMenu);
+function customRaidPopupMenu:GetEntries()
+    return {
+        UnitPopupSetRaidLeaderButtonMixin,
+        UnitPopupSetRaidAssistButtonMixin, 
+        UnitPopupSetRaidMainTankButtonMixin,
+        UnitPopupSetRaidMainAssistButtonMixin,
+        UnitPopupSetRaidDemoteButtonMixin,
+        UnitPopupLootPromoteButtonMixin,
+        UnitPopupOtherSubsectionTitle,
+        UnitPopupVoiceChatButtonMixin,
+        UnitPopupMovePlayerFrameButtonMixin,
+        UnitPopupMoveTargetFrameButtonMixin,
+        UnitPopupEnterEditModeMixin,
+        UnitPopupReportGroupMemberButtonMixin,
+        UnitPopupCopyCharacterNameButtonMixin,
+        UnitPopupPvpReportAfkButtonMixin,
+        UnitPopupVoteToKickButtonMixin,
+        UnitPopupSetRaidRemoveButtonMixin,
+        UnitPopupSubsectionSeperatorMixin,
+        openBlizzardRaidFrame,
+    }
+end
+
 local function loadClassSpecPanel()
     classSpecPanel = CreateFrame("Frame", "MythicIOGrabber_ClassPanel", miog.F.LITE_MODE and PVEFrame or miog.pveFrame2, "MIOG_ClassSpecPanel")
     classSpecPanel:SetPoint("BOTTOMRIGHT", classSpecPanel:GetParent(), "TOPRIGHT")

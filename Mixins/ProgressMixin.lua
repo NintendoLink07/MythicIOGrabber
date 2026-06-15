@@ -426,8 +426,28 @@ function ProgressOverviewMixin:LoadActivities()
 	end
 
 	if(not self.raidActivities or #self.raidActivities == 0) then
-		local groups = C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
 		local raidActivities = {}
+		local ids = miog:GetCurrentTierJournalMapIDs("raid")
+
+		for k, mapID in ipairs(ids) do
+			local mapInfo = miog:GetMapInfo(mapID)
+
+			tinsert(raidActivities, {name = mapInfo.name, order = mapInfo.order, activityID = mapInfo.activityID, mapID = mapID})
+		end
+
+		table.sort(raidActivities, function(k1, k2)
+			if(k1.order == k2.order) then
+				return k1.mapID > k2.mapID
+
+			end
+
+			return k1.order < k2.order
+		end)
+
+		self.raidActivities = raidActivities
+		self.currentRaidMapIDs = ids
+
+		--[[local groups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentSeason)
 
 		for k, v in ipairs(groups) do
 			local activities = C_LFGList.GetAvailableActivities(3, v)
@@ -442,28 +462,26 @@ function ProgressOverviewMixin:LoadActivities()
 			tinsert(raidActivities, {name = name, order = order, activityID = activityID, mapID = mapID})
 		end
 
-		table.sort(raidActivities, function(k1, k2)
-			if(k1.order == k2.order) then
-				return k1.activityID > k2.activityID
-
-			end
-
-			return k1.order < k2.order
-		end)
-
-		self.raidActivities = raidActivities
-
 		if(raidActivities[1]) then
 			self.currentRaidMapIDs = {}
 
-			for k, v in pairs(raidActivities) do
-				tinsert(self.currentRaidMapIDs, v.mapID)
+			local seasonID = C_MythicPlus.GetCurrentSeason()
 
+			if(seasonID > 0) then
+				local ids = miog.ITEM_LEVEL_DATA[seasonID].raidMapIDs
+
+				if(ids and #ids > 0) then
+					for k, mapID in pairs(ids) do
+						tinsert(self.currentRaidMapIDs, mapID)
+
+					end
+
+					self.currentRaidMapID = ids[1]
+
+				end
 			end
 
-			self.currentRaidMapID = raidActivities[1].mapID
-
-		end
+		end]]
 	end
 end
 
@@ -569,19 +587,21 @@ function ProgressOverviewMixin:OnLoad()
 
 				local hasData = false
 
-				for _, mapID in pairs(self.currentRaidMapIDs) do
-					local journalInfo = miog:GetJournalDataForMapID(mapID)
+				if(self.currentRaidMapIDs) then
+					for _, mapID in pairs(self.currentRaidMapIDs) do
+						local journalInfo = miog:GetJournalDataForMapID(mapID)
 
-					if(journalInfo and journalInfo.bosses) then
-						totalNumBosses = totalNumBosses + #journalInfo.bosses
+						if(journalInfo and journalInfo.bosses) then
+							totalNumBosses = totalNumBosses + #journalInfo.bosses
 
-						local playerInstanceData = data.raids.instances[mapID]
-					
-						if(playerInstanceData and playerInstanceData[i]) then
-							hasData = true
-							totalNumKills = totalNumKills + playerInstanceData[i].kills
-							--raidProgressFrame.Text:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
+							local playerInstanceData = data.raids.instances[mapID]
+						
+							if(playerInstanceData and playerInstanceData[i]) then
+								hasData = true
+								totalNumKills = totalNumKills + playerInstanceData[i].kills
+								--raidProgressFrame.Text:SetTextColor(miog.DIFFICULTY[i].miogColors:GetRGBA())
 
+							end
 						end
 					end
 				end

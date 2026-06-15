@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.14] - 2026-06-15
+
+### Fixed
+
+- [GroupManager] Rightclick menu's should now work again.
+
+- Some background changes / prep for version 4.0
+
+
+
+
 ## [3.9.13c] - 2026-05-17
 
 ### Fixed

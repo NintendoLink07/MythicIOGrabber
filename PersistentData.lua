@@ -2095,6 +2095,45 @@ function miog:RetrieveJournalInstanceInfoFromJournalInstanceID(journalInstanceID
 	return database.pointers.journal[journalInstanceID]
 end
 
+function miog:GetCurrentTierJournalMapIDs(type)
+	if(not EncounterJournal) then
+		EncounterJournal_LoadUI()
+
+	end
+
+	local ids = {}
+
+	if(EJ_GetNumTiers() > 0) then
+		local currentExp = GetNumExpansions()
+
+		EJ_SelectTier(currentExp)
+
+		for shouldBeRaid = 0, 1 do
+			local isRaid = shouldBeRaid == 1
+
+			local index = 1
+			local journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid2 = EJ_GetInstanceByIndex(index, isRaid)
+
+			EJ_SelectInstance(journalInstanceID)
+
+			while instanceName do
+				miog:LoadMapData(mapID)
+				miog:SaveJournalInstanceInfo(journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid, currentExp, index)
+
+				index = index + 1
+				journalInstanceID, instanceName, description, bgImage, buttonImage1, loreImage, buttonImage2, dungeonAreaMapID, link, shouldDisplayDifficulty, mapID, covenantID, isRaid = EJ_GetInstanceByIndex(index, isRaid)
+
+				if(not type or ((isRaid and type == "raid") or type == "dungeon")) then
+					tinsert(ids, mapID)
+
+				end
+			end
+		end
+	end
+
+	return ids
+end
+
 function miog:CreateJournalDB()
 	local startTier = 1
 
@@ -2648,6 +2687,7 @@ local quarterSteps = {
 
 miog.ITEM_LEVEL_DATA = {
 	[14] = {
+		raidMapIDs = {2769},
 		referenceMinLevel = 597,
 		referenceMinLevelStepIndex = 1,
 		referenceMaxLevel = 678,
@@ -2723,6 +2763,7 @@ miog.ITEM_LEVEL_DATA = {
 		},
 	},
 	[15] = {
+		raidMapIDs = {2810},
 		referenceMinLevel = 642,
 		referenceMinLevelStepIndex = 3,
 		referenceMaxLevel = 723,
@@ -2802,6 +2843,7 @@ miog.ITEM_LEVEL_DATA = {
 		},
 	},
 	[16] = {
+		raidMapIDs = {2912, 2913, 2939},
 		referenceMinLevel = 207,
 		referenceMinLevelStepIndex = 4,
 		referenceMaxLevel = 289,
