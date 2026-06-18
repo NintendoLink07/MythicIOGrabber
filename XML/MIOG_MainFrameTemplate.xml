@@ -384,6 +384,7 @@
                     <EventFrame parentKey="ApplicationViewerScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="SearchPanelScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="GroupManagerScrollBar" inherits="MinimalScrollBar" hidden="true" />
+                    <EventFrame parentKey="ProgressPanelScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressOverviewScrollBar" inherits="MinimalScrollBar" hidden="true" />
                     <EventFrame parentKey="ProgressMPlusScrollBar" inherits="MinimalScrollBar" hidden="true">
                         <Anchors>
@@ -687,11 +688,18 @@
                     
                     <Frame parentKey="GroupManager" inherits="MIOG_GroupOrganizer" hidden="true" setAllPoints="true" />
                     <Frame parentKey="NewProgress" inherits="MIOG_ProgressTabTemplate" hidden="true" setAllPoints="true" />
+                    <!--<Frame parentKey="ProgressPanel" inherits="MIOG_ProgressPanel" hidden="true" setAllPoints="true" />!-->
                     <Frame parentKey="Ports" inherits="MIOG_Ports" hidden="true" setAllPoints="true" />
                     <Frame parentKey="GearingTable" inherits="MIOG_GearingTable" hidden="true" setAllPoints="true" />
                     <Frame parentKey="RaidSheet" inherits="MIOG_RaidSheet" hidden="true" setAllPoints="true" />
                     <Frame parentKey="Loot" inherits="MIOG_Loot" hidden="true" setAllPoints="true" />
                     <Frame parentKey="UpgradeFinder" inherits="MIOG_UpgradeFinder" hidden="true" setAllPoints="true" />
+
+                    <Frame parentKey="ProgressCheck" inherits="MIOG_ProgressCheck" hidden="true">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="20"/>
+                        </Anchors>
+                    </Frame>
                 </Frames>
 
                 <Layers>
