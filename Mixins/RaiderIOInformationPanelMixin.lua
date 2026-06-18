@@ -85,39 +85,42 @@ function RaiderIOInformationPanelMixin:SetupRaidFrame(raidFrame, mapIDs, isMains
             if(mapInfo.bosses) then
                 for i = 1, 10, 1 do
                     local bossFrame = raidFrame.Bosses["Boss" .. overallBossIndex]
-                    local bossInfo = mapInfo.bosses[i]
 
-                    if(bossInfo) then
-                        if(bossFrame.Index) then
-                            bossFrame.Index:SetText(overallBossIndex)
+                    if(bossFrame) then
+                        local bossInfo = mapInfo.bosses[i]
+
+                        if(bossInfo) then
+                            if(bossFrame.Index) then
+                                bossFrame.Index:SetText(overallBossIndex)
+
+                            end
+
+                            if(mapInfo.bossIcons[i]) then
+                                bossFrame.Icon:SetTexture(mapInfo.bossIcons[i].icon)
+
+                            end
+
+                            bossFrame.Icon:SetDesaturated(true)
+                            bossFrame.Icon:SetScript("OnMouseDown", function()
+                                local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+                                local difficulty = 16
+
+                                miog:OpenEncounterJournal(difficulty, instanceID, bossInfo.journalEncounterID)
+                            end)
+
+                            if(bossFrame.Border) then
+                                bossFrame.Border:SetColorTexture(1, 0, 0, 1);
+
+                            end
+
+                            overallBossIndex = overallBossIndex + 1
+
+                            bossFrame:Show()
+
+                        else
+                            bossFrame:Hide()
 
                         end
-
-                        if(mapInfo.bossIcons[i]) then
-                            bossFrame.Icon:SetTexture(mapInfo.bossIcons[i].icon)
-
-                        end
-
-                        bossFrame.Icon:SetDesaturated(true)
-                        bossFrame.Icon:SetScript("OnMouseDown", function()
-                            local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-                            local difficulty = 16
-
-                            miog:OpenEncounterJournal(difficulty, instanceID, bossInfo.journalEncounterID)
-                        end)
-
-                        if(bossFrame.Border) then
-                            bossFrame.Border:SetColorTexture(1, 0, 0, 1);
-
-                        end
-
-                        overallBossIndex = overallBossIndex + 1
-
-                        bossFrame:Show()
-
-                    else
-                        bossFrame:Hide()
-
                     end
                 end
 

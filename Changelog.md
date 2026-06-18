@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.15] - 2026-06-18
+
+### Changed
+
+- [FilterManager] You can now filter by "World" and/or "World HC"
+
+### Fixed
+
+- All Sporefall / Rotmire related pointers are now implemented.
+
+- More backend changes for version 4.0
+
+
+
+
 ## [3.9.14] - 2026-06-15
 
 ### Fixed
@@ -4989,7 +5004,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.13c..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.15..HEAD
+[3.9.15]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15
+[3.9.14]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.14
 [3.9.13c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13c
 [3.9.13b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13b
 [3.9.13a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13a

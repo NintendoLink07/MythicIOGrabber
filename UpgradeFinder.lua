@@ -453,7 +453,7 @@ local function retrieveJournalInstanceIDs()
     local expDungeonGroups = C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentExpansion)
     local dungeonsGroups = {} or C_LFGList.GetAvailableActivityGroups(2, Enum.LFGListFilter.CurrentSeason)
     local raidGroups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
-    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
+    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
     local journalList = {}
     local expDone = {}
@@ -520,7 +520,7 @@ local function findAllRelevantMapIDs()
     local dungeonGroup = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
     local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.PvE))
     local seasonGroups = miog.retrieveCurrentRaidActivityGroups()
-    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion))
+    local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 5)
 
     local listWithMapIDs = {}
     local seasonalDungeonsDone = {}

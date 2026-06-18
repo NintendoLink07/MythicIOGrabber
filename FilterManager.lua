@@ -485,7 +485,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 				end
 
 			elseif(isRaid and raidFiltersAt1) then
-				if(currentSettings.activities[activityInfo.mapID] == false) then -- for world boss activities specifically
+				if(currentSettings.activities[searchResultInfo.activityIDs[1]] == false) then -- for world boss activities specifically
 					return false, "raidMismatch"
 
 				end
@@ -891,13 +891,13 @@ local function refreshFilters()
 		end
 
 		if(isMainRaid and not isLegacyRaid) then
-			local worldBossActivity = C_LFGList.GetAvailableActivities(3, 0, 133)
+			local worldBossActivities = C_LFGList.GetAvailableActivities(3, 0, 5)
 
-			if(worldBossActivity and #worldBossActivity > 0) then
-				local activityInfo = miog:GetActivityInfo(worldBossActivity[1])
-				
-				tinsert(allGroups, {filterID = activityInfo.mapID, isWorld = true})
+			if(worldBossActivities and #worldBossActivities > 0) then
+				for k, v in ipairs(worldBossActivities) do
+					tinsert(allGroups, {filterID = v, isWorld = true})
 
+				end
 			end
 		elseif(isArenaPvp) then
 			local pvpActivities = C_LFGList.GetAvailableActivities(categoryID)
@@ -925,12 +925,9 @@ local function refreshFilters()
 					if(groupData.isPvE) then
 						info = miog:GetGroupInfo(groupData.filterID)
 
-					elseif(groupData.isPvp) then
+					elseif(groupData.isPvp or groupData.isWorld) then
 						info = miog:GetActivityInfo(groupData.filterID)
 						
-					elseif(groupData.isWorld) then
-						info = miog:GetMapInfo(groupData.filterID)
-
 					end
 					
 					activityFilter.type = groupData.isPvE and "pve" or groupData.isPvp and "pvp" or groupData.isWorld and "world"
@@ -1482,8 +1479,7 @@ local function loadFilterManager()
 			local type = self:GetParent().type
 
 			if(type == "world") then
-				local mapInfo = miog:GetMapInfo(filterID)
-				GameTooltip:SetText(mapInfo.activities[1].fullName)
+				GameTooltip:SetText(C_LFGList.GetActivityFullName(filterID) or "")
 
 			elseif(type == "pvp") then
 				GameTooltip:SetText(C_LFGList.GetActivityFullName(filterID) or "")
@@ -1501,20 +1497,15 @@ local function loadFilterManager()
 			if(filterID) then
 				changeSetting(self:GetChecked(), "activities", filterID)
 				setStatus("change")
+
+				local type = self:GetParent().type
 			
-				if(getCurrentCategoryID() == 3) then
+				if(getCurrentCategoryID() == 3 and type ~= "world") then
 					local bossParent = filterManager.ActivityBosses["Bosses" .. i]
-
-					local type = self:GetParent().type
-
 					local bossTable
 					
 					if(type == "pve") then
 						local info = miog:GetGroupInfo(filterID)
-						bossTable = info.bosses
-
-					elseif(type == "world") then
-						local info = miog:GetMapInfo(filterID)
 						bossTable = info.bosses
 
 					end

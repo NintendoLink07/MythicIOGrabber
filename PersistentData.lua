@@ -602,7 +602,13 @@ for k = 2, 30, 1 do
 end
 
 miog.ACTIVE_RAID_TIER_INFOS = {
-	[1] = {mapIDs = {2912, 2939, 2913}},
+	[1] = {mapIDs = {2912, 2939, 2913, 1592}},
+
+}
+
+miog.ACTIVITY_ID_INFO = {
+	[1735] = {abbreviatedName = "WLD"},
+	[1968] = {abbreviatedName = "WLD HC"},
 
 }
 
@@ -678,6 +684,13 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 		mapID = 2939,
 		bossIcons = {
 			{icon = "interface/icons/inv_120_raid_dreamwell_malformedmanifestation.blp"},
+		},
+	},
+	[422] = {
+		abbreviatedName = "SF",
+		mapID = 1592,
+		bossIcons = {
+			{icon = "interface/icons/inv_1207_achievement_raid_fungariangiant_fungalgiant.blp"},
 		},
 	},
 }
@@ -928,6 +941,7 @@ miog.GROUP_INFO = {
 	[413] = {groupName = "The Shadow Enclave", orderIndex = 0},
 	[414] = {groupName = "Twilight Crypts", orderIndex = 0},
 	[415] = {groupName = "The Darkway", orderIndex = 0},
+	[422] = {groupName = "Sporefall", orderIndex = 0},
 
 }
 
@@ -1486,6 +1500,16 @@ miog.MAP_INFO = {
 			61477,
 		}
 	},
+	[1592] = {abbreviatedName = "SF", fileName = "raidfungarian",
+		bossIcons = {
+			{icon = "interface/icons/inv_1207_achievement_raid_fungariangiant_fungalgiant.blp"},
+		},
+		achievementIDs = {
+			63237,
+			63240,
+			63241,
+		}
+	},
 }
 
 miog.CHALLENGE_MODE_INFO = {
@@ -1742,7 +1766,14 @@ function miog:IntegrateMapDataIntoJournal(journalInstanceID, mapID)
 			local mapDB = database.pointers.map[map]
 			
 			if(mapDB) then
-				journalDB.abbreviatedName = miog.MAP_INFO[map].abbreviatedName
+				if(miog.MAP_INFO[map]) then
+					journalDB.abbreviatedName = miog.MAP_INFO[map].abbreviatedName
+
+				else
+					miog.printDebug("Missing abbreviated name for " .. map)
+
+				end
+
 				journalDB.horizontal = mapDB.horizontal
 				journalDB.vertical = mapDB.vertical
 				journalDB.achievementIDs = mapDB.achievementIDs
@@ -2365,6 +2396,10 @@ function miog:CreateActivity(activityID, overwrite)
 
 			miog:IntegrateJournalDataIntoActivity(activityID)
 
+			if(miog.ACTIVITY_ID_INFO[activityID]) then
+				database.pointers.activity[activityID].abbreviatedName = miog.ACTIVITY_ID_INFO[activityID].abbreviatedName
+
+			end
 		end
 	end
 end

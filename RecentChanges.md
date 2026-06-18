@@ -1,7 +1,11 @@
-## [3.9.14](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.14) - 2026-06-15
+## [3.9.15](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15) - 2026-06-18
+
+### Changed
+
+- [FilterManager] You can now filter by "World" and/or "World HC"
 
 ### Fixed
 
-- [GroupManager] Rightclick menu's should now work again.
+- All Sporefall / Rotmire related pointers are now implemented.
 
-- Some background changes / prep for version 4.0
+- More backend changes for version 4.0
