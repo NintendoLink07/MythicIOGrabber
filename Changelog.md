@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.15a] - 2026-06-19
+
+### Added
+
+- A Omnium Folio bar/button has been added to the main frame.
+
+- The "Ritual Sites" renown bar has been added to the main frame.
+
+
+
+
 ## [3.9.15] - 2026-06-18
 
 ### Changed
@@ -5004,7 +5015,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.15..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.15a..HEAD
+[3.9.15a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15a
 [3.9.15]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15
 [3.9.14]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.14
 [3.9.13c]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.13c

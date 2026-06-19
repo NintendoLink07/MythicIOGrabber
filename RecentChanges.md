@@ -1,11 +1,7 @@
-## [3.9.15](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15) - 2026-06-18
+## [3.9.15a](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15a) - 2026-06-19
 
-### Changed
+### Added
 
-- [FilterManager] You can now filter by "World" and/or "World HC"
+- A Omnium Folio bar/button has been added to the main frame.
 
-### Fixed
-
-- All Sporefall / Rotmire related pointers are now implemented.
-
-- More backend changes for version 4.0
+- The "Ritual Sites" renown bar has been added to the main frame.

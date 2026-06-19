@@ -568,6 +568,48 @@
                                 </Anchors>
                             </Frame>
 
+                            <Frame parentKey="NewInformation" inherits="VerticalLayoutFrame">
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="-1"/>
+                                </Anchors>
+
+                                <Frames>
+                                    <Button parentKey="OmniumFolioButton" inherits="MIOG_ProgressBarTemplate">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="1" type="number" />
+                                        </KeyValues>
+
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <Texture parentKey="Icon" atlas="midnight-landingbutton-up">
+                                                    <Size x="24" y="24" />
+                                                    <Anchors>
+                                                        <Anchor point="RIGHT" relativeKey="$parent.ThresholdBar.RightText" x="14" y="-1"/>
+                                                    </Anchors>
+                                                </Texture>
+                                            </Layer>
+                                        </Layers>
+
+                                        <Scripts>
+                                            <OnLoad>
+                                                self.ThresholdBar:SetStatusBarColor(0.70980, 0.59216, 0.40392, 1)
+                                                self.Icon:SetParent(self.ThresholdBar)
+                                                self.ThresholdBar.LeftText:SetText(RUNES_OF_POWER)
+                                            </OnLoad>
+                                            <OnClick>
+                                                ToggleExpansionLandingPage()
+                                            </OnClick>
+                                            <OnEnter>
+                                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                                GameTooltip:SetText(RUNES_OF_POWER)
+                                                GameTooltip:AddLine(MIDNIGHT_LANDING_PAGE_TOOLTIP)
+                                                GameTooltip:Show()
+                                            </OnEnter>
+                                        </Scripts>
+                                    </Button>
+                                </Frames> 
+                            </Frame>
+
                             <Frame parentKey="Information" inherits="VerticalLayoutFrame">
                                 <Anchors>
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="1"/>
@@ -600,7 +642,6 @@
                                     </Frame>
 
                                     <Frame parentKey="KeystoneStatusBar" inherits="MIOG_ProgressBarTemplate">
-                                        <!--<BarTexture atlas="ui-castingbar-filling-standard" />!-->
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="11" type="number" />
                                         </KeyValues>
@@ -665,6 +706,12 @@
                                     <Button parentKey="RenownBar4" inherits="MIOG_RenownBarTemplate" hidden="true">
                                         <KeyValues>
                                             <KeyValue key="layoutIndex" value="24" type="number" />
+                                        </KeyValues>
+                                    </Button>
+
+                                    <Button parentKey="RenownBar5" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="25" type="number" />
                                         </KeyValues>
                                     </Button>
                                 </Frames>
