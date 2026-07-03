@@ -1,0 +1,93 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressCheckCharacterOverviewInfoColumnTemplate" virtual="true">
+        <Size x="160" />
+        <Frames>
+             <Frame parentKey="Menu" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="fixedWidth" value="160" type="number" />
+                    <KeyValue key="fixedHeight" value="150" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Button inherits="UIPanelButtonTemplate" mixin="ProgressCheckInfoColumnButtonMixin" text="Overview">
+                        <Size y="20" />
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick method="OnClick" />
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Dungeon" inherits="UIPanelButtonTemplate" mixin="ProgressCheckInfoColumnButtonMixin" text="Dungeon">
+                        <Size y="20" />
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick method="OnClick" />
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Raid" inherits="UIPanelButtonTemplate" mixin="ProgressCheckInfoColumnButtonMixin" text="Raid">
+                        <Size y="20" />
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick method="OnClick" />
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="PVP" inherits="UIPanelButtonTemplate" mixin="ProgressCheckInfoColumnButtonMixin" text="PVP">
+                        <Size y="20" />
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick method="OnClick" />
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="Lockouts" inherits="UIPanelButtonTemplate" mixin="ProgressCheckInfoColumnButtonMixin" text="Lockouts">
+                        <Size y="20" />
+                        <KeyValues>
+                            <KeyValue key="expand" value="true" type="boolean" />
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+
+                        <Scripts>
+                            <OnClick method="OnClick" />
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="CellList" inherits="MIOG_ProgressCheckCharacterOverviewInfoColumnCellListTemplate">
+                <KeyValues>
+                    <KeyValue key="fixedWidth" value="160" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Menu" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
+

@@ -103,6 +103,7 @@ local defaultSettings = {
         miog.changeTheme(value)
     end},
     {name = "Progress data", variableName = "MIOG_ProgressData", key="progressData", default={characters = {}, activities = {}}},
+    {name = "Progress", variableName = "MIOG_Progress", key="progress", default={characters = {}, activities = {}}},
     {name = "LFG Statistics", variableName = "MIOG_LFGStatistics", key="lfgStatistics", default={}},
     {name = "Requeue data", variableName = "MIOG_RequeueData", key="requeueData", default = {guids = {}}},
     {name = "Queue up time", variableName = "MIOG_QueueUpTime", key="queueUpTime", default=0},

@@ -145,7 +145,7 @@ function QueueManagerMixin:UpdatePlunderstormQueue()
 end
 
 function QueueManagerMixin:CheckQueues()
-	if(not InCombatLockdown()) then
+	if(miog:CanUpdateSecretStuff()) then
 		dataProvider:Flush()
 
 		self:UpdateFakeApplications()
@@ -208,7 +208,7 @@ function QueueManagerMixin:OnEvent(...)
 
 	local event2 = ...
 
-	if(not InCombatLockdown()) then
+	if(miog:CanUpdateSecretStuff()) then
 		if(event2 == "LFG_LIST_APPLICATION_STATUS_UPDATED") then --event == "LFG_LIST_SEARCH_RESULT_UPDATED"
 			local resultID, status = ...
 		

@@ -74,7 +74,7 @@ local function getChestsLevelForID(challengeMapID, durationSec)
 	return durationSec <= threeChest and 3 or durationSec <= twoChest and 2 or durationSec <= oneChest and 1 or 0
 end
 
-function ProgressMythicPlusCellMixin:OnEnter(challengeMapID, guid)
+function ProgressMythicPlusCellMixin:OnEnter(challengeMapID)
 	local name = C_ChallengeMode.GetMapUIInfo(challengeMapID);
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(name, 1, 1, 1);

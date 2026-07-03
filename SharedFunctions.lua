@@ -1157,8 +1157,22 @@ function miog:OpenEncounterJournal(difficultyID, journalInstanceID, encounterID,
 	EncounterJournal_OpenJournal(difficultyID, journalInstanceID, encounterID, sectionID, creatureID, itemID)
 end
 
+function miog:CanUpdateSecretStuff()
+	return not InCombatLockdown() and not C_InstanceEncounter.IsEncounterInProgress()
+end
+
+function miog:CanAccessTable(table)
+	return canaccesstable(table)
+
+end
+
+function miog:CanAccessValue(value)
+	return canaccessvalue(value)
+	
+end
+
 miog.refreshLastGroupTeleport = function(mapID)
-	if(not InCombatLockdown()) then
+	if(miog:CanUpdateSecretStuff()) then
 		local teleportMap = mapID or MIOG_CharacterSettings.lastGroupMap
 		local mapInfo = miog:GetMapInfo(teleportMap)
 		local teleportSpellID = miog.MAP_TELEPORTS[teleportMap]

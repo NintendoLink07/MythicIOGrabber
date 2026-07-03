@@ -283,13 +283,19 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.Raid40] = miog.ITEM_QUALITY_COLORS[2].color,
 	[DifficultyUtil.ID.PrimaryRaidNormal] = miog.ITEM_QUALITY_COLORS[2].color,
 	[DifficultyUtil.ID.PrimaryRaidHeroic] = miog.ITEM_QUALITY_COLORS[3].color,
-	[DifficultyUtil.ID.PrimaryRaidMythic] = miog.ITEM_QUALITY_COLORS[5].color,
+	[DifficultyUtil.ID.PrimaryRaidMythic] = miog.ITEM_QUALITY_COLORS[4].color,
 	[DifficultyUtil.ID.PrimaryRaidLFR] = miog.ITEM_QUALITY_COLORS[1].color,
-	[DifficultyUtil.ID.DungeonMythic] = miog.ITEM_QUALITY_COLORS[5].color,
+	[DifficultyUtil.ID.DungeonMythic] = miog.ITEM_QUALITY_COLORS[4].color,
 	[DifficultyUtil.ID.DungeonTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
 	[DifficultyUtil.ID.RaidTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
 	[DifficultyUtil.ID.RaidStory] = miog.ITEM_QUALITY_COLORS[1].color,
+	[DifficultyUtil.ID.RaidMythicFlexible] = miog.ITEM_QUALITY_COLORS[4].color,
 }
+
+function miog:GetColorMatchingDifficultyID(difficultyID)
+	return miog.DIFFICULTY_ID_TO_COLOR[difficultyID]
+
+end
 
 miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 	[DifficultyUtil.ID.DungeonNormal] = "N",
@@ -309,7 +315,12 @@ miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 	[DifficultyUtil.ID.DungeonTimewalker] = "TW",
 	[DifficultyUtil.ID.RaidTimewalker] = "TW",
 	[DifficultyUtil.ID.RaidStory] = "ST",
+	[DifficultyUtil.ID.RaidMythicFlexible] = "M",
 }
+
+function miog:ConvertDifficultyIDToShortName(difficultyID)
+	return miog.DIFFICULTY_ID_TO_SHORT_NAME[difficultyID]
+end
 
 miog.BETTER_DIFFICULTY_ORDER = {
 	[0] = 0,
@@ -335,7 +346,8 @@ miog.BETTER_DIFFICULTY_ORDER = {
 	[33] = 32,
 	[14] = 33,
 	[15] = 34,
-	[16] = 35,
+	[233] = 35,
+	[16] = 36,
 
 	--DELVE
 	[208] = 40
@@ -401,7 +413,7 @@ miog.CUSTOM_DIFFICULTY_ORDER = {
 	["M+"] = 5,
 }
 
-for i = 0, 250, 1 do -- https://wago.tools/db2/Difficulty
+for i = 0, 300, 1 do -- https://wago.tools/db2/Difficulty
 	local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID, isLFR, minGroupSize, maxGroupSize = GetDifficultyInfo(i)
 
 	if(name) then
@@ -1505,9 +1517,10 @@ miog.MAP_INFO = {
 			{icon = "interface/icons/inv_1207_achievement_raid_fungariangiant_fungalgiant.blp"},
 		},
 		achievementIDs = {
-			63237,
-			63240,
-			63241,
+			63233,
+			63234,
+			63235,
+			63236,
 		}
 	},
 }
@@ -1637,6 +1650,10 @@ miog.PVP_BRACKET_IDS_TO_INFO = {}
 
 for k, v in ipairs(miog.PVP_BRACKET_INFO) do
 	miog.PVP_BRACKET_IDS_TO_INFO[v.id] = v
+end
+
+function miog:GetPVPBacketInfo(id)
+	return miog.PVP_BRACKET_IDS_TO_INFO[id]
 end
 
 miog.CUSTOM_CATEGORY_ORDER = {
@@ -2673,9 +2690,11 @@ local function loadRawData()
 	for k, v in pairs(miog.PVP_BRACKET_INFO) do
 		if(loadHQData) then
 			v.vertical = MythicIO.GetBackgroundImage(v.fileName, true)
+			v.horizontal = MythicIO.GetBackgroundImage(v.fileName, false)
 		
 		else
 			v.vertical = miog.C.STANDARD_FILE_PATH .. "/backgrounds/pvp/vertical/" .. v.fileName .. ".png"
+			v.horizontal = miog.C.STANDARD_FILE_PATH .. "/backgrounds/pvp/horizontal/" .. v.fileName .. ".png"
 
 		end
 	end
@@ -3296,15 +3315,13 @@ miog.RACES = {
 	[37] = "raceicon128-mechagnome-male",
 	[52] = "raceicon128-dracthyr-male",
 	[70] = "raceicon128-dracthyr-male",
+	[75] = "raceicon128-dracthyrvisage-male",
+	[76] = "raceicon128-dracthyrvisage-male",
+	[84] = "raceicon-earthen-male",
+	[85] = "raceicon-earthen-male",
+	[86] = "raceicon128-haranir-male",
+	[91] = "raceicon128-haranir-male",
 
-}
-
-miog.SEARCH_LANGUAGES = {
-	itIT=true,
-	ruRU=true,
-	frFR=true,
-	esES=true,
-	deDE=true,
 }
 
 miog.COLOR_BREAKPOINTS = {
@@ -3315,24 +3332,6 @@ miog.COLOR_BREAKPOINTS = {
 	[4] = {breakpoint = 2800, hex = "ffa335ee", r = 0.64, g = 0.21, b = 0.93},
 	[5] = {breakpoint = 3500, hex = "ffff8000", r = 1, g = 0.5, b = 0},
 	[6] = {breakpoint = 4200, hex = "ffe6cc80", r = 0.9, g = 0.8, b = 0.5},
-}
-
-miog.PLAYSTYLE_STRINGS = {
-	mZero1 = "Standard",
-	mZero2 = "Learning/Progression",
-	mZero3 = "Quick Clear",
-
-	mPlus1 = "Standard",
-	mPlus2 = "Completion",
-	mPlus3 = "Beat Timer",
-
-	raid1 = "Standard",
-	raid2 = "Learning/Progression",
-	raid3 = "Quick Clear",
-	
-	pvp1 = "Earn Conquest",
-	pvp2 = "Learning",
-	pvp3 = "Increase Rating"
 }
 
 miog.ACTIVITY_BACKGROUNDS = {

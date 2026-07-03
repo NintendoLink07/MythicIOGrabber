@@ -89,7 +89,7 @@ end
 function AppViewer:AddApplicant(applicantID, activityID)
 	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
 
-	if(applicantData) then
+	if(applicantData and miog:CanAccessValue(applicantData.comment)) then
 		local groupData = {}
 
 		local parent
@@ -163,7 +163,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 
 		if(allDataAvailable) then
 			if(multipleMembers) then
-				local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / applicantData.numMembers, overallSecondary / applicantData.numMembers, overallRole / applicantData.numMembers, overallItemLevel / applicantData.numMembers
+				--local averagePrimary, averageSecondary, averageRole, averageItemLevel = overallPrimary / applicantData.numMembers, overallSecondary / applicantData.numMembers, overallRole / applicantData.numMembers, overallItemLevel / applicantData.numMembers
 
 				parent = treeDataProvider:Insert({
 					template = "MIOG_AppViewerApplicantMultiMemberTemplate",
@@ -321,7 +321,7 @@ function AppViewer:OnEvent(event, ...)
 
 		self:RetrieveAndSetEntryInfo()
 
-    elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then
+	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then
 		local newEntry, withData = ...
 
 		if(withData) then
@@ -373,7 +373,7 @@ function AppViewer:OnEvent(event, ...)
 
 		self.ActivityBar.Delist:SetEnabled(visible)
 		self.ActivityBar.Edit:SetEnabled(visible)
-    end
+	end
 end
 
 local registered = false
@@ -383,6 +383,8 @@ function AppViewer:OnShow()
 		ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ApplicationViewerScrollBar)
 		registered = true
 	end
+
+	self:RefreshApplicantList()
 end
 
 function AppViewer:OnLoad()

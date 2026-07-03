@@ -7,60 +7,6 @@ local activityIndices = {
 	Enum.WeeklyRewardChestThresholdType.World, -- world/delves
 }
 
---rewrite category buttons for correct filters ?!
-local function createCategoryButtons(categoryID, type, rootDescription)
-	local categoryInfo = C_LFGList.GetLfgCategoryInfo(categoryID)
-
-	for i = 1, categoryInfo.separateRecommended and 2 or 1, 1 do
-		local categoryButton = rootDescription:CreateButton(i == 1 and categoryInfo.name or LFGListUtil_GetDecoratedCategoryName(categoryInfo.name, Enum.LFGListFilter.NotRecommended, false), function()
-			--local filters = i == 2 and categoryInfo.separateRecommended and Enum.LFGListFilter.NotRecommended or categoryID == 1 and 4 or Enum.LFGListFilter.Recommended
-			local filters = (categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) and Enum.LFGListFilter.PvP or categoryInfo.separateRecommended and (i == 1 and Enum.LFGListFilter.Recommended or i == 2 and Enum.LFGListFilter.NotRecommended) or 0
-			
-			LFGListFrame.CategorySelection.selectedCategory = categoryID
-			LFGListFrame.CategorySelection.selectedFilters = filters
-
-			if(type == "search") then
-				if(LFGListFrame.CategorySelection.selectedCategory ~= categoryID) then
-					LFGListSearchPanel_Clear(LFGListFrame.SearchPanel)
-
-				end
-
-				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, categoryID, filters or 0, LFGListFrame.baseFilters)
-				LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
-
-				if(not dontSearch) then
-					LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
-
-				else
-					miog.SearchPanel.Status:Hide()
-
-				end
-			else
-				LFGListEntryCreation_Show(LFGListFrame.EntryCreation, LFGListFrame.baseFilters, categoryID, filters);
-
-			end
-	
-			if(miog.pveFrame2.selectedTabFrame) then
-				miog.pveFrame2.selectedTabFrame:Hide()
-			end
-	
-			miog.pveFrame2.TabFramesPanel.MainTab:Show()
-			miog.pveFrame2.selectedTabFrame = miog.pveFrame2.TabFramesPanel.MainTab
-		end)
-
-		categoryButton:SetTooltip(function(tooltip, elementDescription)
-			local canUse, failureReason = C_LFGInfo.CanPlayerUsePremadeGroup();
-
-			if(not canUse) then
-				GameTooltip_SetTitle(tooltip, failureReason);
-
-			end
-		end)
-
-		categoryButton:SetEnabled(C_LFGInfo.CanPlayerUsePremadeGroup())
-	end
-end
-
 local function anchorNewScrollBar(tab)
 	local pveFrame2 = miog.pveFrame2
 
@@ -87,7 +33,7 @@ local function anchorNewScrollBar(tab)
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.GroupManagerScrollBar
 			
 		elseif(tab == 3) then
-			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressOverviewScrollBar
+			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.ProgressCheckScrollBar
 
 		elseif(tab == 4) then
 			pveFrame2.CurrentScrollBar = pveFrame2.ScrollBarArea.TeleportsScrollBar
@@ -111,6 +57,94 @@ local function anchorNewScrollBar(tab)
 		pveFrame2.CurrentScrollBar:SetPoint("TOPLEFT")
 		pveFrame2.CurrentScrollBar:SetPoint("BOTTOMRIGHT", pveFrame2.ScrollBarArea.Resize, "TOPRIGHT")
 		pveFrame2.CurrentScrollBar:Show()
+	end
+end
+
+local function updateVaultProgress()
+	for k, v in ipairs(activityIndices) do
+		local activities = C_WeeklyRewards.GetActivities(v)
+
+		if(activities and #activities > 0) then
+			local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
+			
+			currentFrame:SetOnlyActivities(activities)
+			local farthestActivity = currentFrame:GetActivityForProgressInfo()
+
+			currentFrame.ThresholdBar:SetMinMaxValues(0, 100)
+			currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
+
+			local ilvls = currentFrame:GetAllItemlevels()
+
+			currentFrame.ThresholdBar:SetValue(0)
+			local currentValue
+			
+			local all = farthestActivity.progress >= farthestActivity.threshold
+			
+			for i = 1, farthestActivity.threshold, 1 do
+				local progressFrameString = "Progress" .. i
+				local singleFrame = currentFrame[progressFrameString]
+				singleFrame:SetParent(currentFrame.ThresholdBar)
+				singleFrame.progressFrameIndex = i
+
+				local isCompleted = farthestActivity.progress >= i
+				local activityIndex = activities[1].threshold == i and 1 or activities[2].threshold == i and 2 or activities[3].threshold == i and 3
+				local activityCompleted = isCompleted and activityIndex
+
+				local checkmark = singleFrame.Checkmark
+				local text = singleFrame.Text
+
+				if(activityCompleted) then
+					local ilvl = tremove(ilvls, 1)
+					text:SetText(ilvl and WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)) or "")
+					text:SetParent(currentFrame.ThresholdBar)
+					text:Show()
+
+					checkmark:SetParent(currentFrame.ThresholdBar)
+					checkmark:Show()
+
+				else
+					text:Hide()
+					checkmark:Hide()
+
+				end
+
+				singleFrame.Ring:SetShown(activityIndex)
+				singleFrame.Diamond:SetShown(not activityIndex)
+				singleFrame.Glow:SetShown(not activityIndex and isCompleted)
+
+				if(isCompleted) then
+					if(not currentValue) then
+						currentValue = v == 3 and 64 or 50
+
+					else
+						currentValue = currentValue + 7.333
+
+					end
+
+					currentFrame.ThresholdBar:SetValue(currentValue)
+					singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
+
+				else
+					singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
+
+				end
+			end
+
+			if(all) then
+				currentFrame.ThresholdBar.BarFillGlow:Show()
+				currentFrame.ThresholdBar.BarBackgroundGlow:Show()
+				currentFrame.ThresholdBar.BarBorderGlow:Show()
+				currentFrame.ThresholdBar.Checkmark:Show()
+				currentFrame.ThresholdBar.End:Hide()
+
+			elseif(activities[1].progress > 0) then
+				currentFrame.ThresholdBar.End:ClearAllPoints()
+				currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
+				currentFrame.ThresholdBar.End:Show()
+			end
+
+			currentFrame:Show()
+		end
 	end
 end
 
@@ -167,11 +201,6 @@ local function createPVEFrameReplacement()
 
 			setup = true
 		end
-		
-		local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
-		C_Calendar.SetAbsMonth(currentCalendarTime.month, currentCalendarTime.year);
-
-		C_Calendar.OpenCalendar();
 
 		miog.MainTab.QueueInformation.LastGroup.Text:SetText("Last group: " .. MIOG_CharacterSettings.lastGroup)
 		miog.refreshLastGroupTeleport()
@@ -208,98 +237,8 @@ local function createPVEFrameReplacement()
 					miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetValue(0)
 				end
 			end
- 
-			for k, v in ipairs(activityIndices) do
-				local activities = C_WeeklyRewards.GetActivities(v)
-
-				if(activities and #activities > 0) then
-					local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
-					currentFrame:SetInfo(activities)
-
-					local farthestActivity = currentFrame:GetFarthestActivity(true)
-
-					local numOfCompletedActivities = currentFrame:GetNumOfCompletedActivities()
-
-					local currentColor = numOfCompletedActivities == 3 and miog.CLRSCC.green or numOfCompletedActivities == 2 and miog.CLRSCC.yellow or numOfCompletedActivities == 1 and miog.CLRSCC.orange or miog.CLRSCC.red
-					local dimColor = {CreateColorFromHexString(currentColor):GetRGB()}
-					dimColor[4] = 0.1
-
-					currentFrame.ThresholdBar:SetMinMaxValues(0, 100)
-					currentFrame.ThresholdBar.LeftText:SetText(k == 1 and RAIDS or k == 2 and DUNGEONS or k == 3 and WORLD)
-
-					local ilvls = currentFrame:GetAllItemlevels()
-
-					currentFrame.ThresholdBar:SetValue(0)
-					local currentValue
-					
-					local all = farthestActivity.progress >= farthestActivity.threshold
-					
-					for i = 1, farthestActivity.threshold, 1 do
-						local progressFrameString = "Progress" .. i
-						local singleFrame = currentFrame[progressFrameString]
-						singleFrame:SetParent(currentFrame.ThresholdBar)
-						singleFrame.progressFrameIndex = i
-
-						local isCompleted = farthestActivity.progress >= i
-						local activityIndex = activities[1].threshold == i and 1 or activities[2].threshold == i and 2 or activities[3].threshold == i and 3
-						local activityCompleted = isCompleted and activityIndex
-
-						local checkmark = singleFrame.Checkmark
-						local text = singleFrame.Text
-
-						if(activityCompleted) then
-							local ilvl = tremove(ilvls, 1)
-							text:SetText(ilvl and WrapTextInColorCode(ilvl, miog.gearing.getColorForItemlevel(ilvl)) or "")
-							text:SetParent(currentFrame.ThresholdBar)
-							text:Show()
-
-							checkmark:SetParent(currentFrame.ThresholdBar)
-							checkmark:Show()
-
-						else
-							text:Hide()
-							checkmark:Hide()
-
-						end
-
-						singleFrame.Ring:SetShown(activityIndex)
-						singleFrame.Diamond:SetShown(not activityIndex)
-						singleFrame.Glow:SetShown(not activityIndex and isCompleted)
-
-						if(isCompleted) then
-							if(not currentValue) then
-								currentValue = v == 3 and 64 or 50
-
-							else
-								currentValue = currentValue + 7.333
-
-							end
-
-							currentFrame.ThresholdBar:SetValue(currentValue)
-							singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(false)
-
-						else
-							singleFrame[activityIndex and "Ring" or "Diamond"]:SetDesaturated(true)
-
-						end
-					end
-
-					if(all) then
-						currentFrame.ThresholdBar.BarFillGlow:Show()
-						currentFrame.ThresholdBar.BarBackgroundGlow:Show()
-						currentFrame.ThresholdBar.BarBorderGlow:Show()
-						currentFrame.ThresholdBar.Checkmark:Show()
-						currentFrame.ThresholdBar.End:Hide()
-
-					elseif(activities[1].progress > 0) then
-						currentFrame.ThresholdBar.End:ClearAllPoints()
-						currentFrame.ThresholdBar.End:SetPoint("RIGHT", currentFrame["Progress" .. farthestActivity.progress], "RIGHT", 3, 1)
-						currentFrame.ThresholdBar.End:Show()
-					end
-
-					currentFrame:Show()
-				end
-			end
+			
+			updateVaultProgress()
 		else
 			for k, v in ipairs(activityIndices) do
 				local currentFrame = miog.MainTab.Information["VaultProgress" .. k]
@@ -578,12 +517,6 @@ local function createPVEFrameReplacement()
 
 		end
 	end)
-
-	pveFrame2.TabFramesPanel.NewProgress:SetupInitialCharacterData(MIOG_NewSettings.progressData)
-	pveFrame2.TabFramesPanel.NewProgress.Overview:ConnectSetting(MIOG_NewSettings.progressData)
-	pveFrame2.TabFramesPanel.NewProgress.MythicPlus:ConnectSetting(MIOG_NewSettings.progressData)
-	pveFrame2.TabFramesPanel.NewProgress.Raid:ConnectSetting(MIOG_NewSettings.progressData)
-	pveFrame2.TabFramesPanel.NewProgress.PVP:ConnectSetting(MIOG_NewSettings.progressData)
 
 	miog.pveFrame2.TitleBar.MoreButton.Text:SetText("More")
 end

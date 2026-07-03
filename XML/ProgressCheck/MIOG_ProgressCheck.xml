@@ -2,37 +2,51 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_ProgressCheck" mixin="ProgressCheckMixin" virtual="true">
         <Frames>
-            <!--<Frame parentKey="HeaderContainer">
-                <Size y="20"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT"/>
-                    <Anchor point="TOPRIGHT"/>
-                </Anchors>
-            </Frame>!-->
+            <EventFrame parentKey="ScrollBar" inherits="MIOG_MinimalHorizontalScrollBarTemplate">
+                <Size y="16" />
 
-            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+            </EventFrame>
+
+            <Frame parentKey="InfoColumn" inherits="MIOG_ProgressCheckCharacterOverviewInfoColumnTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT"/>
-                    <Anchor point="BOTTOMRIGHT" />
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBar" relativePoint="TOPLEFT"/>
                 </Anchors>
             </Frame>
 
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" />
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InfoColumn" relativePoint="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ScrollBar" relativePoint="TOPRIGHT"/>
                 </Anchors>
-            </EventFrame>
+            </Frame>
         </Frames>
 
+        <Layers>
+			<Layer level="BORDER">
+				<Texture parentKey="Background1" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background2" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background3" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background4" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background5" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background6" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background7" horizTile="true" vertTile="true"/>
+				<Texture parentKey="Background8" horizTile="true" vertTile="true"/>
+			</Layer>
+        </Layers>
+
         <Scripts>
+            <OnEvent method="OnEvent" />  
             <OnLoad method="OnLoad" />  
             <OnShow method="OnShow" />
         </Scripts>
     </Frame>
 
     <Frame name="MIOG_ProgressCheckHeaderTemplate" mixin="ProgressCheckHeaderMixin" virtual="true">
-        <Size x="100" y="16"/>
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" setAllPoints="true"/>
@@ -40,17 +54,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="MIOG_ProgressCheckRowTemplate" mixin="ProgressCheckRowMixin" virtual="true">
-        <Size x="100" y="16"/>
-        <Layers>
-            <Layer level="BACKGROUND">
-				<Texture parentKey="Background" setAllPoints="true" />
-            </Layer>
-        </Layers>
-    </Frame>
-
     <Frame name="MIOG_ProgressCheckCellTemplate" mixin="ProgressCheckCellMixin" virtual="true">
-        <Size y="16"/>
         <Layers>
             <Layer level="OVERLAY">
                 <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" setAllPoints="true"/>

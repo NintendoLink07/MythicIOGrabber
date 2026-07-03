@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.9.16] - 2026-07-03
+
+### Changed
+
+- [Progress] The progress frame has been recoded to be more accurate and performance and all submenus have been redesigned so the design is the same across all submenus.
+
+- [MainFrame] The vault progress bars have been recoded so they are as accurate as the [Progress] vault progress frames.
+
+### Fixed
+
+- [UpgradeFinder] An error has been resolved when a character has no item equipped in a slot.
+
+- More secret values fixes.
+
+
+
+
 ## [3.9.15a] - 2026-06-19
 
 ### Added
@@ -5015,7 +5032,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.15a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.16..HEAD
+[3.9.16]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.16
 [3.9.15a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15a
 [3.9.15]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15
 [3.9.14]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.14

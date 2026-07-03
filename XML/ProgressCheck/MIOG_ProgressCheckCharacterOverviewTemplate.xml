@@ -1,10 +1,101 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_ProgressCheckCharacterOverviewTemplate" mixin="ProgressCheckCharacterOverviewMixin" virtual="true">
+    <Frame name="MIOG_ProgressCheckCharacterOverviewTemplate" virtual="true">
+        <Frames>
+            <Frame parentKey="Header" inherits="MIOG_ProgressCheckCharacterOverviewHeaderTemplate">
+                <Size y="150" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+            </Frame>
 
-        <Scripts>
-            <OnLoad method="OnLoad" />
-        </Scripts>
+            <Frame parentKey="CellList" inherits="VerticalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="minimumWidth" value="112" type="number" />
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Itemlevel" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Score" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Resilient" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Normal" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Heroic" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Mythic" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="6" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Raids" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="8" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="Dungeons" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="9" type="number" />
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentKey="World" parentArray="cellTable" inherits="MIOG_ProgressCheckCharacterOverviewVaultCellTemplate">
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="10" type="number" />
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="DividerLeft" atlas="delves-dashboard-bar-divider-complete">
+                    <Size x="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="7" y="1"/>
+                        <Anchor point="BOTTOMLEFT" x="7" y="-20"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="DividerRight" atlas="delves-dashboard-bar-divider-complete">
+                    <Size x="2" />
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" x="-8" y="1"/>
+                        <Anchor point="BOTTOMRIGHT" x="-8" y="-20"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Frame>
 </Ui>
 

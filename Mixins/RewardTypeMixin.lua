@@ -60,6 +60,7 @@ function RewardTypeMixin:SetInfo(activities)
         self.activities = activities
 
         self:SetHighestCurrentActivity()
+
     end
 end
 
@@ -114,57 +115,59 @@ function RewardTypeMixin:GetHighestItemlevel()
 end
 
 function RewardTypeMixin:AddUpgradeDataToTooltip(enum)
-    local farthestCompletedActivity = self:GetFarthestActivity()
-    local currentDifficultyID = farthestCompletedActivity.level;
-    local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(farthestCompletedActivity.activityTierID, farthestCompletedActivity.level);
+    if(not self.frameType == "progress") then
+        local farthestCompletedActivity = self:GetFarthestActivity()
+        local currentDifficultyID = farthestCompletedActivity.level;
+        local hasData, nextActivityTierID, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(farthestCompletedActivity.activityTierID, farthestCompletedActivity.level);
 
-    local itemLink, upgradeItemLink
-    
-    if(self.info.exampleLinks) then
-        itemLink, upgradeItemLink = self.info.exampleLinks[farthestCompletedActivity.id].item, self.info.exampleLinks[farthestCompletedActivity.id].upgrade
+        local itemLink, upgradeItemLink
         
-    else
-        itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(farthestCompletedActivity.id);
-
-    end
-    
-	local itemLevel, upgradeItemLevel, preview, sparse;
-	if itemLink then
-		itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink);
-	end
-	if upgradeItemLink then
-		upgradeItemLevel, preview, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
-	end
-
-    if hasData then
-        upgradeItemLevel = nextItemLevel;
-    else
-        if(enum == Enum.WeeklyRewardChestThresholdType.Activities) then
-            nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(farthestCompletedActivity.level);
-
+        if(self.info.exampleLinks) then
+            itemLink, upgradeItemLink = self.info.exampleLinks[farthestCompletedActivity.id].item, self.info.exampleLinks[farthestCompletedActivity.id].upgrade
+            
         else
-            nextLevel = farthestCompletedActivity.level + 1;
+            itemLink, upgradeItemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(farthestCompletedActivity.id);
 
         end
-    end
+        
+        local itemLevel, upgradeItemLevel, preview, sparse;
+        if itemLink then
+            itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink);
+        end
+        if upgradeItemLink then
+            upgradeItemLevel, preview, sparse = C_Item.GetDetailedItemLevelInfo(upgradeItemLink);
+        end
 
-    if upgradeItemLevel then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip);
-        GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
-
-        if(enum == Enum.WeeklyRewardChestThresholdType.Activities) then
-            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, nextLevel));
-
-        elseif(enum == Enum.WeeklyRewardChestThresholdType.Raid) then
-            local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
-            if nextDifficultyID then
-                local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
-            
-                GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
-            end
+        if hasData then
+            upgradeItemLevel = nextItemLevel;
         else
-            GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_WORLD, nextLevel));
+            if(enum == Enum.WeeklyRewardChestThresholdType.Activities) then
+                nextLevel = WeeklyRewardsUtil.GetNextMythicLevel(farthestCompletedActivity.level);
 
+            else
+                nextLevel = farthestCompletedActivity.level + 1;
+
+            end
+        end
+
+        if upgradeItemLevel then
+            GameTooltip_AddBlankLineToTooltip(GameTooltip);
+            GameTooltip_AddColoredLine(GameTooltip, string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel), GREEN_FONT_COLOR);
+
+            if(enum == Enum.WeeklyRewardChestThresholdType.Activities) then
+                GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, nextLevel));
+
+            elseif(enum == Enum.WeeklyRewardChestThresholdType.Raid) then
+                local nextDifficultyID = DifficultyUtil.GetNextPrimaryRaidDifficultyID(currentDifficultyID);
+                if nextDifficultyID then
+                    local difficultyName = DifficultyUtil.GetDifficultyName(nextDifficultyID);
+                
+                    GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_RAID, difficultyName));
+                end
+            else
+                GameTooltip_AddHighlightLine(GameTooltip, string.format(WEEKLY_REWARDS_COMPLETE_WORLD, nextLevel));
+
+            end
         end
     end
 end
@@ -193,7 +196,7 @@ function RewardTypeMixin:HasHighestRewardBeenUnlocked(info)
     return false
 end
 
-function RewardTypeMixin:OnEnter(childIndex)
+function RewardTypeMixin:OnEnter()
     if(self.info) then
         local farthestCompletedActivity = self:GetFarthestActivity()
 
@@ -201,7 +204,7 @@ function RewardTypeMixin:OnEnter(childIndex)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip_SetTitle(GameTooltip, GREAT_VAULT_REWARDS);
 
-            local hasRewards = self.frameType == "progress" and self.info.hasRewards or self.frameType ~= "progress" and C_WeeklyRewards.HasAvailableRewards() or false;
+            local hasRewards = self.frameType == "progress" and self.info.hasAvailableRewards or self.frameType ~= "progress" and C_WeeklyRewards.HasAvailableRewards() or false;
             --local canShowPreviewItem = self.unlocked and not C_WeeklyRewards.CanClaimRewards();
             local numOfCompletedActivities = self:GetNumOfCompletedActivities()
 
@@ -213,6 +216,7 @@ function RewardTypeMixin:OnEnter(childIndex)
             local farthestActivity = self:GetFarthestActivity(true)
 
             local highestItem, highestUpgrade
+            
             if(self.frameType == "progress" and self.info.exampleLinks) then
                 highestItem, highestUpgrade = self.info.exampleLinks[self.info.id].item, self.info.exampleLinks[self.info.id].upgrade
 
@@ -332,7 +336,7 @@ function RewardTypeMixin:OnEnter(childIndex)
                     end
                 end
 
-                local encounters = self.frameType == "progress" and self.info.raidEncounterInfo and self.info.raidEncounterInfo[self.info.index] or self.frameType ~= "progress" and C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
+                local encounters = self.frameType == "progress" and self.info.raidEncounterInfo or self.frameType ~= "progress" and C_WeeklyRewards.GetActivityEncounterInfo(self.info.type, self.info.index);
                 if encounters then
                     GameTooltip_AddBlankLineToTooltip(GameTooltip);
                     table.sort(encounters, EncountersSort);
@@ -419,7 +423,6 @@ function RewardTypeMixin:OnEnter(childIndex)
                 end
 
                 local itemLevel
-
 
                 if(item) then
                     itemLevel = C_Item.GetDetailedItemLevelInfo(item)

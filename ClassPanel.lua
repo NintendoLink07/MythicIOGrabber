@@ -4,7 +4,7 @@ local wticc = WrapTextInColorCode
 local classColors = {}
 
 local function updateGroupClassData()
-	if(not InCombatLockdown()) then
+	if(miog:CanUpdateSecretStuff()) then
 		local classCount = {
 			[1] = 0,
 			[2] = 0,

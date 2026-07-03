@@ -3,6 +3,8 @@ _G.MythicIOGrabber = miog
 
 --miog.openRaidLib = LibStub:GetLibrary("LibOpenRaid-1.0")
 
+local funcList = {}
+
 miog.debug = {}
 
 miog.referencePVPButtons = {}
@@ -102,6 +104,15 @@ local function mainEvents(_, event, ...)
 			miog.MainFrame:Show()
 
 		end
+
+		if(miog:CanUpdateSecretStuff()) then
+			for k, v in pairs(funcList) do
+				v[1]()
+
+				funcList[k] = nil
+			end
+		end
+		
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo()) then
 			if(miog.EntryCreation and not miog.EntryCreation:IsVisible()) then
@@ -135,6 +146,12 @@ local function mainEvents(_, event, ...)
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
 	end
+end
+
+function miog:CallAfterCombat(id, func)
+	funcList[id] = funcList[id] or {}
+	funcList[id][1] = func
+
 end
 
 
@@ -300,6 +317,7 @@ local function handler(msg, editBox)
 
 	end
 end
+
 SlashCmdList["MIOG"] = handler
 
 local eventReceiver = CreateFrame("Frame", "MythicIOGrabber_EventReceiver")

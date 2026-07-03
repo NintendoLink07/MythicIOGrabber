@@ -760,7 +760,7 @@ local function sortActivityGroup(k1, k2)
 end
 
 local function refreshActivityFilterColor()
-	local lockouts = miog:GetMainSetting("progressData", "characters", UnitGUID("player"), "lockouts")
+	local lockouts = miog:GetMainSetting("progress", "characters", UnitGUID("player"), "lockouts", "list")
 	local _, categoryID = getCurrentPanelAndCategoryID()
 
 	local isPvE = categoryID == 2 or categoryID == 3
@@ -768,13 +768,13 @@ local function refreshActivityFilterColor()
 	local done = {}
 
 	for k, v in ipairs(lockouts) do
-		done[v.journalInstanceID] = true
+		done[v.journalInstanceID] = v.difficultyID
 
 	end
 
 	local difficultySetting = retrieveSetting("difficulty")
 
-	local isMythicDifficulty = isPvE and (difficultySetting.id == 23 or difficultySetting.id == 16)
+	local isMythicDifficulty = isPvE and (categoryID == 2 and difficultySetting.id == 23 or categoryID == 3 and difficultySetting.id == 16)
 
 	local filterManager = miog.FilterManager
 

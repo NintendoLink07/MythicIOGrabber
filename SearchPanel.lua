@@ -309,108 +309,6 @@ function NearestValue(number)
     return index, closest
 end
 
-local function getSortCriteriaForSearchResult(resultID)
-	local table
-	local isRaid, isPvP, isDungeon, isOther
-
-	if(C_LFGList.HasSearchResultInfo(resultID)) then
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-
-		if(searchResultInfo and not searchResultInfo.hasSelf) then
-			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
-
-			--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
-				isRaid = activityInfo.categoryID == 3
-				isPvP = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
-				isDungeon = activityInfo.categoryID == 2
-				isOther = not isRaid and not isPvP and not isDungeon
-				
-			--end
-
-			local mapID = activityInfo.mapID
-
-			local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
-
-			local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
-
-			local playerDifficultyData
-			
-			if(appStatus == "applied" or status ~= false) then
-				local primarySortAttribute, secondarySortAttribute
-
-				local nameTable
-
-				if(searchResultInfo.leaderName) then
-					nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
-
-				end
-
-				if(nameTable and not nameTable[2]) then
-					nameTable[2] = GetNormalizedRealmName()
-
-					if(nameTable[2]) then
-						searchResultInfo.leaderName = nameTable[1] .. "-" .. nameTable[2]
-
-					end
-				end
-
-				if(isDungeon or isOther) then
-					primarySortAttribute = searchResultInfo.leaderOverallDungeonScore or 0
-					secondarySortAttribute = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
-
-				elseif(isRaid) then
-					if(searchResultInfo.leaderName) then
-							primarySortAttribute = playerDifficultyData[1] and playerDifficultyData[1].weight or 0
-							secondarySortAttribute = playerDifficultyData[2] and playerDifficultyData[2].weight or 0
-
-						if(playerDifficultyData) then
-							primarySortAttribute = playerDifficultyData[1].weight or 0
-							secondarySortAttribute = playerDifficultyData[2].weight or 0
-
-						else
-							primarySortAttribute = 0
-							secondarySortAttribute = 0
-
-						end
-
-					else
-						primarySortAttribute = 0
-						secondarySortAttribute = 0
-
-					end
-
-				elseif(isPvP) then
-					local pvpDataExists = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
-
-					if(pvpDataExists) then
-						primarySortAttribute = searchResultInfo.leaderPvpRatingInfo[1].rating
-						secondarySortAttribute = searchResultInfo.leaderPvpRatingInfo[1].tier
-						
-					else
-						primarySortAttribute = 0
-						secondarySortAttribute = 0
-
-					end
-
-				end
-
-				table ={
-					name = searchResultInfo.leaderName,
-					primary = primarySortAttribute,
-					appStatus = appStatus,
-					secondary = secondarySortAttribute,
-					index = resultID,
-					resultID = resultID,
-					age = searchResultInfo.age,
-				}
-			end
-		end
-	end
-
-	return table
-end
-
-
 local function createDataProviderWithUnsortedData()
 	local actualResults, resultTable = C_LFGList.GetFilteredSearchResults()
 
@@ -427,7 +325,7 @@ local function createDataProviderWithUnsortedData()
 		if(C_LFGList.HasSearchResultInfo(resultID)) then
 			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
 
-			if(searchResultInfo) then
+			if(searchResultInfo and miog:CanAccessTable(searchResultInfo.activityIDs)) then
 				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 
 				--if(LFGListFrame.SearchPanel.categoryID ~= activityInfo.categoryID) then
@@ -545,7 +443,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 	if(C_LFGList.HasSearchResultInfo(data.resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
 
-		if(searchResultInfo.leaderName) then
+		if(miog:CanAccessTable(searchResultInfo.activityIDs) and miog:CanAccessValue(searchResultInfo.numBNetFriends) and searchResultInfo.leaderName) then
 			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 			
 			local isQuestCategory = activityInfo.categoryID == 1
@@ -695,221 +593,224 @@ local function insertRoleMembersOrDummy(array, result)
 end
 
 local function updateScrollBoxFrame(frame, data)
-	if(C_LFGList.HasSearchResultInfo(data.resultID) and not InCombatLockdown()) then
+	if(C_LFGList.HasSearchResultInfo(data.resultID)) then
 		local searchResultInfo = C_LFGList.GetSearchResultInfo(data.resultID)
-		local activityID = searchResultInfo.activityIDs[1]
-		local activityInfo = miog:GetActivityInfo(activityID)
-		local currentFrame = frame
-		--local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
-		currentFrame.resultID = data.resultID
-		
-		currentFrame.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
-		currentFrame.difficultyID = activityInfo.difficultyID
-		currentFrame.instanceID = instanceID
 
-		if(currentFrame.BasicInformation.Age.ageTicker) then
-			currentFrame.BasicInformation.Age.ageTicker:Cancel()
+		if(searchResultInfo and miog:CanAccessTable(searchResultInfo.activityIDs)) then
+			local activityID = searchResultInfo.activityIDs[1]
+			local activityInfo = miog:GetActivityInfo(activityID)
+			local currentFrame = frame
+			--local instanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
+			currentFrame.resultID = data.resultID
+			
+			currentFrame.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
+			currentFrame.difficultyID = activityInfo.difficultyID
+			currentFrame.instanceID = instanceID
 
-		end
+			if(currentFrame.BasicInformation.Age.ageTicker) then
+				currentFrame.BasicInformation.Age.ageTicker:Cancel()
 
-		currentFrame.CategoryInformation.Comment:SetShown(not searchResultInfo.comment == "")
-
-		local categoryID = activityInfo.categoryID
-		local isRaid = categoryID == 3
-		local isDungeon = categoryID == 2
-
-		local roleCount = {
-			["TANK"] = 0,
-			["HEALER"] = 0,
-			["DAMAGER"] = 0,
-		}
-
-		if(isRaid) then
-			for i = 1, searchResultInfo.numMembers, 1 do
-				local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
-
-				if(not info.assignedRole) then
-					info.assignedRole = "DAMAGER"
-					
-				end
-
-				roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 			end
 
-			local bossPanel = currentFrame.BossPanel
-			local newActivity = bossPanel.activityID ~= activityID
-			
-			bossPanel.activityID = activityID
+			currentFrame.CategoryInformation.Comment:SetShown(not searchResultInfo.comment == "")
 
-			local bossData = activityInfo.bosses
+			local categoryID = activityInfo.categoryID
+			local isRaid = categoryID == 3
+			local isDungeon = categoryID == 2
 
-			if(bossData) then
-				local bossIcons = activityInfo.bossIcons
-				local bossIndex = activityInfo.numOfBosses
-				local numOfBosses
+			local roleCount = {
+				["TANK"] = 0,
+				["HEALER"] = 0,
+				["DAMAGER"] = 0,
+			}
 
-				local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
-				local encountersDefeated = {}
+			if(isRaid) then
+				for i = 1, searchResultInfo.numMembers, 1 do
+					local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
 
-				if(encounterInfo) then
-					for _, v in ipairs(encounterInfo) do
-						encountersDefeated[v] = true
-
+					if(not info.assignedRole) then
+						info.assignedRole = "DAMAGER"
+						
 					end
+
+					roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
 				end
 
+				local bossPanel = currentFrame.BossPanel
+				local newActivity = bossPanel.activityID ~= activityID
 				
-				bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
+				bossPanel.activityID = activityID
 
-				numOfBosses = 20
+				local bossData = activityInfo.bosses
 
-				for i = numOfBosses, 1, -1 do
-					local bossFrame = bossPanel["Boss" .. i]
-					local bossInfo = bossData[bossIndex]
+				if(bossData) then
+					local bossIcons = activityInfo.bossIcons
+					local bossIndex = activityInfo.numOfBosses
+					local numOfBosses
+
+					local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(data.resultID)
+					local encountersDefeated = {}
+
+					if(encounterInfo) then
+						for _, v in ipairs(encounterInfo) do
+							encountersDefeated[v] = true
+
+						end
+					end
+
 					
-					bossFrame:SetShown(bossInfo)
+					bossPanel:SetShown(isRaid and activityInfo.difficultyID and activityInfo.difficultyID > 0)
 
-					if(bossInfo) then
-						local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+					numOfBosses = 20
 
-						bossFrame.Icon:SetDesaturated(bossDefeated)
-						bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+					for i = numOfBosses, 1, -1 do
+						local bossFrame = bossPanel["Boss" .. i]
+						local bossInfo = bossData[bossIndex]
+						
+						bossFrame:SetShown(bossInfo)
 
-						if(newActivity) then
-							if(bossIcons and bossIcons[i]) then
-								bossFrame.Icon:SetTexture(bossIcons[i].icon)
-								
-							else
-								SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+						if(bossInfo) then
+							local bossDefeated = encountersDefeated[bossInfo.name] or encountersDefeated[bossInfo.altName]
+
+							bossFrame.Icon:SetDesaturated(bossDefeated)
+							bossFrame.Border:SetColorTexture((bossDefeated and miog.CLRSCC.colors.red or miog.CLRSCC.colors.green):GetRGBA())
+
+							if(newActivity) then
+								if(bossIcons and bossIcons[i]) then
+									bossFrame.Icon:SetTexture(bossIcons[i].icon)
+									
+								else
+									SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
+
+								end
 
 							end
 
+							bossIndex = bossIndex - 1
+
+						end
+					end
+				end
+			else
+				local memberPanel = currentFrame.MemberPanel
+
+				memberPanel:SetShown(true)
+
+				currentFrame.Keyrange:SetShown(isDungeon)
+
+				local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
+				
+				local arrays = {
+					["TANK"] = {},
+					["DAMAGER"] = {},
+					["HEALER"] = {},
+				}
+
+				local roleAdded = {
+					["TANK"] = false,
+					["HEALER"] = false,
+					["DAMAGER"] = false,
+				}
+
+				data.isLeaverGroup = false
+
+				for i = 1, groupLimit, 1 do --max is num of group icons
+					local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
+
+					if(info) then
+						if(not info.assignedRole) then
+							info.assignedRole = "DAMAGER"
+
 						end
 
-						bossIndex = bossIndex - 1
-
-					end
-				end
-			end
-		else
-			local memberPanel = currentFrame.MemberPanel
-
-			memberPanel:SetShown(true)
-
-			currentFrame.Keyrange:SetShown(isDungeon)
-
-			local groupLimit = activityInfo.maxNumPlayers == 0 and 5 or activityInfo.maxNumPlayers
-			
-			local arrays = {
-				["TANK"] = {},
-				["DAMAGER"] = {},
-				["HEALER"] = {},
-			}
-
-			local roleAdded = {
-				["TANK"] = false,
-				["HEALER"] = false,
-				["DAMAGER"] = false,
-			}
-
-			data.isLeaverGroup = false
-
-			for i = 1, groupLimit, 1 do --max is num of group icons
-				local info = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
-
-				if(info) then
-					if(not info.assignedRole) then
-						info.assignedRole = "DAMAGER"
-
-					end
-
-					tinsert(arrays[info.assignedRole], {
-						leader = info.isLeader,
-						role = info.assignedRole,
-						class = info.classFilename,
-						specID = info.classFilename and info.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[info.specName .. "-" .. info.classFilename],
-						isLeaver = info.isLeaver,
-					})
-				
-					roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
-					roleAdded[info.assignedRole] = true
-
-					if(not data.isLeaverGroup) then
-						data.isLeaverGroup = info.isLeaver
-					end
-				else
-					local role = not roleAdded["TANK"] and "TANK" or not roleAdded["HEALER"] and "HEALER" or "DAMAGER"
-					tinsert(arrays[role], {class = "DUMMY", role = role, specID = 20})
-
-					roleAdded[role] = true
-				end
-			end
-
-			local result = {}
-
-			insertRoleMembersOrDummy(arrays["TANK"], result)
-			insertRoleMembersOrDummy(arrays["HEALER"], result)
-			insertRoleMembersOrDummy(arrays["DAMAGER"], result)
-			
-			for i = 1, 5, 1 do
-				local currentMemberFrame = memberPanel.memberFrames[i]
-				local underLimit = i <= groupLimit
-				
-				currentMemberFrame:SetShown(underLimit)
+						tinsert(arrays[info.assignedRole], {
+							leader = info.isLeader,
+							role = info.assignedRole,
+							class = info.classFilename,
+							specID = info.classFilename and info.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[info.specName .. "-" .. info.classFilename],
+							isLeaver = info.isLeaver,
+						})
 					
-				if(underLimit) then
-					local memberData = result[i]
-					local specID = memberData.specID
+						roleCount[info.assignedRole] = roleCount[info.assignedRole] + 1
+						roleAdded[info.assignedRole] = true
 
-					currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID] and miog.SPECIALIZATIONS[specID].squaredIcon or
-					miog.CLASSFILE_TO_ID[memberData.class] and miog.CLASSFILE_TO_INFO[memberData.class].icon)
-
-					currentMemberFrame.LeaverIcon:SetShown(memberData.isLeaver)
-
-					if(memberData.class ~= "DUMMY") then
-						currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(memberData.class):GetRGBA())
-
+						if(not data.isLeaverGroup) then
+							data.isLeaverGroup = info.isLeaver
+						end
 					else
-						currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
+						local role = not roleAdded["TANK"] and "TANK" or not roleAdded["HEALER"] and "HEALER" or "DAMAGER"
+						tinsert(arrays[role], {class = "DUMMY", role = role, specID = 20})
 
-					end
-
-					if(memberData.leader) then
-						memberPanel.LeaderCrown:ClearAllPoints()
-						memberPanel.LeaderCrown:SetParent(currentMemberFrame)
-						memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
-						memberPanel.LeaderCrown:Show()
-
-						currentMemberFrame.leaderName = searchResultInfo.leaderName
-
-					else
-						currentMemberFrame.leaderName = nil
-
-					end
-				end
-			end
-
-			if(categoryID == 2) then
-				if(searchResultInfo.leaderOverallDungeonScore) then
-					local keylevel, score = NearestValue(searchResultInfo.leaderOverallDungeonScore)
-					local lower, higher = keylevel, keylevel + 1
-
-					if(lower >= 2) then
-						currentFrame.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
-
-					else
-						currentFrame.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
-
+						roleAdded[role] = true
 					end
 				end
 
+				local result = {}
+
+				insertRoleMembersOrDummy(arrays["TANK"], result)
+				insertRoleMembersOrDummy(arrays["HEALER"], result)
+				insertRoleMembersOrDummy(arrays["DAMAGER"], result)
+				
+				for i = 1, 5, 1 do
+					local currentMemberFrame = memberPanel.memberFrames[i]
+					local underLimit = i <= groupLimit
+					
+					currentMemberFrame:SetShown(underLimit)
+						
+					if(underLimit) then
+						local memberData = result[i]
+						local specID = memberData.specID
+
+						currentMemberFrame.Icon:SetTexture(miog.SPECIALIZATIONS[specID] and miog.SPECIALIZATIONS[specID].squaredIcon or
+						miog.CLASSFILE_TO_ID[memberData.class] and miog.CLASSFILE_TO_INFO[memberData.class].icon)
+
+						currentMemberFrame.LeaverIcon:SetShown(memberData.isLeaver)
+
+						if(memberData.class ~= "DUMMY") then
+							currentMemberFrame.Border:SetColorTexture(C_ClassColor.GetClassColor(memberData.class):GetRGBA())
+
+						else
+							currentMemberFrame.Border:SetColorTexture(0, 0, 0, 0)
+
+						end
+
+						if(memberData.leader) then
+							memberPanel.LeaderCrown:ClearAllPoints()
+							memberPanel.LeaderCrown:SetParent(currentMemberFrame)
+							memberPanel.LeaderCrown:SetPoint("CENTER", currentMemberFrame, "TOP")
+							memberPanel.LeaderCrown:Show()
+
+							currentMemberFrame.leaderName = searchResultInfo.leaderName
+
+						else
+							currentMemberFrame.leaderName = nil
+
+						end
+					end
+				end
+
+				if(categoryID == 2) then
+					if(searchResultInfo.leaderOverallDungeonScore) then
+						local keylevel, score = NearestValue(searchResultInfo.leaderOverallDungeonScore)
+						local lower, higher = keylevel, keylevel + 1
+
+						if(lower >= 2) then
+							currentFrame.Keyrange:SetText("(" .. wticc(lower, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[lower]):GenerateHexColor()) .. "-" .. wticc(higher, miog.createCustomColorForRating(miog.KEYSTONE_BASE_SCORE[higher]):GenerateHexColor()) .. ")")
+
+						else
+							currentFrame.Keyrange:SetText("(" .. wticc(0, miog.createCustomColorForRating(0):GenerateHexColor()) .. ")")
+
+						end
+					end
+
+				end
 			end
+
+			currentFrame.BasicInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
+
+			updateOptionalScrollBoxFrameData(frame, data)
+			updateScrollBoxFrameStatus(frame, data.resultID)
 		end
-
-		currentFrame.BasicInformation.RoleComposition:SetText("[" .. roleCount["TANK"] .. "/" .. roleCount["HEALER"] .. "/" .. roleCount["DAMAGER"] .. "]")
-
-		updateOptionalScrollBoxFrameData(frame, data)
-		updateScrollBoxFrameStatus(frame, data.resultID)
 	end
 end
 
@@ -1005,83 +906,89 @@ local updateScheduled = false
 local currentTimer
 
 local function searchPanelEvents(_, event, ...)
-	if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
-		if(not updateScheduled) then
-			miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
-			miog.SearchPanel.results = LFGListFrame.SearchPanel.results
+	if(miog:CanUpdateSecretStuff()) then
+		if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
+			if(not updateScheduled) then
+				miog.SearchPanel.totalResults = LFGListFrame.SearchPanel.totalResults
+				miog.SearchPanel.results = LFGListFrame.SearchPanel.results
 
-			fullyUpdateSearchPanel()
+				fullyUpdateSearchPanel()
 
-			currentTimer = C_Timer.NewTimer(0.65, function()
+				currentTimer = C_Timer.NewTimer(0.65, function()
+					fullyUpdateSearchPanel()
+					updateScheduled = false
+
+				end)
+
+				updateScheduled = true
+
+			elseif(lastNumOfResults == 0) then
+				currentTimer:Cancel()
 				fullyUpdateSearchPanel()
 				updateScheduled = false
+			end
 
-			end)
+		elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
+			if(C_LFGList.HasSearchResultInfo(...)) then
+				local resultID = ...
+				local outData = nil
 
-			updateScheduled = true
+				local frame = miog.SearchPanel.ScrollBox2:FindFrameByPredicate(function(localFrame, node)
+					local isTrue = node.data.resultID == resultID
 
-		elseif(lastNumOfResults == 0) then
-			currentTimer:Cancel()
-			fullyUpdateSearchPanel()
-			updateScheduled = false
-		end
+					if(isTrue) then
+						outData = node.data
 
-	elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then --update to title, ilvl, group members, etc
-		if(C_LFGList.HasSearchResultInfo(...)) then
-			local resultID = ...
-			local outData = nil
+					end
 
-			local frame = miog.SearchPanel.ScrollBox2:FindFrameByPredicate(function(localFrame, node)
-				local isTrue = node.data.resultID == resultID
+					return isTrue
+				end)
 
-				if(isTrue) then
-					outData = node.data
-
+				if(frame) then
+					updateScrollBoxFrame(frame, outData)
 				end
+			end
+		elseif(event == "LFG_LIST_SEARCH_FAILED") then
+			showStatusOverlay(...)
+			updateScheduled = false
 
-				return isTrue
-			end)
+		elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
+			local resultID, new = ...
+			
+			miog.increaseStatistic(new)
+
+			local frame = findFrame(resultID)
 
 			if(frame) then
-				updateScrollBoxFrame(frame, outData)
-			end
-		end
-	elseif(event == "LFG_LIST_SEARCH_FAILED") then
-		showStatusOverlay(...)
-		updateScheduled = false
+				updateScrollBoxFrameApplicationStatus(frame, resultID, new)
 
-	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
-		local resultID, new = ...
-		
-		miog.increaseStatistic(new)
-
-		local frame = findFrame(resultID)
-
-		if(frame) then
-			updateScrollBoxFrameApplicationStatus(frame, resultID, new)
-
-		end
-
-		if(new == "inviteaccepted") then
-			local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
-			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
-			local lastGroup = activityInfo.fullName
-
-			if(not miog.F.LITE_MODE) then
-				local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
-
-				lastGroupFrame.Text:SetText(lastGroup)
-
-				miog.refreshLastGroupTeleport(activityInfo.mapID)
 			end
 
-			MIOG_CharacterSettings.lastGroupMap = activityInfo.mapID
-			MIOG_CharacterSettings.lastGroup = lastGroup
+			if(new == "inviteaccepted") then
+				local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
+				local lastGroup = activityInfo.fullName
 
-		elseif(new == "applied") then
-			fullyUpdateSearchPanel()
+				if(not miog.F.LITE_MODE) then
+					local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
 
+					lastGroupFrame.Text:SetText(lastGroup)
+
+					miog.refreshLastGroupTeleport(activityInfo.mapID)
+				end
+
+				MIOG_CharacterSettings.lastGroupMap = activityInfo.mapID
+				MIOG_CharacterSettings.lastGroup = lastGroup
+
+			elseif(new == "applied") then
+				fullyUpdateSearchPanel()
+
+			end
 		end
+
+	else
+		miog:CallAfterCombat("SearchPanel", function() fullyUpdateSearchPanel() end)
+
 	end
 end
 

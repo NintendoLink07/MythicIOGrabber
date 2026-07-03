@@ -63,9 +63,11 @@ function ItemUpgradeFinderMixin:OnShow()
     PaperDollItemSlotButton_OnShow(self)
 
     local item = Item:CreateFromEquipmentSlot(self:GetID())
+    local ilvl = item:GetCurrentItemLevel()
+    local qualityColor = item:GetItemQualityColor()
 
-    if(item:GetCurrentItemLevel()) then
-        self.ItemLevel:SetText(WrapTextInColorCode(item:GetCurrentItemLevel(), item:GetItemQualityColor().color:GenerateHexColor()))
+    if(ilvl and qualityColor) then
+        self.ItemLevel:SetText(WrapTextInColorCode(ilvl, qualityColor.color:GenerateHexColor()))
 
     end
 end

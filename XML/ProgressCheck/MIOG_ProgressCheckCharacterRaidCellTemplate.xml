@@ -1,0 +1,22 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ProgressCheckCharacterRaidCellTemplate" inherits="MIOG_ProgressCheckCharacterColoredCellTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="LeftText" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" x="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="RightText" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="RIGHT" x="-3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

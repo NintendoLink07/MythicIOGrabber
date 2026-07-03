@@ -1,10 +1,10 @@
 ## Interface: 120007
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
-## OptionalDeps: RaiderIO, MythicIO - Resources, 
+## OptionalDeps: RaiderIO, MythicIO - Resources, Blizzard_WeeklyRewards
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.15a
+## Version: 3.9.16
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -55,7 +55,7 @@ Mixins\RaidSheetSpaceMixin.lua
 Mixins\RewardTypeMixin.lua
 Mixins\FakeDropdownMixin.lua
 Mixins\RaiderIOInformationPanelMixin.lua
-Mixins\GraphMixin.lua
+#Mixins\GraphMixin.lua
 Mixins\ItemUpgradeFinderMixin.lua
 Mixins\SearchBoxFiltersMixin.lua
 Mixins\SortBarMixin.lua
@@ -67,6 +67,7 @@ Mixins\GearingTableCellMixin.lua
 Mixins\TeleportLogoMixin.lua
 Mixins\TeleportButtonMixin.lua
 Mixins\AbandonMixin.lua
+Mixins\BetterWeeklyActivitiesMixin.lua
 
 Mixins\GroupOrganizerCellMixin.lua
 Mixins\RaidViewMixin.lua
@@ -107,6 +108,9 @@ ModuleMixins\Ports\PortsGroupMixin.lua
 ModuleMixins\Ports\PortsMixin.lua
 
 
+ModuleMixins\ProgressCheck\ProgressCheckCellListMixin.lua
+ModuleMixins\ProgressCheck\ProgressCheckWeeklyActivitiesMixin.lua
+ModuleMixins\ProgressCheck\ProgressCheckElementsMixin.lua
 ModuleMixins\ProgressCheck\ProgressCheckMixin.lua
 
 
@@ -115,6 +119,22 @@ ModuleMixins\ProgressCheck\ProgressCheckMixin.lua
 ##
 ### XML
 ##
+
+
+
+XML\Misc\MIOG_MultiStateButtonTemplate.xml
+XML\Misc\MIOG_SortButtonTemplate.xml
+XML\Misc\MIOG_SortButtonWithTextTemplate.xml
+XML\Misc\MIOG_NavBarButtonTemplate.xml
+XML\Misc\MIOG_TabButtonTemplate.xml
+XML\Misc\MIOG_MinimalCheckButtonTemplate.xml
+XML\Misc\MIOG_MinimalCheckButtonWithTextTemplate.xml
+XML\Misc\MIOG_MenuButtonTemplate.xml
+XML\Misc\MIOG_VerticalButtonTemplate.xml
+XML\Misc\MIOG_MinimalHorizontalScrollBarTemplate.xml
+XML\Misc\MIOG_IconWithTextTemplate.xml
+XML\Misc\MIOG_SearchBoxFilterTemplate.xml
+XML\Misc\MIOG_ProgressBarTemplate.xml
 
 XML\GroupCreator\MIOG_GroupCreator.xml
 
@@ -134,8 +154,30 @@ XML\AppViewer\MIOG_AppViewerApplicantSingleMemberTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantMultiMemberTemplate.xml
 
+
+XML\ProgressCheck\MIOG_ProgressCheckCharacterCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCellListTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterLockoutsCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterLockoutsTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterPVPCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterPVPTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterRaidCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterRaidTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterDungeonCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterDungeonTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterColoredCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewVaultCellTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewIconTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewHeaderTemplate.xml
 XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewTemplate.xml
+
+XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewInfoColumnCellListTemplate.xml
+XML\ProgressCheck\MIOG_ProgressCheckCharacterOverviewInfoColumnTemplate.xml
 XML\ProgressCheck\MIOG_ProgressCheck.xml
+
+
+
+
 
 
 XML\Misc\MIOG_TableHeaderTemplate.xml
@@ -265,37 +307,23 @@ XML\Lockouts\MIOG_LockoutCheckInstanceTemplate.xml
 ## XML\Statistics\MIOG_ProgressFullCharacterTemplate.xml
 ## XML\Statistics\MIOG_ProgressionVerticalCharacterTemplate.xml
 
-XML\Progress\MIOG_ProgressCharacterIconTemplate.xml
-XML\Progress\MIOG_ProgressTabTemplate.xml
-XML\Progress\MIOG_ProgressOverviewCellTemplate.xml
-XML\Progress\MIOG_ProgressOverviewHeaderTemplate.xml
-XML\Progress\MIOG_ProgressSelectionButtonTemplate.xml
-XML\Progress\MIOG_ProgressMythicPlusCellTemplate.xml
-XML\Progress\MIOG_ProgressActivityHeaderTemplate.xml
-XML\Progress\MIOG_ProgressMythicPlusCharacterCellTemplate.xml
-XML\Progress\MIOG_ProgressEmptyHeaderTemplate.xml
-XML\Progress\MIOG_ProgressRaidCellTemplate.xml
-XML\Progress\MIOG_ProgressRaidCharacterCellTemplate.xml
-XML\Progress\MIOG_ProgressPVPCellTemplate.xml
-XML\Progress\MIOG_ProgressPVPCharacterCellTemplate.xml
-XML\Progress\MIOG_ProgressOverviewFullTemplate.xml
-XML\Progress\MIOG_ProgressLineTemplate.xml
-XML\Progress\MIOG_ProgressOverviewColorCellTemplate.xml
-XML\Progress\MIOG_ProgressOverviewVaultCellTemplate.xml
-
-XML\Misc\MIOG_MultiStateButtonTemplate.xml
-XML\Misc\MIOG_SortButtonTemplate.xml
-XML\Misc\MIOG_SortButtonWithTextTemplate.xml
-XML\Misc\MIOG_NavBarButtonTemplate.xml
-XML\Misc\MIOG_TabButtonTemplate.xml
-XML\Misc\MIOG_MinimalCheckButtonTemplate.xml
-XML\Misc\MIOG_MinimalCheckButtonWithTextTemplate.xml
-XML\Misc\MIOG_MenuButtonTemplate.xml
-XML\Misc\MIOG_VerticalButtonTemplate.xml
-XML\Misc\MIOG_MinimalHorizontalScrollBarTemplate.xml
-XML\Misc\MIOG_IconWithTextTemplate.xml
-XML\Misc\MIOG_SearchBoxFilterTemplate.xml
-XML\Misc\MIOG_ProgressBarTemplate.xml
+#XML\Progress\MIOG_ProgressCharacterIconTemplate.xml
+#XML\Progress\MIOG_ProgressTabTemplate.xml
+#XML\Progress\MIOG_ProgressOverviewCellTemplate.xml
+#XML\Progress\MIOG_ProgressOverviewHeaderTemplate.xml
+#XML\Progress\MIOG_ProgressSelectionButtonTemplate.xml
+#XML\Progress\MIOG_ProgressMythicPlusCellTemplate.xml
+#XML\Progress\MIOG_ProgressActivityHeaderTemplate.xml
+#XML\Progress\MIOG_ProgressMythicPlusCharacterCellTemplate.xml
+#XML\Progress\MIOG_ProgressEmptyHeaderTemplate.xml
+#XML\Progress\MIOG_ProgressRaidCellTemplate.xml
+#XML\Progress\MIOG_ProgressRaidCharacterCellTemplate.xml
+#XML\Progress\MIOG_ProgressPVPCellTemplate.xml
+#XML\Progress\MIOG_ProgressPVPCharacterCellTemplate.xml
+#XML\Progress\MIOG_ProgressOverviewFullTemplate.xml
+#XML\Progress\MIOG_ProgressLineTemplate.xml
+#XML\Progress\MIOG_ProgressOverviewColorCellTemplate.xml
+#XML\Progress\MIOG_ProgressOverviewVaultCellTemplate.xml
 
 XML\RenownBars\MIOG_RenownBarTemplate.xml
 
