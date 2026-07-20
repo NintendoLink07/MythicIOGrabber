@@ -1,0 +1,72 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrame" inherits="BackdropTemplate" mixin="SearchFrameMixin" virtual="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TEXT_PANEL_0_16" type="global"/>
+        </KeyValues>
+
+        <Frames>
+            <Frame parentKey="Header">
+                <Size y="44" />
+
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT"/>
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="ActivitySort" inherits="MIOG_SearchFrameSortButtonTemplate" text="Activity">
+                        <Size x="100" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" x="12"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():TriggerSort("activityName")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="SecondaryRatingSort" inherits="MIOG_SearchFrameSortButtonTemplate" text="2. Rating">
+                        <Size x="100" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" x="-12"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():TriggerSort("secondaryRating")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button parentKey="RatingSort" inherits="MIOG_SearchFrameSortButtonTemplate" text="Rating">
+                        <Size x="100" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOM"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                self:GetParent():GetParent():TriggerSort("rating")
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+            <OnEvent method="OnEvent" />
+        </Scripts>
+    </Frame>
+</Ui>
+

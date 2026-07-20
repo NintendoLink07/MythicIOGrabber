@@ -79,5 +79,6 @@ end
 ProgressCheckColoredCellMixin = {}
 
 function ProgressCheckColoredCellMixin:OnLoad()
-    self.BackgroundColor:SetColorTexture(0.75, 0.75, 0.75, 0.1)
+    self.BackgroundColor:SetColorTexture(0.75, 0.75, 0.75, 0.3)
+    
 end

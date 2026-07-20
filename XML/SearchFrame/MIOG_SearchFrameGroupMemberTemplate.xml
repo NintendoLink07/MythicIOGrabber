@@ -1,0 +1,48 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameGroupMemberTemplate" virtual="true">
+        <Layers>
+            <Layer level="BORDER">
+                <Texture parentKey="Border" setAllPoints="true" />
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon" enableMouseClicks="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Border" relativePoint="TOPLEFT" x="1" y="-1" />
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Border" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <Texture parentKey="LeaverIcon" atlas="groupfinder-icon-leaver" hidden="true"> 
+                    <Size x="12" y="12" />
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativeKey="$parent.BORDER" relativePoint="BOTTOMRIGHT" />
+                    </Anchors>
+
+                    <Scripts>
+                        <OnEnter>
+                            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		                    GameTooltip:AddLine(MYTHIC_PLUS_DESERTER)
+                            GameTooltip:Show()
+                        </OnEnter>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnEnter>
+                if(self.leaderName) then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:AddLine(format(_G["LFG_LIST_TOOLTIP_LEADER"], self.leaderName))
+                    GameTooltip:Show()
+                end
+            </OnEnter>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

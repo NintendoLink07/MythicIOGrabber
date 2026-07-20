@@ -710,6 +710,13 @@
                                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Information"/>
                                 </Anchors>
                             </Frame>
+                            
+                            <Frame parentKey="SearchFrame" inherits="MIOG_SearchFrame" frameStrata="HIGH">
+                                <Size x="350" y="350" />
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPRIGHT" x="340"/>
+                                </Anchors>
+                            </Frame>
                         </Frames>
                     </Frame>
                     

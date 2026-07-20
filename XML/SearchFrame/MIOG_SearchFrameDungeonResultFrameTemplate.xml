@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameDungeonResultFrameTemplate" inherits="MIOG_SearchFrameStandardResultFrameTemplate" mixin="SearchFrameDungeonResultFrameMixin" virtual="true">
+        <Size y="40" />
+
+        <Frames>
+            <Frame parentKey="General" inherits="MIOG_SearchFrameStandardResultFrameGeneralRowWithRatingTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                    <Anchor point="TOPRIGHT"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Activity" inherits="MIOG_SearchFrameStandardResultFrameActivityRowTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.General" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.General" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

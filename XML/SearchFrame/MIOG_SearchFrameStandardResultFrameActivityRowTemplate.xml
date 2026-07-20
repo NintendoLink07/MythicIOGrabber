@@ -1,0 +1,79 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameStandardResultFrameActivityRowTemplate" virtual="true">
+        <Frames>
+            <CheckButton parentKey="Expand" inherits="MIOG_SearchFrameExpandButtonTemplate">
+                <Size x="18" y="18" />
+                <Anchors>
+                    <Anchor point="LEFT"/>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+
+        <Frames>
+            <Frame parentKey="Members" inherits="HorizontalLayoutFrame">
+                <KeyValues>
+                    <KeyValue key="spacing" value="16" type="number"/>
+                </KeyValues>
+
+                <Anchors>
+                    <Anchor point="RIGHT" x="-30"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="1" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="2" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="3" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="4" type="number"/>
+                        </KeyValues>
+                    </Frame>
+
+                    <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
+                        <Size x="16" y="16" />
+
+                        <KeyValues>
+                            <KeyValue key="layoutIndex" value="5" type="number"/>
+                        </KeyValues>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
+                    <Size x="128" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Members" relativePoint="LEFT" x="-4"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

@@ -1,0 +1,69 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameStandardResultFrameTemplate" inherits="BackdropTemplate" mixin="SearchFrameResultFrameMixin" virtual="true">
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1"> 
+                <Texture parentKey="Background" setAllPoints="true" vertTile="true" horizTile="true"/>
+            </Layer>
+
+            <Layer level="BACKGROUND"> 
+                <Texture parentKey="TransparentDark" setAllPoints="true">
+                    <Color r="0.3" g="0.3" b="0.3" a="0.2" />
+                </Texture>
+            </Layer>
+
+             <Layer level="OVERLAY">
+                <Texture parentKey="Divider" atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" y="-18"/>
+                        <Anchor point="TOPRIGHT" y="-18"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture parentKey="LeaderCrown" file="Interface\Addons\MythicIOGrabber\res\infoIcons\leaderIcon.png" hidden="true">
+                    <Size x="14" y="14" />
+                </Texture>
+
+                <Texture parentKey="Attention" atlas="BattleBar-SwapPetFrame-Highlight" setAllPoints="true" hidden="true" />
+                <Texture parentKey="Highlight" atlas="search-highlight" setAllPoints="true" hidden="true" />
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Button parentKey="Cancel" inherits="UIPanelButtonTemplate" text="X" hidden="true">
+                <Size x="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick>
+                        C_LFGList.CancelApplication(self:GetParent():GetData().resultID)
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="SystemFont_Shadow_Large" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" setAllPoints="true" />
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+            <OnEnter method="OnEnter" />
+            <OnMouseDown method="OnMouseDown" />
+            <OnLeave function="LFGListSearchEntry_OnLeave" />
+        </Scripts>
+    </Frame>
+</Ui>

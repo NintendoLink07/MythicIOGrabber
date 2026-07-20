@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <CheckButton name="MIOG_SearchFrameExpandButtonTemplate" virtual="true">
+        <NormalTexture atlas="campaign_headericon_closed" />
+        <CheckedTexture atlas="campaign_headericon_open" />
+
+        <Scripts>
+            <OnClick>
+                self:GetParent():GetParent():GetElementData():ToggleCollapsed()
+
+            </OnClick>
+        </Scripts>
+    </CheckButton>
+</Ui>

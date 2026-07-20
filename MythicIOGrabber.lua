@@ -145,6 +145,31 @@ local function mainEvents(_, event, ...)
 	elseif(event == "CHALLENGE_MODE_COMPLETED") then
 		miog.increaseStatistic("CHALLENGE_MODE_COMPLETED")
 
+	elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
+		local resultID, new = ...
+		
+		miog.increaseStatistic(new)
+
+		if(new == "inviteaccepted") then
+			local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+
+			if(searchResultInfo) then
+				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
+				local lastGroup = activityInfo.fullName
+
+				if(not miog.F.LITE_MODE) then
+					local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
+
+					lastGroupFrame.Text:SetText(lastGroup)
+
+					miog.refreshLastGroupTeleport(activityInfo.mapID)
+				end
+
+				MIOG_CharacterSettings.lastGroupMap = activityInfo.mapID
+				MIOG_CharacterSettings.lastGroup = lastGroup
+
+			end
+		end
 	end
 end
 

@@ -164,64 +164,6 @@ local function createResultTooltip(resultID, resultFrame)
 		GameTooltip:SetOwner(resultFrame, "ANCHOR_RIGHT", 0, 0)
 		LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID)
 
-		if(MIOG_NewSettings.enableResultFrameClassSpecTooltip) then
-			GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-			local orderedList = {}
-			local specList = {}
-
-			for i = 1, searchResultInfo.numMembers, 1 do
-				local role, class, _, specLocalized = C_LFGList.GetSearchResultMemberInfo(searchResultInfo.searchResultID, i)
-
-				orderedList[i] = {role = role, class = class, specID = miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[specLocalized .. "-" .. class]}
-
-				specList[orderedList[i].specID] = specList[orderedList[i].specID] and specList[orderedList[i].specID] + 1 or 1
-			end
-
-			table.sort(orderedList, function(k1, k2)
-				if(k1.role ~= k2.role) then
-					return k1.role > k2.role
-
-				elseif(k1.specID ~= k2.specID) then
-					return k1.specID < k2.specID
-
-				else
-					return k1.class < k2.class
-
-				end
-
-			end)
-
-			local newRole = nil
-
-			for k, v in ipairs(orderedList) do
-				local _, name, _, icon, _, classFile, className = GetSpecializationInfoByID(v.specID)
-
-				if(name == "") then
-					name = "Unspecced"
-
-				end
-
-				if(specList[v.specID]) then
-					if(newRole ~= v.role) then
-						if(newRole ~= nil) then
-							--GameTooltip_AddBlankLineToTooltip(GameTooltip)
-						end
-
-						newRole = v.role
-
-						--GameTooltip:AddLine(v.role)
-					end
-
-					local roleIcon = v.role == "TANK" and "groupfinder-icon-role-micro-tank" or v.role == "HEALER" and "groupfinder-icon-role-micro-heal" or "groupfinder-icon-role-micro-dps"
-
-					GameTooltip:AddLine("|A:" .. roleIcon .. ":16:16|a" .. wticc(specList[v.specID] .. "x " .. "|T" .. icon .. ":11:11|t " .. name .. " " .. className, C_ClassColor.GetClassColor(classFile):GenerateHexColor()))
-
-					specList[v.specID] = nil
-				end
-			end
-		end
-
 		local nameTable
 
 		if(searchResultInfo.leaderName) then
@@ -446,12 +388,12 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 		if(miog:CanAccessTable(searchResultInfo.activityIDs) and miog:CanAccessValue(searchResultInfo.numBNetFriends) and searchResultInfo.leaderName) then
 			local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 			
-			local isQuestCategory = activityInfo.categoryID == 1
 			local declineData = LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]
+			local isQuestCategory = activityInfo.categoryID == 1
 			local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
 			local questDesc = questTagInfo and questTagInfo.tagName
 			local difficultyID = activityInfo.difficultyID
-			local difficultyName = difficultyID and activityInfo.difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
+			local difficultyName = difficultyID and difficultyID ~= 0 and miog.DIFFICULTY_ID_INFO[difficultyID].shortName
 			local shortName = activityInfo.abbreviatedName
 
 			local difficultyZoneText = difficultyID and difficultyName or questDesc or nil
@@ -546,7 +488,7 @@ local function updateOptionalScrollBoxFrameData(frame, data)
 			elseif(isPvP) then
 				local pvpData = searchResultInfo.leaderPvpRatingInfo[1]
 
-				if(pvpData.tier and pvpData.tier ~= "N/A") then
+				if(pvpData and pvpData.tier and pvpData.tier ~= "N/A") then
 					local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
 					primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
 					secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))

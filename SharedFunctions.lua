@@ -1171,6 +1171,17 @@ function miog:CanAccessValue(value)
 	
 end
 
+function miog:GetSecureSearchResultInfo(resultID)
+	if(C_LFGList.HasSearchResultInfo(resultID)) then
+        local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+
+        if(searchResultInfo and miog:CanAccessTable(searchResultInfo.activityIDs)) then
+			return searchResultInfo
+
+		end
+	end
+end
+
 miog.refreshLastGroupTeleport = function(mapID)
 	if(miog:CanUpdateSecretStuff()) then
 		local teleportMap = mapID or MIOG_CharacterSettings.lastGroupMap

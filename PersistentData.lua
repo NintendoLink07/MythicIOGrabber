@@ -3185,10 +3185,13 @@ for k, v in pairs(miog.CLASSES) do
 	miog.CLASSFILE_TO_INFO[v.name] = v
 end
 
+miog.CLASS_COLORS = {}
 miog.OFFICIAL_CLASSES = {}
 
 for i = 1, 13, 1 do
-	miog.OFFICIAL_CLASSES[i] = miog.CLASSES[i]
+	local classInfo = miog.CLASSES[i]
+	miog.OFFICIAL_CLASSES[i] = classInfo
+	miog.CLASS_COLORS[classInfo.name] = C_ClassColor.GetClassColor(classInfo.name)
 end
 
 miog.SPECIALIZATIONS = {
@@ -3196,7 +3199,7 @@ miog.SPECIALIZATIONS = {
 	[1] = {name = "Missing Tank", class = miog.CLASSES[20], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/tankIcon.png"},
 	[2] = {name = "Missing Healer", class = miog.CLASSES[21], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/healerIcon.png"},
 	[3] = {name = "Missing Damager", class = miog.CLASSES[22], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/damagerIcon.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/damagerIcon.png"},
-	[20] = {name = "Empty", class = miog.CLASSES[20], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"},
+	[9999] = {name = "Empty", class = miog.CLASSES[100], icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/empty.png"},
 
 	[62] = {name = "Arcane", class = miog.CLASSES[8], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/arcane_squared.png", stat = "ITEM_MOD_INTELLECT_SHORT"},
 	[63] = {name = "Fire", class = miog.CLASSES[8], icon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire.png", squaredIcon = miog.C.STANDARD_FILE_PATH .. "/specIcons/fire_squared.png", stat = "ITEM_MOD_INTELLECT_SHORT"},

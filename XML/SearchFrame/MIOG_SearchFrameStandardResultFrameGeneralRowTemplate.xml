@@ -1,0 +1,29 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameStandardResultFrameGeneralRowTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY"> 
+                <Texture parentKey="Icon">
+                    <Size x="18" y="18" />
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </Texture>
+
+                <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
+                    <Size x="128" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Composition" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="[0||0||0]">
+                    <Size x="60" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Title" relativePoint="RIGHT" x="24"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

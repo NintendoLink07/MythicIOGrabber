@@ -9,37 +9,6 @@ local defaultSortState = {
     active = false,
 }
 
-local function keepSignUpNote(self, resultID)
-    if(C_LFGList.HasSearchResultInfo(resultID)) then
-        local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID);
-        --if ( searchResultInfo.activityID ~= self.activityID ) then
-            --C_LFGList.ClearApplicationTextFields();
-        --end
-
-        self.resultID = resultID;
-        self.activityID = searchResultInfo.activityIDs[1];
-        LFGListApplicationDialog_UpdateRoles(self);
-        StaticPopupSpecial_Show(self);
-    end
-end
-
-LFGListApplicationDialog_Show = keepSignUpNote
-
---[[LFGListApplicationDialogDescription:Hide()
-LFGListApplicationDialogDescription = nil
-
-local customDesc = CreateFrame("ScrollFrame", nil, LFGListApplicationDialog, "InputScrollFrameTemplate")
-customDesc:SetParentKey("Description")
-customDesc:SetSize(210, 28)
-customDesc:SetPoint("BOTTOM", 0, 55)
-customDesc.maxLetters = 63
-customDesc.instructions = LFG_LIST_NOTE_TO_LEADER
-customDesc.hideCharCount = true
-InputScrollFrame_OnLoad(customDesc);
-customDesc.EditBox:SetText("3.4k last season, Dispell/Purge")
-
-LFGListApplicationDialogDescription = customDesc]]
-
 local defaultFilters = {
     classes = {},
     specs = {},
