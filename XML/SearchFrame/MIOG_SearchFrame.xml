@@ -16,9 +16,9 @@
 
                 <Frames>
                     <Button parentKey="ActivitySort" inherits="MIOG_SearchFrameSortButtonTemplate" text="Activity">
-                        <Size x="100" y="24" />
+                        <Size x="116" y="24" />
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT" x="12"/>
+                            <Anchor point="BOTTOMLEFT"/>
                         </Anchors>
 
                         <Scripts>
@@ -29,9 +29,9 @@
                     </Button>
 
                     <Button parentKey="SecondaryRatingSort" inherits="MIOG_SearchFrameSortButtonTemplate" text="2. Rating">
-                        <Size x="100" y="24" />
+                        <Size x="116" y="24" />
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT" x="-12"/>
+                            <Anchor point="BOTTOMRIGHT"/>
                         </Anchors>
 
                         <Scripts>
@@ -42,7 +42,7 @@
                     </Button>
 
                     <Button parentKey="RatingSort" inherits="MIOG_SearchFrameSortButtonTemplate" text="Rating">
-                        <Size x="100" y="24" />
+                        <Size x="116" y="24" />
                         <Anchors>
                             <Anchor point="BOTTOM"/>
                         </Anchors>
@@ -55,6 +55,7 @@
                     </Button>
                 </Frames>
             </Frame>
+            
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
@@ -65,6 +66,7 @@
 
         <Scripts>
             <OnLoad method="OnLoad" />
+            <OnShow method="OnShow" />
             <OnEvent method="OnEvent" />
         </Scripts>
     </Frame>

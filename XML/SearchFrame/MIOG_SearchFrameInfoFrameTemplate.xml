@@ -1,16 +1,219 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_SearchFrameInfoFrameTemplate" mixin="SearchFrameInfoFrameMixin" virtual="true">
-        <Size y="160" />
+        <Size y="144" />
 
         <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="Title" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST TEXT HERE">
-                    <Anchors>
-                        <Anchor point="TOPLEFT"/>
-                    </Anchors>
-                </FontString>
+            <Layer level="BACKGROUND" textureSubLevel="-1"> 
+                <Texture parentKey="Background" setAllPoints="true" vertTile="true" horizTile="true"/>
             </Layer>
         </Layers>
+
+        <Frames>
+            <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture setAllPoints="true">
+                            <Color r="0.1" g="0.1" b="0.1" a="0.9" />
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Text" font="SystemFont_Shadow_Large" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" setAllPoints="true" />
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="Dungeons">
+                <Size x="140" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="2"/>
+                    <Anchor point="BOTTOMLEFT" x="2"/>
+                </Anchors>
+
+                <Frames>
+                    <Frame parentKey="Dungeon1" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon2" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon1" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon3" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon2" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon2" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon4" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon3" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon3" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon5" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon4" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon4" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon6" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon5" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon5" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon7" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon6" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon6" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+
+                    <Frame parentKey="Dungeon8" parentArray="childFrames" inherits="MIOG_SearchFrameInfoFrameDungeonTemplate">
+                        <Size y="16" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Dungeon7" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeon7" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+            
+            <Frame parentKey="Raids">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-2"/>
+                    <Anchor point="BOTTOMRIGHT" x="-2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" relativePoint="TOPRIGHT"/>
+                </Anchors>
+                
+                <Frames>
+                    <Frame parentKey="Raid1">
+                        <Size y="34" />
+
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                            <Anchor point="TOPRIGHT"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST TEXT HERE">
+                                    <Size x="96" y="16" />
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="Progress2" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="99/99">
+                                    <Size x="48" y="16" />
+                                    <Anchors>
+                                        <Anchor point="TOPRIGHT"/>
+                                    </Anchors>
+                                </FontString>
+
+                                <FontString parentKey="Progress1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="99/99">
+                                    <Size x="48" y="16" />
+                                    <Anchors>
+                                        <Anchor point="RIGHT" relativeKey="$parent.Progress2" relativePoint="LEFT" x="-4"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Frames>
+                            <Frame parentKey="Boss1" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss2" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss3" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+                            <Frame parentKey="Boss4" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Boss5" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss6" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss7" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+                            
+                            <Frame parentKey="Boss8" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss9" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+
+                            <Frame parentKey="Boss10" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="4"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+
+        <Scripts>
+            <OnLoad method="OnLoad" />
+        </Scripts>
     </Frame>
 </Ui>

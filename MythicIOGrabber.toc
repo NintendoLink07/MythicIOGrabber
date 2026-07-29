@@ -4,7 +4,7 @@
 ## OptionalDeps: RaiderIO, MythicIO - Resources, Blizzard_WeeklyRewards
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.9.16
+## Version: 3.10
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -96,6 +96,8 @@ ModuleMixins\AppViewer\ApplicantMixin.lua
 ModuleMixins\AppViewer\ApplicantSingleMemberMixin.lua
 ModuleMixins\AppViewer\ApplicantMultiMemberMixin.lua
 
+
+ModuleMixins\SearchFrame\SearchFrameBaseFrameMixin.lua
 ModuleMixins\SearchFrame\SearchFrameInfoFrameMixin.lua
 ModuleMixins\SearchFrame\SearchFrameResultFrameMixin.lua
 ModuleMixins\SearchFrame\SearchFrameMixin.lua
@@ -158,6 +160,7 @@ XML\AppViewer\MIOG_AppViewerApplicantSingleMemberTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantMultiMemberTemplate.xml
 
+XML\SearchFrame\MIOG_SearchFrameInfoFrameDungeonTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameSortButtonTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameRaidBossTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameGroupMemberTemplate.xml

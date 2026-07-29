@@ -950,20 +950,20 @@ miog.createSearchPanel = function()
 
 	local searchBox = LFGListFrame.SearchPanel.SearchBox
 	searchBox:ClearAllPoints()
-	searchBox:SetParent(searchPanel)
+	--searchBox:SetParent(searchPanel)
 
 	searchPanel.standardSearchBoxWidth = LFGListFrame.SearchPanel.SearchBox:GetWidth()
 	LFGListFrame.SearchPanel.FilterButton:Hide()
 
 	if(not miog.F.LITE_MODE) then
-		LFGListFrame.SearchPanel.SearchBox:SetSize(searchPanel.SearchBoxBase:GetSize())
+		--LFGListFrame.SearchPanel.SearchBox:SetSize(searchPanel.SearchBoxBase:GetSize())
 
 	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 100)
+		--LFGListFrame.SearchPanel.SearchBox:SetWidth(searchPanel.standardSearchBoxWidth - 100)
 
 	end
 
-	LFGListFrame.SearchPanel.SearchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
+	--LFGListFrame.SearchPanel.SearchBox:SetPoint(searchPanel.SearchBoxBase:GetPoint())
 	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
 	searchPanel.SearchBox = searchBox
 

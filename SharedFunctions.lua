@@ -1040,10 +1040,13 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 	if(profile) then
 		local mplusData = {}
 		local intimeInfo, overtimeInfo
+		local keystoneProfile = profile.mythicKeystoneProfile
 
-		if(profile.mythicKeystoneProfile) then
-			if(profile.mythicKeystoneProfile.sortedDungeons) then
-				for i, dungeonEntry in ipairs(profile.mythicKeystoneProfile.sortedDungeons) do
+		if(keystoneProfile) then
+			local sortedDungeons = profile.mythicKeystoneProfile.sortedDungeons
+			
+			if(sortedDungeons) then
+				for i, dungeonEntry in ipairs(sortedDungeons) do
 					if(returnAsBlizzardTable) then
 						local table
 
@@ -1066,8 +1069,8 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 
 					else
 						mplusData[dungeonEntry.dungeon.keystone_instance] = {
-							level = profile.mythicKeystoneProfile.dungeons[dungeonEntry.dungeon.index],
-							chests = profile.mythicKeystoneProfile.dungeonUpgrades[dungeonEntry.dungeon.index]
+							level = keystoneProfile.dungeons[dungeonEntry.dungeon.index],
+							chests = keystoneProfile.dungeonUpgrades[dungeonEntry.dungeon.index]
 						}
 
 					end
@@ -1076,21 +1079,21 @@ local function getMPlusSortData(playerName, realm, region, returnAsBlizzardTable
 			end
 
 			if(not returnAsBlizzardTable) then
-				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
-				mplusData.previousScore = profile.mythicKeystoneProfile.mplusPrevious
+				mplusData.score = keystoneProfile.mplusCurrent
+				mplusData.previousScore = keystoneProfile.mplusPrevious
 		
-				mplusData.mainScore = profile.mythicKeystoneProfile.mplusMainCurrent
-				mplusData.mainPreviousScore = profile.mythicKeystoneProfile.mplusMainPrevious
+				mplusData.mainScore = keystoneProfile.mplusMainCurrent
+				mplusData.mainPreviousScore = keystoneProfile.mplusMainPrevious
 		
-				mplusData.keystoneMilestone2 = profile.mythicKeystoneProfile.keystoneMilestone2
-				mplusData.keystoneMilestone4 = profile.mythicKeystoneProfile.keystoneMilestone4
-				mplusData.keystoneMilestone7 = profile.mythicKeystoneProfile.keystoneMilestone7
-				mplusData.keystoneMilestone10 = profile.mythicKeystoneProfile.keystoneMilestone10
-				mplusData.keystoneMilestone12 = profile.mythicKeystoneProfile.keystoneMilestone12
-				mplusData.keystoneMilestone15 = profile.mythicKeystoneProfile.keystoneMilestone15
+				mplusData.keystoneMilestone2 = keystoneProfile.keystoneMilestone2
+				mplusData.keystoneMilestone4 = keystoneProfile.keystoneMilestone4
+				mplusData.keystoneMilestone7 = keystoneProfile.keystoneMilestone7
+				mplusData.keystoneMilestone10 = keystoneProfile.keystoneMilestone10
+				mplusData.keystoneMilestone12 = keystoneProfile.keystoneMilestone12
+				mplusData.keystoneMilestone15 = keystoneProfile.keystoneMilestone15
 
 			else
-				mplusData.score = profile.mythicKeystoneProfile.mplusCurrent
+				mplusData.score = keystoneProfile.mplusCurrent
 
 			end
 
@@ -1169,6 +1172,15 @@ end
 function miog:CanAccessValue(value)
 	return canaccessvalue(value)
 	
+end
+
+function miog:GetSecureApplicantData(applicantID)
+	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
+
+	if(applicantData and miog:CanAccessValue(applicantData.comment)) then
+		return applicantData
+
+	end
 end
 
 function miog:GetSecureSearchResultInfo(resultID)

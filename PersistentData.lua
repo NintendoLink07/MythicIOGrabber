@@ -1900,7 +1900,7 @@ function miog:SaveJournalInstanceBossData(journalInstanceID)
 	local bossIndex = 1
 	local bossName, _, journalEncounterID, _, _, _, dungeonEncounterID, mapID = EJ_GetEncounterInfoByIndex(bossIndex, journalInstanceID);
 
-	if(not bossName and journalDB.mapID > 0) then
+	if(journalDB.mapID > 0) then
 		EJ_SelectInstance(journalInstanceID)
 
 	end

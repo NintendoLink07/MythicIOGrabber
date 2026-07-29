@@ -1,5 +1,7 @@
 local addonName, miog = ...
 
+local iTable = {}
+
 SearchFrameMixin = {}
 
 function SearchFrameMixin:TriggerSort(id)
@@ -27,9 +29,39 @@ function SearchFrameMixin:TriggerSort(id)
     self:Refresh()
 end
 
+local function sortResults(k1, k2)
+    if(k1.applied ~= k2.applied) then
+        return k1.applied
+
+    end
+
+    for _, v in ipairs(iTable) do
+        local sortElement = v.state
+        local id = v.id
+
+        local val1 = k1[id]
+        local val2 = k2[id]
+
+        if(val1 ~= val2) then
+            if(sortElement == 1) then
+                return val1 < val2
+
+            elseif(sortElement == 2) then
+                return val1 > val2
+                
+            end
+        end
+    end
+
+    return k1.resultID < k2.resultID
+end
+
 function SearchFrameMixin:Refresh()
     local dataProvider = CreateTreeDataProvider()
     local numOfResults, resultList = C_LFGList.GetFilteredSearchResults()
+
+    self.categoryID = LFGListFrame.SearchPanel.categoryID
+    self.filters = LFGListFrame.SearchPanel.filters
 
     local resultTable = {}
     
@@ -40,11 +72,13 @@ function SearchFrameMixin:Refresh()
             if(searchResultInfo) then
                 local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
                 local isDungeon = activityInfo.categoryID == 2
+                local isRaid = activityInfo.categoryID == 3
+				local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
                 
                 local template =
                 activityInfo.categoryID == 1 and "MIOG_SearchFrameQuestingResultFrameTemplate" or
-                activityInfo.categoryID == 2 and "MIOG_SearchFrameDungeonResultFrameTemplate" or
-                activityInfo.categoryID == 3 and "MIOG_SearchFrameRaidResultFrameTemplate" or
+                isDungeon and "MIOG_SearchFrameDungeonResultFrameTemplate" or
+                isRaid and "MIOG_SearchFrameRaidResultFrameTemplate" or
                 activityInfo.categoryID == 121 and "MIOG_SearchFrameDelvesResultFrameTemplate" or
                 activityInfo.categoryID == 4 and "MIOG_SearchFrameArenaResultFrameTemplate" or
                 activityInfo.categoryID == 9 and "MIOG_SearchFrameBattlegroundResultFrameTemplate" or
@@ -57,6 +91,45 @@ function SearchFrameMixin:Refresh()
                     rating = searchResultInfo.leaderOverallDungeonScore or 0
                     secondaryRating = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
                 
+                elseif(isRaid) then
+                    local nameTable
+
+                    if(searchResultInfo.leaderName) then
+                        nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+
+                        if(nameTable and not nameTable[2]) then
+                            nameTable[2] = GetNormalizedRealmName()
+
+                        end
+                        
+                        local progressData = miog.getRaidProgress(nameTable[1], nameTable[2])
+
+                        if(progressData) then
+                            rating, secondaryRating = miog.getWeightFromRaidProgress(progressData)
+
+                        else
+                            rating, secondaryRating = 0, 0
+
+                        end
+
+                    else
+                        rating, secondaryRating = 0, 0
+
+                    end
+                   
+                elseif(isPvp) then
+                    local pvpDataExists = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
+
+                    if(pvpDataExists) then
+                        rating = searchResultInfo.leaderPvpRatingInfo[1].rating
+                        secondaryRating = searchResultInfo.leaderPvpRatingInfo[1].tier
+                        
+                    else
+                        rating = 0
+                        secondaryRating = 0
+
+                    end
+
                 else
                     rating = 0
                     secondaryRating = 0
@@ -90,44 +163,16 @@ function SearchFrameMixin:Refresh()
             
         end)
     else
-        local iTable = {}
+        iTable = {}
         local numElements = 0
 
         for k, v in pairs(self.sortOrder) do
             iTable[v.index] = {id = k, state = v.state}
             numElements = numElements + 1
+
         end
 
-        table.sort(resultTable, function(k1, k2)
-            if(k1.applied) then
-                return true
-                
-            elseif(k2.applied) then
-                return false
-
-            end
-
-            for index, v in ipairs(iTable) do
-                local sortElement = v.state
-                local id = v.id
-
-                if(k1[id] ~= k2[id]) then
-                    if(sortElement == 1) then
-                        return k1[id] < k2[id]
-
-                    elseif(sortElement == 2) then
-                        return k1[id] > k2[id]
-                        
-                    end
-                    
-                elseif(index == numElements) then
-                    return k1.resultID < k2.resultID
-
-                else
-
-                end
-            end
-        end)
+        table.sort(resultTable, sortResults)
 
     end
 
@@ -187,6 +232,31 @@ function SearchFrameMixin:OnEvent(event, ...)
     end
 end
 
+
+function SearchFrameMixin:OnShow()
+	local searchBox = LFGListFrame.SearchPanel.SearchBox
+	searchBox:ClearAllPoints()
+    searchBox:SetParent(self)
+	searchBox:SetPoint("TOPLEFT", self, "TOPLEFT", 7, 0)
+	searchBox:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, 0)
+    searchBox:SetFrameStrata("HIGH")
+    self.SearchBox = searchBox
+
+end
+
+function SearchFrameMixin:HookSearchPanelElements()
+    self.SearchingSpinner = LFGListFrame.SearchPanel.SearchingSpinner
+    self.ScrollBox.NoResultsFound = LFGListFrame.SearchPanel.ScrollBox.NoResultsFound
+    self.ScrollBox.StartGroupButton = LFGListFrame.SearchPanel.ScrollBox.StartGroupButton
+    self.SignUpButton = LFGListFrame.SearchPanel.SignUpButton
+    self.LeaverBadge = LFGListFrame.SearchPanel.LeaverBadge
+    self.BackButton = LFGListFrame.SearchPanel.BackButton
+    self.BackToGroupButton = LFGListFrame.SearchPanel.BackToGroupButton
+    self.AutoCompleteFrame = LFGListFrame.SearchPanel.AutoCompleteFrame
+	self:GetParent().EntryCreation = miog.GroupCreator
+
+end
+
 function SearchFrameMixin:OnLoad()
     BackdropTemplateMixin.OnBackdropLoaded(self)
 
@@ -202,10 +272,7 @@ function SearchFrameMixin:OnLoad()
     local function Initializer(frame, node)
 		local data = node:GetData()
 
-		if(data.template ~= "MIOG_SearchFrameInfoFrameTemplate") then
-            frame:Update()
-
-		end
+        frame:Update()
 	end
 	
 	local function CustomFactory(factory, node)
@@ -221,7 +288,14 @@ function SearchFrameMixin:OnLoad()
         end
 	end)
     view:SetElementExtentCalculator(function(dataIndex, node)
-        local searchResultInfo = miog:GetSecureSearchResultInfo(node:GetData().resultID)
+        local data = node:GetData()
+
+        if(data.template == "MIOG_SearchFrameInfoFrameTemplate") then
+            return 144
+
+        end
+
+        local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
         if(searchResultInfo) then
             local activityID = searchResultInfo.activityIDs[1]
@@ -248,4 +322,6 @@ function SearchFrameMixin:OnLoad()
 
     self.ScrollBox:Init(view)
     self.sortOrder = {}
+
+    self:HookSearchPanelElements()
 end

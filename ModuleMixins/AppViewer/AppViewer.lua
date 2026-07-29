@@ -87,7 +87,7 @@ function AppViewer:RemoveApplicantFrame(applicantID)
 end
 
 function AppViewer:AddApplicant(applicantID, activityID)
-	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
+	local applicantData = miog:GetSecureApplicantData(applicantID)
 
 	if(applicantData and miog:CanAccessValue(applicantData.comment)) then
 		local groupData = {}
@@ -330,7 +330,7 @@ function AppViewer:OnEvent(event, ...)
 		end
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...
-		local applicantData = C_LFGList.GetApplicantInfo(applicantID)
+		local applicantData = miog:GetSecureApplicantData(applicantID)
 		local canInvite = LFGListUtil_IsEntryEmpowered()
 		local frame = self:FindApplicantFrame(applicantID)
 
