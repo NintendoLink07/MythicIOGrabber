@@ -22,7 +22,7 @@ UI.lua
 ActivityChecker.lua
 ##QueueManagement.lua
 
-SearchPanel.lua
+# SearchPanel.lua
 ###EntryCreation.lua
 SharedFunctions.lua
 FilterManager.lua
@@ -167,6 +167,8 @@ XML\SearchFrame\MIOG_SearchFrameGroupMemberTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameExpandButtonTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameInfoFrameTemplate.xml
 
+XML\SearchFrame\MIOG_SearchFrameRaidTemplate.xml
+
 XML\SearchFrame\MIOG_SearchFrameSmallGroupResultFrameTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameBigGroupResultFrameTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameBattlegroundResultFrameTemplate.xml
@@ -176,6 +178,7 @@ XML\SearchFrame\MIOG_SearchFrameDelvesResultFrameTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameQuestingResultFrameTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameDungeonResultFrameTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameRaidResultFrameTemplate.xml
+
 
 XML\SearchFrame\MIOG_SearchFrameStandardResultFrameActivityRowTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameStandardResultFrameGeneralRowWithRatingTemplate.xml
@@ -234,9 +237,9 @@ XML\Holidays\MIOG_HolidayFrameTemplate.xml
 
 XML\MIOG_MainFrameTemplate.xml
 XML\MIOG_MainFrameRoleTemplate.xml
-XML\MIOG_Plugin.xml
+# XML\MIOG_Plugin.xml
 
-XML\MIOG_EntryCreation.xml
+# XML\MIOG_EntryCreation.xml
 XML\MIOG_CurrencySingleTemplate.xml
 XML\MIOG_OptionsPanel.xml
 XML\MIOG_PopupFrame.xml
@@ -271,24 +274,24 @@ XML\GroupOrganizer\MIOG_GroupOrganizerSpaceTemplate.xml
 # XML\ApplicationViewer\MIOG_ApplicantFrameTemplate.xml
 # XML\ApplicationViewer\MIOG_ApplicantMemberFrameTemplateNew.xml
 
-XML\SearchPanel\MIOG_SearchPanel.xml
-XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
-XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
-XML\SearchPanel\MIOG_SearchResultFrameRoundBossFrameTemplate.xml
-XML\SearchPanel\MIOG_SearchResultFrameBossPanelTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanel.xml
+# XML\SearchPanel\MIOG_SearchResultFrameGroupMemberTemplate.xml
+# XML\SearchPanel\MIOG_SearchResultFrameSmallGroupMemberTemplate.xml
+# XML\SearchPanel\MIOG_SearchResultFrameRoundBossFrameTemplate.xml
+# XML\SearchPanel\MIOG_SearchResultFrameBossPanelTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelResultFrameTemplate.xml
 
-XML\SearchPanel\MIOG_SearchPanelGenericResultFrameTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelDungeonListingTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelGenericRaidListingTemplate.xml
-XML\SearchPanel\MIOG_SearchResultFrameSquareBossFrameTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelRaidNerubarTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelRaidUndermineTemplate.xml
-XML\SearchPanel\MIOG_SearchPanelRaidManaforgeTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelGenericResultFrameTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelDungeonListingTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelGenericRaidListingTemplate.xml
+# XML\SearchPanel\MIOG_SearchResultFrameSquareBossFrameTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelRaidNerubarTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelRaidUndermineTemplate.xml
+# XML\SearchPanel\MIOG_SearchPanelRaidManaforgeTemplate.xml
 
-XML\SearchPanel\MIOG_ProgressPanel.xml
-XML\SearchPanel\MIOG_ProgressPanelDungeonTemplate.xml
-XML\SearchPanel\MIOG_ProgressPanelTierTemplate.xml
+XML\FilterManager\MIOG_ProgressPanel.xml
+XML\FilterManager\MIOG_ProgressPanelDungeonTemplate.xml
+XML\FilterManager\MIOG_ProgressPanelTierTemplate.xml
 
 XML\SearchPanel\MIOG_ApplicationDialogTextboxTemplate.xml
 XML\SearchPanel\MIOG_ApplicationDialogTextboxInputTemplate.xml

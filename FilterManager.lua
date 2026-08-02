@@ -22,7 +22,7 @@ local panels = {
 }
 
 local function getCurrentPanel()
-	if(miog.SearchPanel:IsShown()) then
+	if(miog.SearchFrame:IsShown()) then
 		return "SearchPanel"
 		
 	elseif(miog.ApplicationViewer:IsShown()) then
@@ -288,7 +288,7 @@ local function checkIfSearchResultIsEligible(resultID, isActiveQueue)
 			["NONE"] = 0
 		}
 
-		local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+		local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
 		local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 		local categoryID = activityInfo.categoryID or getCurrentCategoryID("SearchPanel")
 		local isArenaPvp = categoryID == 4 or categoryID == 7
@@ -1082,7 +1082,7 @@ end
 local function loadFilterManager()
 	retrieveDelveTiers()
 
-	local filterManager = CreateFrame("Frame", "FilterManager", miog.Plugin, "MIOG_FilterManager")
+	local filterManager = CreateFrame("Frame", "FilterManager", miog.MainFrame, "MIOG_FilterManager")
 	filterManager:SetPoint("TOPLEFT", miog.MainFrame, "TOPRIGHT", 5, 0)
 
 	miog.createFrameBorder(filterManager, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())

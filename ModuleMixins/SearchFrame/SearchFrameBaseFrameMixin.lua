@@ -6,7 +6,10 @@ function SearchFrameBaseFrameMixin:OnLoad()
 
 end
 
+function SearchFrameBaseFrameMixin:Reset()
+	self:SetStatus()
 
+end
 
 local function LFGListAdvancedFiltersActivitiesNoneChecked(enabled)
 	return #enabled.activities == 0;
@@ -138,45 +141,62 @@ function SearchFrameBaseFrameMixin:RefreshStatus()
     --implement in children
 end
 
-function SearchFrameBaseFrameMixin:SetStatus(searchResultInfo)
-    local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(searchResultInfo.searchResultID);
-    local isDeclined = IsDeclined(appStatus);
-    if LFGListFrame.declines then
-        if not isDeclined and LFGListFrame.declines[searchResultInfo.partyGUID] then
-            isDeclined = true;
-            appStatus = LFGListFrame.declines[searchResultInfo.partyGUID];
-        end
-    end
-
-    local isApplication = (appStatus ~= "none" or pendingStatus);
-    local isAppFinished = LFGListUtil_IsStatusInactive(appStatus) or LFGListUtil_IsStatusInactive(pendingStatus);
-    local enabled = C_LFGList.GetAdvancedFilter();
-    local displayData = C_LFGList.GetSearchResultMemberCounts(searchResultInfo.searchResultID);
+function SearchFrameBaseFrameMixin:UpdateVisuals(searchResultInfo)
     
-    self.hasInvitation = appStatus == "invited"
-    self.isTimedOut = appStatus == "timedout"
-    self.isFull = appStatus == "declined_full"
-    self.applicationHasBeenCancelled = appStatus == "cancelled"
-    self.applicationHasBeenDeclined = appStatus == "declined"
-    self.invitationHasBeenDeclined = appStatus == "invitedeclined"
-
-    self.isNowFilteredOut = LFGListFrame.CategorySelection.selectedCategory == GROUP_FINDER_CATEGORY_ID_DUNGEONS and not EntryStillSatisfiesFilters(enabled, displayData, searchResultInfo);
-    self.isApplication = isApplication and not isAppFinished;
-    self.isSelected = LFGListFrame.SearchPanel.selectedResult == searchResultInfo.searchResultID and not isApplication and not searchResultInfo.isDelisted;
-    self.isDelisted = searchResultInfo.isDelisted
-
-    self:RefreshStatus()
 end
 
-function SearchFrameBaseFrameMixin:UpdateVisuals(searchResultInfo)
-    local activityID = searchResultInfo.activityIDs[1]
-    local activityInfo = miog:GetActivityInfo(activityID)
+function SearchFrameBaseFrameMixin:SetStatus(searchResultInfo)
+	if(searchResultInfo) then
+		local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(searchResultInfo.searchResultID);
+		local isDeclined = IsDeclined(appStatus);
+		if LFGListFrame.declines then
+			if not isDeclined and LFGListFrame.declines[searchResultInfo.partyGUID] then
+				isDeclined = true;
+				appStatus = LFGListFrame.declines[searchResultInfo.partyGUID];
+			end
+		end
 
-    if(activityInfo.horizontal) then
-        self.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
+		local isApplication = (appStatus ~= "none" or pendingStatus);
+		local isAppFinished = LFGListUtil_IsStatusInactive(appStatus) or LFGListUtil_IsStatusInactive(pendingStatus);
+		local enabled = C_LFGList.GetAdvancedFilter();
+		local displayData = C_LFGList.GetSearchResultMemberCounts(searchResultInfo.searchResultID);
+		
+		self.hasInvitation = appStatus == "invited"
+		self.isTimedOut = appStatus == "timedout"
+		self.isFull = appStatus == "declined_full"
+		self.applicationHasBeenCancelled = appStatus == "cancelled"
+		self.applicationHasBeenDeclined = appStatus == "declined"
+		self.invitationHasBeenDeclined = appStatus == "invitedeclined"
 
-    else
-        self.Background:SetColorTexture(PANEL_BACKGROUND_COLOR:GetRGBA())
+		self.isNowFilteredOut = LFGListFrame.CategorySelection.selectedCategory == GROUP_FINDER_CATEGORY_ID_DUNGEONS and not EntryStillSatisfiesFilters(enabled, displayData, searchResultInfo);
+		self.isApplication = isApplication and not isAppFinished;
+		self.isSelected = LFGListFrame.SearchPanel.selectedResult == searchResultInfo.searchResultID and not isApplication and not searchResultInfo.isDelisted;
+		self.isDelisted = searchResultInfo.isDelisted
 
-    end
+		local activityID = searchResultInfo.activityIDs[1]
+		local activityInfo = miog:GetActivityInfo(activityID)
+
+		if(activityInfo.horizontal) then
+			self.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
+
+		else
+			self.Background:SetColorTexture(PANEL_BACKGROUND_COLOR:GetRGBA())
+
+		end
+		
+		self:RefreshStatus()
+	else
+		self.hasInvitation = nil
+		self.isTimedOut = nil
+		self.isFull = nil
+		self.applicationHasBeenCancelled = nil
+		self.applicationHasBeenDeclined = nil
+		self.invitationHasBeenDeclined = nil
+
+		self.isNowFilteredOut = nil
+		self.isApplication = nil
+		self.isSelected = nil
+		self.isDelisted = nil
+
+	end
 end

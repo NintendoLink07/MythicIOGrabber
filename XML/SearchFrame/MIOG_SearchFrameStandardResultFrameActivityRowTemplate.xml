@@ -10,6 +10,17 @@
             </CheckButton>
         </Frames>
 
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
+                    <Size x="128" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
         <Frames>
             <Frame parentKey="Members" inherits="HorizontalLayoutFrame">
                 <KeyValues>
@@ -17,6 +28,7 @@
                 </KeyValues>
 
                 <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="24"/>
                     <Anchor point="RIGHT" x="-30"/>
                 </Anchors>
 
@@ -63,17 +75,5 @@
                 </Frames>
             </Frame>
         </Frames>
-
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
-                    <Size x="128" />
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
-                        <Anchor point="RIGHT" relativeKey="$parent.Members" relativePoint="LEFT" x="-4"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
     </Frame>
 </Ui>

@@ -336,13 +336,21 @@ end
 function BetterWeeklyActivitiesMixin:OnEnter(selfFrame, ...)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -7, -11);
 
-	local itemLink1, itemLink2, itemLink3 = self.exampleRewardsData[1][1], self.exampleRewardsData[2][1], self.exampleRewardsData[3][1]
+	local itemLink1, itemLink2, itemLink3
+
+	if(self.exampleRewardsData) then
+		itemLink1, itemLink2, itemLink3 = self.exampleRewardsData[1][1], self.exampleRewardsData[2][1], self.exampleRewardsData[3][1]
+		
+	else
+		itemLink1, itemLink2, itemLink3 = "", "", ""
+
+	end
 
 	if(itemLink1 ~= "" and not C_Item.GetDetailedItemLevelInfo(itemLink1) or itemLink2 ~= "" and not C_Item.GetDetailedItemLevelInfo(itemLink2) or itemLink3 ~= "" and not C_Item.GetDetailedItemLevelInfo(itemLink3)) then
 		GameTooltip_AddErrorLine(GameTooltip, RETRIEVING_ITEM_INFO)
 		self.UpdateTooltip = self.OnEnter
 
-	else
+	elseif(self.activities) then
 		self.UpdateTooltip = nil
 		
 		if self:CanShowPreviewItemTooltip() then
@@ -408,6 +416,22 @@ function BetterWeeklyActivitiesMixin:SetOnlyActivities(activities)
 
 	self.activities = activities
 	self.progressInfo = activities[3]
+end
+
+function BetterWeeklyActivitiesMixin:Reset()
+	self.greatVaultData = nil
+	self.type = nil
+
+    self.runHistory = nil
+	self.worldHistory = nil
+    self.raidEncounterData = nil
+	self.exampleRewardsData = nil
+	self.numHeroic, self.numMythic, self.numMythicPlus = nil, nil, nil
+	
+
+	self.activities = nil
+	self.progressInfo = nil
+
 end
 
 function BetterWeeklyActivitiesMixin:SetInfo(greatVaultData, type)

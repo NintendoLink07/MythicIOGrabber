@@ -1,13 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_SearchFrameInfoFrameTemplate" mixin="SearchFrameInfoFrameMixin" virtual="true">
-        <Size y="144" />
-
-        <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-1"> 
-                <Texture parentKey="Background" setAllPoints="true" vertTile="true" horizTile="true"/>
-            </Layer>
-        </Layers>
+        <Size y="146" />
 
         <Frames>
             <Frame parentKey="StatusFrame" hidden="true" setAllPoints="true" framestrata="FULLSCREEN">
@@ -25,10 +19,10 @@
             </Frame>
 
             <Frame parentKey="Dungeons">
-                <Size x="140" />
+                <Size x="142" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" x="2"/>
-                    <Anchor point="BOTTOMLEFT" x="2"/>
+                    <Anchor point="TOPLEFT" x="2" y="-2"/>
+                    <Anchor point="BOTTOMLEFT" x="2" y="2"/>
                 </Anchors>
 
                 <Frames>
@@ -114,103 +108,163 @@
                 </Anchors>
                 
                 <Frames>
-                    <Frame parentKey="Raid1">
-                        <Size y="34" />
+                    <Frame parentKey="Raid1" inherits="MIOG_SearchFrameRaidTemplate" hidden="true">
+                        <Size y="32" />
 
                         <Anchors>
                             <Anchor point="TOPLEFT"/>
                             <Anchor point="TOPRIGHT"/>
                         </Anchors>
+                    </Frame>
 
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST TEXT HERE">
-                                    <Size x="96" y="16" />
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT"/>
-                                    </Anchors>
-                                </FontString>
+                    <Frame parentKey="Raid2" inherits="MIOG_SearchFrameRaidTemplate" hidden="true">
+                        <Size y="34" />
 
-                                <FontString parentKey="Progress2" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="99/99">
-                                    <Size x="48" y="16" />
-                                    <Anchors>
-                                        <Anchor point="TOPRIGHT"/>
-                                    </Anchors>
-                                </FontString>
-
-                                <FontString parentKey="Progress1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="99/99">
-                                    <Size x="48" y="16" />
-                                    <Anchors>
-                                        <Anchor point="RIGHT" relativeKey="$parent.Progress2" relativePoint="LEFT" x="-4"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-
-                        <Frames>
-                            <Frame parentKey="Boss1" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss2" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss3" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-                            <Frame parentKey="Boss4" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-                            
-                            <Frame parentKey="Boss5" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss6" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss7" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-                            
-                            <Frame parentKey="Boss8" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss9" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-
-                            <Frame parentKey="Boss10" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
-                                <Anchors>
-                                    <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="4"/>
-                                </Anchors>
-                            </Frame>
-                        </Frames>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Raid1" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.Raid1" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>
         </Frames>
+
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1"> 
+                <Texture parentKey="Background" setAllPoints="true" vertTile="true" horizTile="true"/>
+            </Layer>
+
+            <Layer level="BACKGROUND"> 
+                <Texture parentKey="TransparentDark" setAllPoints="true">
+                    <Color r="0.1" g="0.1" b="0.1" a="0.5" />
+                </Texture>
+            </Layer>
+
+            <Layer level="OVERLAY">
+                <FontString parentKey="Realm" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                    <Size y="16" />
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Dungeons" relativePoint="BOTTOMRIGHT" x="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="KeysDone" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                    <Size y="16" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Realm" relativePoint="TOPLEFT" y="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Realm" relativePoint="TOPRIGHT" y="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="MainChar" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                    <Size y="16" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.KeysDone" relativePoint="TOPLEFT" y="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.KeysDone" relativePoint="TOPRIGHT" y="2"/>
+                    </Anchors>
+                </FontString>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-16"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-16"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-34"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-34"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-52"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-52"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-70"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-70"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-88"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-88"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-106"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-106"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Dungeons" y="-124"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Dungeons" y="-124"/>
+                    </Anchors>
+                </Texture>
+
+           
+                
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" y="-34"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-34"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" y="-70"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-70"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" y="-88"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-88"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" y="-106"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-106"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="UI-LFG-DividerLine">
+                    <Size y="2" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.Raids" y="-124"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-124"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
 
         <Scripts>
             <OnLoad method="OnLoad" />

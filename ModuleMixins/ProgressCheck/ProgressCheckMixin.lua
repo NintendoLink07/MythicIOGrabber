@@ -785,9 +785,6 @@ function ProgressCheckMixin:OnEvent(event, ...)
     elseif(event == "PVP_RATED_STATS_UPDATE") then
         self:UpdatePVPData()
 
-    elseif(event == "PLAYER_ENTERING_WORLD") then
-        self:Refresh()
-
     end
 end
 
@@ -916,25 +913,25 @@ function ProgressCheckMixin:OnLoad()
 
                 end
                 
-
                 local dungeonPercentage = frame.CellList.Dungeons:GetProgressPercentage()
                 if(dungeonPercentage > 0) then
                     frame.CellList.Dungeons.Text:SetTextColor(miog.createCustomColorForRating(4000 * dungeonPercentage):GetRGBA())
                     frame.CellList.Dungeons.Checkmark:SetShown(dungeonPercentage == 1)
+                    
                 else
                     frame.CellList.Dungeons.Text:SetTextColor(grayColor:GetRGBA())
                     frame.CellList.Dungeons.Checkmark:SetShown(false)
 
                 end
                 
-
                 local worldPercentage = frame.CellList.World:GetProgressPercentage()
                 if(worldPercentage > 0) then
                     frame.CellList.World.Text:SetTextColor(miog.createCustomColorForRating(4000 * worldPercentage):GetRGBA())
                     frame.CellList.World.Checkmark:SetShown(worldPercentage == 1)
-                    frame.CellList.World.Checkmark:SetShown(false)
+
                 else
                     frame.CellList.World.Text:SetTextColor(grayColor:GetRGBA())
+                    frame.CellList.World.Checkmark:SetShown(false)
 
                 end
             else
@@ -949,6 +946,10 @@ function ProgressCheckMixin:OnLoad()
                 frame.CellList.World.Text:SetText(EMPTY_STRING)
                 frame.CellList.World.Text:SetTextColor(grayColor:GetRGBA())
                 frame.CellList.World.Checkmark:SetShown(false)
+
+                frame.CellList.Raids:Reset()
+                frame.CellList.Dungeons:Reset()
+                frame.CellList.World:Reset()
 
                 --frame.CellList.GreatVault.Icon:Hide()
 

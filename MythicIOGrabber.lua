@@ -157,13 +157,11 @@ local function mainEvents(_, event, ...)
 				local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
 				local lastGroup = activityInfo.fullName
 
-				if(not miog.F.LITE_MODE) then
-					local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
+				local lastGroupFrame = miog.MainTab.QueueInformation.LastGroup
 
-					lastGroupFrame.Text:SetText(lastGroup)
+				lastGroupFrame.Text:SetText(lastGroup)
 
-					miog.refreshLastGroupTeleport(activityInfo.mapID)
-				end
+				miog.refreshLastGroupTeleport(activityInfo.mapID)
 
 				MIOG_CharacterSettings.lastGroupMap = activityInfo.mapID
 				MIOG_CharacterSettings.lastGroup = lastGroup
@@ -354,6 +352,7 @@ eventReceiver:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventReceiver:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
 eventReceiver:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 eventReceiver:RegisterEvent("OPEN_RECIPE_RESPONSE")
+eventReceiver:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
 
 eventReceiver:RegisterEvent("CHALLENGE_MODE_START")
 eventReceiver:RegisterEvent("CHALLENGE_MODE_RESET")

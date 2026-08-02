@@ -705,6 +705,13 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 			{icon = "interface/icons/inv_1207_achievement_raid_fungariangiant_fungalgiant.blp"},
 		},
 	},
+	[424] = {
+		abbreviatedName = "VA",
+		mapID = 3004,
+		bossIcons = {
+			{icon = "interface/icons/interface/icons/inv_121_achievement_raid_ulatek.blp"},
+		},
+	},
 }
 
 -- wagotools groupfinderactivity csv, sort by group id and create dataset with mapID, groupID and activityID
@@ -1521,6 +1528,137 @@ miog.MAP_INFO = {
 			63234,
 			63235,
 			63236,
+		}
+	},
+
+	
+	[3004] = {
+		abbreviatedName = "VA",
+		bossData = {
+			[1] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_priestess.blp",
+				achievementIDs = {
+					63533,
+					63534,
+					63535,
+					63536,
+				},
+			},
+			[2] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_golems.blp",
+				achievementIDs = {
+					63537,
+					63538,
+					63539,
+					63540,
+				},
+			},
+			[3] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_tortollans.blp",
+				achievementIDs = {
+					63541,
+					63552,
+					63553,
+					63554,
+				},
+			},
+			[4] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_alchemist.blp",
+				achievementIDs = {
+					63547,
+					63555,
+					63556,
+					63557,
+				},
+			},
+			[5] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_brute.blp",
+				achievementIDs = {
+					63548,
+					63558,
+					63559,
+					63560,
+				},
+			},
+			[6] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_twins.blp",
+				achievementIDs = {
+					63549,
+					63561,
+					63562,
+					63563,
+				},
+			},
+			[7] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp",
+				achievementIDs = {
+					63550,
+					63564,
+					63565,
+					63566,
+				},
+			},
+			[8] = {
+				icon = "interface/icons/interface/icons/inv_121_raid_achievement_ulatek.blp",
+				achievementIDs = {
+					63551,
+					63567,
+					63568,
+					63569,
+				},
+			},
+		},
+
+		bossIcons = {
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_priestess.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_golems.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_tortollans.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_alchemist.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_brute.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_twins.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp"},
+			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_ulatek.blp"},
+		},
+		achievementIDs = {
+			63533,
+			63534,
+			63535,
+			63536,
+
+			63537,
+			63538,
+			63539,
+			63540,
+
+			63541,
+			63552,
+			63553,
+			63554,
+
+			63547,
+			63555,
+			63556,
+			63557,
+
+			63548,
+			63558,
+			63559,
+			63560,
+
+			63549,
+			63561,
+			63562,
+			63563,
+			
+			63550,
+			63564,
+			63565,
+			63566,
+
+			63551,
+			63567,
+			63568,
+			63569,
 		}
 	},
 }
@@ -5359,6 +5497,11 @@ miog.getRealmData = function(realmName, region)
 		return nil, "N/A"
 
 	end
+end
+
+function miog:GetRealmData(realmName, region)
+	return miog.getRealmData(realmName, region)
+
 end
 
 ---------

@@ -31,17 +31,16 @@ function SearchFrameResultFrameMixin:ImprovedClick(button)
             end
 
             LFGListSearchPanel_SelectResult(panel, self.resultID)
+
         else
             LFGListSearchEntry_OnClick(self, button)
 
         end
 
         return true
-
-    else
-        return false
-
     end
+
+    return false
 end
 
 function SearchFrameResultFrameMixin:OnMouseDown(button)
@@ -50,7 +49,7 @@ function SearchFrameResultFrameMixin:OnMouseDown(button)
             local resultID = self:GetData().resultID
 		    local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
 
-            if(resultID and appStatus ~= "applied") then
+            if(resultID and LFGListFrame.SearchPanel.selectedResult and appStatus ~= "applied") then
                 LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 
             end
@@ -115,6 +114,7 @@ end
 function SearchFrameResultFrameMixin:Reset()
     self.Cancel:Hide()
     self.LeaderCrown:Hide()
+    self.Activity.Expand:SetChecked(false)
 
     local memberParent = self.Activity.Members
 
@@ -296,7 +296,7 @@ function SearchFrameResultFrameMixin:Update()
         for i = 1, searchResultInfo.numMembers, 1 do
             local memberInfo = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
 
-            if memberInfo and memberInfo.assignedRole then
+            if memberInfo and memberInfo.assignedRole and memberInfo.specName then
                 local role = memberInfo.assignedRole
                 memberInfo.specID = memberInfo.classFilename and memberInfo.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[memberInfo.specName .. "-" .. memberInfo.classFilename]
                 tinsert(groupInfo, memberInfo)
@@ -382,16 +382,20 @@ function SearchFrameResultFrameMixin:Update()
             else
                 --Custom Category - Custom PVP not adding members
                 --also extension calc on member add or rm
-                for i = ceil(searchResultInfo.numMembers / 10) * 10 - searchResultInfo.numMembers, 1, -1 do
+
+                local maxMembers = activityInfo.maxNumPlayers > 0 and activityInfo.maxNumPlayers or 5
+
+                --ceil(searchResultInfo.numMembers / 10) * 10 - searchResultInfo.numMembers
+
+                for i = 1 + searchResultInfo.numMembers, maxMembers, 1 do
                     tinsert(groupInfo, {
                         classFilename = "DUMMY",
-                        specID = 20,
-                        assignedRole = "DAMAGER",
+                        specID = 9999,
+                        assignedRole = "TANK",
                         isLeaver = false,
                         --atlas = GetIconForRole("DAMAGER", true)
                     })
                 end
-
             end
             
             table.sort(groupInfo, sortByRoleAndSpec)
@@ -439,7 +443,6 @@ function SearchFrameResultFrameMixin:Update()
         self:UpdateApplicationStatus()
 
         self:SetStatus(searchResultInfo)
-        self:UpdateVisuals(searchResultInfo)
     end
 end
 
@@ -542,6 +545,7 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
                 bossFrame = self.Activity.Bosses.bossFrames[10 - numOfBosses + k]
 
             end
+
             bossFrame.ignoreInLayout = nil
 
             bossFrame.Icon:SetDesaturated(bossDefeated)
@@ -575,6 +579,11 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
 
             if(orderedData2) then
                 self.General.SecondaryRating:SetText(WrapTextInColorCode(miog.getParsedProgressString(orderedData2.kills, orderedData2.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
+
+            else
+                self.General.SecondaryRating:SetText("")
+                self.General.SecondaryRating:SetTextColor(WHITE_FONT_COLOR:GetRGBA())
+
 
             end
 
@@ -629,8 +638,6 @@ end
 function SearchFramePVPResultFrameMixin:UpdateCategoryData(searchResultInfo)
     if(searchResultInfo) then
         local pvpRatingInfo = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
-
-        print(searchResultInfo.leaderPvpRatingInfo and #searchResultInfo.leaderPvpRatingInfo)
 
         if(pvpRatingInfo and pvpRatingInfo.rating > 0) then
             self.General.Rating:SetText(pvpRatingInfo.rating)

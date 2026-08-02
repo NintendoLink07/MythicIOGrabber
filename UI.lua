@@ -65,18 +65,12 @@ local function setActivePanel(_, panel)
 		end
 
 		miog.ApplicationViewer:Show()
-		miog.Plugin:Hide()
 	else
 		if(panel == LFGListFrame.SearchPanel) then
-			miog.Plugin:Show()
-			miog.SearchPanel:Show()
+			miog.SearchFrame:Show()
 
 		elseif(panel == LFGListFrame.EntryCreation) then
 			miog.GroupCreator:Show()
-			miog.Plugin:Hide()
-			
-		else
-			miog.Plugin:Hide()
 
 		end
 
@@ -127,15 +121,6 @@ miog.createFrames = function()
 	
 	miog.createPVEFrameReplacement()
 
-	miog.Plugin = CreateFrame("Frame", "MythicIOGrabber_PluginFrame", miog.MainTab, "MIOG_Plugin")
-	miog.Plugin:SetPoint("TOPLEFT", miog.MainTab.QueueInformation, "TOPRIGHT", 0, 0)
-	miog.Plugin:SetPoint("BOTTOMRIGHT", miog.pveFrame2.Currency, "TOPRIGHT", -20, 5)
-	miog.Plugin:SetFrameStrata("HIGH")
-
-	miog.createFrameBorder(miog.Plugin, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.Plugin:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	--PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 	--PVEFrame_ShowFrame("PVPUIFrame", "ConquestFrame")
 	PVEFrame_ShowFrame("PVPUIFrame", "HonorFrame")
 
@@ -144,18 +129,11 @@ miog.createFrames = function()
 
 	miog.pveFrame2.TitleBar.BlizzardFrame:SetPoint("RIGHT", settingsButton, "LEFT", -2, 0)
 
-	miog.Plugin:SetScript("OnEnter", function()
-	
-	end)
-
-	miog.createFrameBorder(miog.Plugin.FooterBar, 1, CreateColorFromHexString(miog.C.BACKGROUND_COLOR_3):GetRGBA())
-	miog.Plugin.FooterBar:SetBackdropColor(CreateColorFromHexString(miog.C.BACKGROUND_COLOR):GetRGBA())
-
-	miog.MainFrame = miog.F.LITE_MODE and miog.Plugin or miog.pveFrame2
+	miog.MainFrame = miog.pveFrame2
 
 	
 	--miog.ApplicationViewer = miog.createApplicationViewer()
-	miog.SearchPanel = miog.createSearchPanel()
+	--miog.SearchPanel = miog.createSearchPanel()
 	--miog.EntryCreation = miog.createEntryCreation()
 	miog.FilterManager = miog.loadFilterManager()
 	
@@ -188,7 +166,7 @@ miog.createFrames = function()
 
 	panels = {
 		miog.ApplicationViewer,
-		miog.SearchPanel,
+		miog.SearchFrame,
 		miog.GroupCreator,
 	}
 end

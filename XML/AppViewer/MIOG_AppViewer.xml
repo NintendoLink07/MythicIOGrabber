@@ -33,23 +33,6 @@
                     </OnLoad>
                 </Scripts>
 			</Frame>
-
-            <!--<Frame parentKey="SortHeader" mixin="SimplifiedSortingMixin, AnchorSystemMixin">
-                <Size y="24" />
-
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Border.Bg" relativePoint="TOPLEFT" x="3"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Border.Bg" relativePoint="TOPRIGHT" x="-2"/>
-                </Anchors>
-
-                <Scripts>
-                    <OnLoad>
-                        SimplifiedSortingMixin.OnLoad(self)
-                        AnchorSystemMixin.OnLoad(self)
-                    </OnLoad>
-                </Scripts>
-            </Frame>!-->
-
             
             <Frame parentKey="SortButtons" mixin="SimplifiedSortingMixin, AnchorSystemMixin" frameLevel="50">
                 <Size y="24" />

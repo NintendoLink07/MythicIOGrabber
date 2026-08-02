@@ -28,7 +28,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
-                            <Size x="128" />
+                            <Size x="128" y="16"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
                             </Anchors>
