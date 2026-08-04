@@ -12,8 +12,6 @@ and this project adheres to [Semantic Versioning].
 - [SearchFrame] The search frame has been reworked / recoded to not break any secret value stuff anymore.
     - Performance has been improved by quite a lot.
 
-- [MainFrame] The vault progress bars have been recoded so they are as accurate as the [Progress] vault progress frames.
-
 ### Fixed
 
 - [Progress] Fixed some minor errors regarding progression tracking.

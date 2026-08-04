@@ -141,7 +141,7 @@
             </Layer>
 
             <Layer level="OVERLAY">
-                <FontString parentKey="Realm" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                <FontString parentKey="Comment" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size y="16" />
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
@@ -149,15 +149,27 @@
                     </Anchors>
                 </FontString>
 
-                <FontString parentKey="KeysDone" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                <FontString parentKey="Realm" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Size y="16" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.Comment" relativePoint="TOPLEFT" y="2"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Comment" relativePoint="TOPRIGHT" y="2"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="KeysDone" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size y="16" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.Realm" relativePoint="TOPLEFT" y="2"/>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Realm" relativePoint="TOPRIGHT" y="2"/>
                     </Anchors>
+
+                    <Scripts>
+                        <OnLeave function="GameTooltip_Hide" />
+                    </Scripts>
                 </FontString>
 
-                <FontString parentKey="MainChar" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST">
+                <FontString parentKey="MainChar" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
                     <Size y="16" />
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.KeysDone" relativePoint="TOPLEFT" y="2"/>

@@ -155,6 +155,7 @@ XML\Loot\MIOG_LootItemTemplate.xml
 XML\Loot\MIOG_LootInstanceTemplate.xml
 XML\Loot\MIOG_LootBossTemplate.xml
 
+XML\AppViewer\MIOG_AppViewerHeaderSortButtonTemplate.xml
 XML\AppViewer\MIOG_AppViewer.xml
 XML\AppViewer\MIOG_AppViewerApplicantSingleMemberTemplate.xml
 XML\AppViewer\MIOG_AppViewerApplicantTemplate.xml

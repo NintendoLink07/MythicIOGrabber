@@ -380,7 +380,7 @@ local registered = false
 
 function AppViewer:OnShow()
 	if(not registered) then
-		ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ApplicationViewerScrollBar)
+		--ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ApplicationViewerScrollBar)
 		registered = true
 	end
 
@@ -388,6 +388,27 @@ function AppViewer:OnShow()
 end
 
 function AppViewer:OnLoad()
+	local visualTable = {
+        edgeFile="Interface\\ChatFrame\\ChatFrameBackground",
+        edgeSize = 2
+    }
+    local r, g, b, a = GRAY_FONT_COLOR:GetRGBA()
+	self:SetBackdrop(visualTable)
+	self:SetBackdropBorderColor(r, g, b, a)
+
+	self.SortButtons.Role:SetBackdrop(visualTable)
+	self.SortButtons.Role:SetBackdropBorderColor(r, g, b, a)
+
+	self.SortButtons.Primary:SetBackdrop(visualTable)
+	self.SortButtons.Primary:SetBackdropBorderColor(r, g, b, a)
+
+	self.SortButtons.Secondary:SetBackdrop(visualTable)
+	self.SortButtons.Secondary:SetBackdropBorderColor(r, g, b, a)
+
+	self.SortButtons.ItemLevel:SetBackdrop(visualTable)
+	self.SortButtons.ItemLevel:SetBackdropBorderColor(r, g, b, a)
+
+	
 	CallbackRegistryMixin.OnLoad(self)
     local view = CreateScrollBoxListTreeListView(3, 0, 0, 0, 0, 6)
     self.view = view

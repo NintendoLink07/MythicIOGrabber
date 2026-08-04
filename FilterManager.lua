@@ -627,7 +627,7 @@ local function refreshPanel(panel)
 	end
 
 	if(panel == "SearchPanel") then
-		miog.fullyUpdateSearchPanel()
+		miog.SearchFrame:Refresh()
 
 	elseif(panel == "ApplicationViewer") then
 		C_LFGList.RefreshApplicants()
@@ -658,7 +658,7 @@ local function changeSetting(value, ...)
 	lastSetting[finalKey] = value
 
 	if panel == "SearchPanel" then
-		miog.fullyUpdateSearchPanel()
+		miog.SearchFrame:Refresh()
 	elseif panel == "ApplicationViewer" then
 		C_LFGList.RefreshApplicants()
 	end

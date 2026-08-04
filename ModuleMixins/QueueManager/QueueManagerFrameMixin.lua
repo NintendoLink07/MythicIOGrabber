@@ -341,8 +341,40 @@ function QueueManagerApplicationFrameMixin:Update()
 end
 
 function QueueManagerApplicationFrameMixin:OnEnter()
-    miog.createResultTooltip(self.data.resultID, self)
+    local resultID = self.data.resultID;
 
+    local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+
+    if(searchResultInfo and not searchResultInfo.isDelisted) then
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 25, 0);
+        LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID);
+
+        local nameTable
+
+		if(searchResultInfo.leaderName) then
+			nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+
+			if(nameTable and not nameTable[2]) then
+				nameTable[2] = GetNormalizedRealmName()
+
+			end
+
+			if(nameTable[2]) then
+				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
+				GameTooltip_AddBlankLineToTooltip(GameTooltip)
+				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
+                GameTooltip:Show()
+			end
+		end
+
+        if(searchResultInfo.crossFactionListing) then
+            LFGListSearchPanel_EvaluateTutorial(LFGListFrame.SearchPanel, self);
+        end
+
+        if self.isNowFilteredOut or self.isApplication or not self.isSelected then
+            self.Highlight:Show();
+        end
+    end
 end
 
 function QueueManagerApplicationFrameMixin:OnClick()
@@ -632,7 +664,7 @@ function QueueManagerListingFrameMixin:Update()
         self:SetTimerInfo()
 
         self.Wait:Hide()
-        self.macrotext = "/run C_LFGList.RemoveListing() LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, false)"
+        self.macrotext = "/run C_LFGList.RemoveListing()"
     end
 end
 
@@ -647,7 +679,7 @@ function QueueManagerListingFrameMixin:OnEnter()
 
     if(activeEntryInfo) then
         local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()
-        self.BackgroundHover:Show()
+        self.Highlight:Show()
         
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(string.format(LFG_LIST_PENDING_APPLICANTS, numActiveApplicants))

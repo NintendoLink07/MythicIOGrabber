@@ -321,6 +321,8 @@ function SearchFrameInfoFrameMixin:Reset()
             end
         end
     end
+
+    self.KeysDone.levels = nil
 end
 
 function SearchFrameInfoFrameMixin:OnLoad()
@@ -385,6 +387,29 @@ function SearchFrameInfoFrameMixin:SetRealmData(realm)
     self.Realm:SetText(countryFlagTexture .. string.upper(region or "") .. "-" .. realm .. "(" .. language .. ")")
 end
 
+function SearchFrameInfoFrameMixin:SetKeyLevels(mplusData)
+    self.KeysDone:SetText(
+        WrapTextInColorCode((mplusData.keystoneMilestone2 or 0), miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+        WrapTextInColorCode((mplusData.keystoneMilestone4 or 0), miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+        WrapTextInColorCode((mplusData.keystoneMilestone7 or 0), miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+        WrapTextInColorCode((mplusData.keystoneMilestone10 or 0), miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
+        WrapTextInColorCode((mplusData.keystoneMilestone12 or 0), miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
+        WrapTextInColorCode((mplusData.keystoneMilestone15 or 0), miog.ITEM_QUALITY_COLORS[7].pureHex)
+    )
+
+    self.KeysDone:SetScript("OnEnter", function(selfFontString)
+        GameTooltip:SetOwner(selfFontString, "ANCHOR_RIGHT")
+        GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
+        GameTooltip:AddLine("2-3: " .. (mplusData.keystoneMilestone2 or 0))
+        GameTooltip:AddLine("4-6: " .. (mplusData.keystoneMilestone4 or 0))
+        GameTooltip:AddLine("7-9: " .. (mplusData.keystoneMilestone7 or 0))
+        GameTooltip:AddLine("10-11: " .. (mplusData.keystoneMilestone10 or 0))
+        GameTooltip:AddLine("12-14: " .. (mplusData.keystoneMilestone12 or 0))
+        GameTooltip:AddLine("15+: " .. (mplusData.keystoneMilestone15 or 0))
+        GameTooltip:Show()
+    
+    end)
+end
 
 function SearchFrameInfoFrameMixin:Update()
     if(IsPlayerAtEffectiveMaxLevel()) then
@@ -422,16 +447,7 @@ function SearchFrameInfoFrameMixin:Update()
 
                         end
                     end
-                end
-                
-                self.KeysDone:SetText(
-                    WrapTextInColorCode(mplusData.keystoneMilestone2 or "0", miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-                    WrapTextInColorCode(mplusData.keystoneMilestone4 or "0", miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-                    WrapTextInColorCode(mplusData.keystoneMilestone7 or "0", miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-                    WrapTextInColorCode(mplusData.keystoneMilestone10 or "0", miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
-                    WrapTextInColorCode(mplusData.keystoneMilestone12 or "0", miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
-                    WrapTextInColorCode(mplusData.keystoneMilestone15 or "0", miog.ITEM_QUALITY_COLORS[7].pureHex)
-                )
+                end     
 
                 if(mplusData.mplusMainCurrent and mplusData.mplusMainCurrent.score > 0) then
                     self.MainChar:SetText("Alt; Main rating is " .. mplusData.mplusMainCurrent.score)
@@ -440,6 +456,8 @@ function SearchFrameInfoFrameMixin:Update()
                     self.MainChar:SetText("Main")
 
                 end
+
+                self:SetKeyLevels(mplusData)
             else
                 for _, v in ipairs(self.Dungeons.childFrames) do
                     v.Text:SetText(0)
@@ -452,6 +470,8 @@ function SearchFrameInfoFrameMixin:Update()
             local raidData = self:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
             local bossesKilled = {}
             
+            --color raid progress with their diff color
+
             if(raidData) then
                 for k, v in ipairs(raidData) do
                     local tierBosses = tierData[k].numOfBosses
@@ -490,6 +510,11 @@ function SearchFrameInfoFrameMixin:Update()
                         end
                     end
                 end
+            end
+
+            if(searchResultInfo.comment) then
+                self.Comment:SetText(searchResultInfo.comment)
+
             end
         end
 

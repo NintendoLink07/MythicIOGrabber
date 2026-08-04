@@ -3,7 +3,7 @@
     <Button name="MIOG_QueueManagerBaseFrameTemplate" mixin="QueueManagerFrameMixin" virtual="true">
         <Size y="45" />
 
-        <HighlightTexture parentKey="BackgroundHover" atlas="ClickCastList-ButtonHighlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
+        <HighlightTexture parentKey="Highlight" atlas="ClickCastList-ButtonHighlight" setAllPoints="true" alphaMode="ADD" hidden="true"/>
 
         <Frames>
             <Button parentKey="CancelApplication" inherits="BigRedExitButtonTemplate, SecureActionButtonTemplate">

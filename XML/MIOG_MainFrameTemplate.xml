@@ -375,7 +375,7 @@
            
                     <Layer level="BACKGROUND" textureSubLevel="-4">
                         <Texture parentKey="TransparentDark" setAllPoints="true">
-                            <Color r="0.3" g="0.3" b="0.3" a="0.1" />
+                            <Color r="0.1" g="0.1" b="0.1" a="0.35" />
                         </Texture>
                     </Layer>
                 </Layers>

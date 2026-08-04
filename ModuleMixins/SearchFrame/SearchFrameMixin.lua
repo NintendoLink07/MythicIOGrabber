@@ -3,6 +3,7 @@ local addonName, miog = ...
 local dataProvider
 
 local iTable = {}
+local lastID = nil
 
 SearchFrameMixin = {}
 
@@ -268,6 +269,8 @@ function SearchFrameMixin:OnEvent(event, ...)
             end
         end
 
+        self.Footer.SignUp:SetEnabled(LFGListFrame.SearchPanel.SignUpButton:IsEnabled())
+
     elseif(event == "LFG_LIST_APPLICATION_STATUS_UPDATED") then
         local resultID = ...
 
@@ -291,9 +294,12 @@ function SearchFrameMixin:OnShow()
 	local searchBox = LFGListFrame.SearchPanel.SearchBox
 	searchBox:ClearAllPoints()
     searchBox:SetParent(self)
-	searchBox:SetPoint("BOTTOMLEFT", self.Header, "BOTTOMLEFT", 7, 0)
-	searchBox:SetPoint("TOPRIGHT", self.Header.SearchButton, "TOPLEFT", -2, 0)
+	searchBox:SetPoint("TOPLEFT", self.Header, "TOPLEFT", 8, -2)
+	searchBox:SetPoint("TOPRIGHT", self.Header.SearchButton, "TOPLEFT", 1, -2)
     searchBox:SetFrameStrata("HIGH")
+    searchBox.Left:Hide()
+    searchBox.Middle:Hide()
+    searchBox.Right:Hide()
     self.SearchBox = searchBox
 
     C_LFGList.ClearApplicationTextFields = function() end
@@ -393,6 +399,26 @@ function SearchFrameMixin:AddInputBoxesToDialog()
 end
 
 function SearchFrameMixin:OnLoad()
+    local visualTable = {
+        edgeFile="Interface\\ChatFrame\\ChatFrameBackground",
+        edgeSize = 2
+    }
+    local r, g, b, a = GRAY_FONT_COLOR:GetRGBA()
+	self:SetBackdrop(visualTable)
+	self:SetBackdropBorderColor(r, g, b, a)
+
+	self.Footer:SetBackdrop(visualTable)
+	self.Footer:SetBackdropBorderColor(r, g, b, a)
+
+	self.Header.ActivitySort:SetBackdrop(visualTable)
+	self.Header.ActivitySort:SetBackdropBorderColor(r, g, b, a)
+
+	self.Header.RatingSort:SetBackdrop(visualTable)
+	self.Header.RatingSort:SetBackdropBorderColor(r, g, b, a)
+
+	self.Header.SecondaryRatingSort:SetBackdrop(visualTable)
+	self.Header.SecondaryRatingSort:SetBackdropBorderColor(r, g, b, a)
+
 	self:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
 	self:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED")
@@ -460,4 +486,19 @@ function SearchFrameMixin:OnLoad()
     self:AddInputBoxesToDialog()
 
 	miog.SearchFrame = self
+
+    hooksecurefunc("LFGListSearchPanel_SelectResult", function(searchPanel, resultID)
+        if(lastID and miog:GetSecureSearchResultInfo(lastID)) then
+            local frame = self:FindNodeFrame(lastID)
+
+            if(frame) then
+                frame:Update()
+
+            end
+        end
+        
+        self.Footer.SignUp:SetEnabled(searchPanel.SignUpButton:IsEnabled())
+
+        lastID = resultID
+    end)
 end

@@ -1,79 +1,32 @@
 local addonName, miog = ...
 
-local MAX_NUM_SPOTS = 32
-
 local rank = {
     ["TANK"] = 1,
     ["HEALER"] = 2,
     ["DAMAGER"] = 3,
 }
 
-local lastEntry
-
 local improve = true
 
 SearchFrameResultFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
 
-function SearchFrameResultFrameMixin:ImprovedClick(button)
-    local resultID = self:GetData().resultID
-    local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
-
-    if(resultID and searchResultInfo and not searchResultInfo.isDelisted) then
-        if(improve) then
-            local panel = LFGListFrame.SearchPanel
-
-            if(button == "RightButton") then
-                LFGListSearchEntry_CreateContextMenu(self)
-
-            elseif(panel.selectedResult ~= resultID and LFGListSearchPanelUtil_CanSelectResult(resultID)) then
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                
-            end
-
-            LFGListSearchPanel_SelectResult(panel, self.resultID)
-
-        else
-            LFGListSearchEntry_OnClick(self, button)
-
-        end
-
-        return true
-    end
-
-    return false
-end
-
 function SearchFrameResultFrameMixin:OnMouseDown(button)
-    if(self:ImprovedClick(button)) then
-        if(button == "LeftButton") then
-            local resultID = self:GetData().resultID
-		    local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+    local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
 
-            if(resultID and LFGListFrame.SearchPanel.selectedResult and appStatus ~= "applied") then
-                LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+    if(searchResultInfo and not searchResultInfo.isDelisted) then
+        LFGListSearchEntry_OnClick(self, button)
+        LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 
-            end
-        end
-
-        if(lastEntry) then
-            lastEntry:Update()
-
-        end
-            
-        lastEntry = self
+        self:Update()
     end
-
-    self:Update()
 end
 
 function SearchFrameResultFrameMixin:OnEnter()
-	local resultID = self:GetData().resultID;
-
-    local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+    local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
 
     if(searchResultInfo and not searchResultInfo.isDelisted) then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 25, 0);
-        LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID);
+        LFGListUtil_SetSearchEntryTooltip(GameTooltip, self.resultID);
 
         local nameTable
 
@@ -89,8 +42,25 @@ function SearchFrameResultFrameMixin:OnEnter()
 				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
 				GameTooltip_AddBlankLineToTooltip(GameTooltip)
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
-                GameTooltip:Show()
 			end
+
+             local success, reasonID = miog.filter.checkIfSearchResultIsEligible(self.resultID)
+
+            if(not success) then
+                local reason = miog.INELIGIBILITY_REASONS[reasonID]
+
+                if(reason) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(WrapTextInColorCode(reason[1], miog.CLRSCC.red))
+
+                else
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Untracked ID", reasonID)
+
+                end
+            end
+
+            GameTooltip:Show()
 		end
 
         if(searchResultInfo.crossFactionListing) then
@@ -98,7 +68,7 @@ function SearchFrameResultFrameMixin:OnEnter()
         end
 
         if self.isNowFilteredOut or self.isApplication or not self.isSelected then
-            self.Highlight:Show();
+            self.Highlight:Show()
         end
     end
 end
@@ -229,12 +199,10 @@ end
 
 function SearchFrameResultFrameMixin:UpdateApplicationStatus()
     if(self.GetData) then
-        local resultID = self:GetData().resultID
-        
-        local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+        local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
 
         if(searchResultInfo) then
-            local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(resultID)
+            local id, appStatus, pendingStatus, appDuration, appRole = C_LFGList.GetApplicationInfo(self.resultID)
 
             self.Cancel:SetShown(appStatus == "applied")
         end
@@ -294,7 +262,7 @@ function SearchFrameResultFrameMixin:Update()
         local groupHasLeaver = false
 
         for i = 1, searchResultInfo.numMembers, 1 do
-            local memberInfo = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
+            local memberInfo = C_LFGList.GetSearchResultPlayerInfo(self.resultID, i)
 
             if memberInfo and memberInfo.assignedRole and memberInfo.specName then
                 local role = memberInfo.assignedRole
@@ -522,7 +490,7 @@ function SearchFrameRaidResultFrameMixin:ResetCategoryData()
 end
 
 function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
-    local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(searchResultInfo.searchResultID) or {}
+    local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(self.resultID) or {}
 
     local activityID = searchResultInfo.activityIDs[1]
     local activityInfo = miog:GetActivityInfo(activityID)

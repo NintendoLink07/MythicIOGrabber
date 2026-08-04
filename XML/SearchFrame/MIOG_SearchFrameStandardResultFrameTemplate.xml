@@ -8,7 +8,7 @@
 
             <Layer level="BACKGROUND"> 
                 <Texture parentKey="TransparentDark" setAllPoints="true">
-                    <Color r="0.3" g="0.3" b="0.3" a="0.2" />
+                    <Color r="0.1" g="0.1" b="0.1" a="0.35" />
                 </Texture>
             </Layer>
 
@@ -31,13 +31,11 @@
         </Layers>
 
         <Frames>
-            <Button parentKey="Cancel" inherits="UIPanelButtonTemplate" text="X" hidden="true">
-                <Size x="20" />
+            <Button parentKey="Cancel" inherits="UIPanelCloseButton">
+                <Size x="18" y="18" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT"/>
-                    <Anchor point="BOTTOMRIGHT"/>
+                    <Anchor point="TOPRIGHT" x="-2"/>
                 </Anchors>
-
                 <Scripts>
                     <OnClick>
                         C_LFGList.CancelApplication(self:GetParent():GetData().resultID)
