@@ -3,6 +3,11 @@
     <Frame name="MIOG_SearchFrameRaidBossTemplate" virtual="true">
         <Size x="16" y="16" />
 
+        <KeyValues>
+            <KeyValue key="spacing" value="2" type="number"/>
+			<KeyValue key="includeAsLayoutChildWhenHidden" value="true" type="boolean"/>
+        </KeyValues>
+
         <Layers>
             <Layer level="BORDER">
                 <Texture parentKey="Border" setAllPoints="true">

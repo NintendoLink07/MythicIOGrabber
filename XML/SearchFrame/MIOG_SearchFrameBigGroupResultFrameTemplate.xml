@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Frame name="MIOG_SearchFrameBigGroupResultFrameTemplate"  inherits="MIOG_SearchFrameStandardResultFrameTemplate" mixin="SearchFrameResultFrameMixin" virtual="true">
+    <Frame name="MIOG_SearchFrameBigGroupResultFrameTemplate" inherits="MIOG_SearchFrameStandardResultFrameTemplate" mixin="SearchFrameBigGroupResultFrameMixin" virtual="true">
         <Frames>
             <Frame parentKey="General" inherits="MIOG_SearchFrameStandardResultFrameGeneralRowTemplate">
                 <Size y="20" />
@@ -37,378 +37,38 @@
                 </Layers>
 
                 <Frames>
-                    <Frame parentKey="Members" inherits="StaticGridLayoutFrame">
-                        <KeyValues>
-                            <KeyValue key="childXPadding" value="4" type="number"/>
-                            <KeyValue key="childYPadding" value="2" type="number"/>
-                        </KeyValues>
+                    <Frame parentKey="Members" hidden="true" />
 
+                    <Frame parentKey="MemberRow1" inherits="MIOG_SearchFrameBigGroupRowTemplate">
+                        <Size y="16" />
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT" x="-30"/>
+                            <Anchor point="TOPRIGHT" x="-4"/>
                             <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT"/>
                         </Anchors>
+                    </Frame>
 
-                        <Frames>
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
+                    <Frame parentKey="MemberRow2" inherits="MIOG_SearchFrameBigGroupRowTemplate">
+                        <Size y="16" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MemberRow1" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MemberRow1" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
 
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="1" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
+                    <Frame parentKey="MemberRow3" inherits="MIOG_SearchFrameBigGroupRowTemplate">
+                        <Size y="16" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MemberRow2" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MemberRow2" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
+                    </Frame>
 
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="2" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="3" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="4" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="5" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="6" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="7" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="8" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="9" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="10" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="1" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="2" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="3" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="4" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="5" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="6" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="7" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="8" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="9" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="10" type="number"/>
-                                    <KeyValue key="gridRow" value="2" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="1" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="2" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="3" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="4" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="5" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="6" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="7" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="8" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="9" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="10" type="number"/>
-                                    <KeyValue key="gridRow" value="3" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="1" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="2" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="3" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="4" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="5" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="6" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="7" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="8" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="9" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                            
-                            <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
-                                <Size x="16" y="16" />
-
-                                <KeyValues>
-                                    <KeyValue key="gridColumn" value="10" type="number"/>
-                                    <KeyValue key="gridRow" value="4" type="number"/>
-                                </KeyValues>
-                            </Frame>
-                        </Frames>
+                    <Frame parentKey="MemberRow4" inherits="MIOG_SearchFrameBigGroupRowTemplate">
+                        <Size y="16" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.MemberRow3" relativePoint="BOTTOMLEFT" y="-2"/>
+                            <Anchor point="TOPRIGHT" relativeKey="$parent.MemberRow3" relativePoint="BOTTOMRIGHT" y="-2"/>
+                        </Anchors>
                     </Frame>
                 </Frames>
             </Frame>

@@ -25,14 +25,14 @@
                 </FontString>
 
                 <FontString parentKey="Rating" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0000">
-                    <Size x="60" />
+                    <Size x="50" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Composition" relativePoint="RIGHT"/>
                     </Anchors>
                 </FontString>
 
                 <FontString parentKey="SecondaryRating" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL" text="0000">
-                    <Size x="36" />
+                    <Size x="50" />
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT"/>
                     </Anchors>

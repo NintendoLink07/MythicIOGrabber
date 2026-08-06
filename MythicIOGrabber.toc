@@ -16,6 +16,7 @@
 MythicIOGrabber.lua
 PVEFrame2.lua
 
+AddonFunctions.lua
 UtilFunctions.lua
 PersistentData.lua
 UI.lua
@@ -166,8 +167,10 @@ XML\SearchFrame\MIOG_SearchFrameSortButtonTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameRaidBossTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameGroupMemberTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameExpandButtonTemplate.xml
+XML\SearchFrame\MIOG_SearchFrameInfoFrameRaidTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameInfoFrameTemplate.xml
 
+XML\SearchFrame\MIOG_SearchFrameBigGroupRowTemplate.xml
 XML\SearchFrame\MIOG_SearchFrameRaidTemplate.xml
 
 XML\SearchFrame\MIOG_SearchFrameSmallGroupResultFrameTemplate.xml

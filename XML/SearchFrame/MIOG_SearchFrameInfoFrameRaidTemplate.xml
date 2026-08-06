@@ -1,0 +1,90 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameInfoFrameRaidTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="TEST TEXT HERE">
+                    <Size x="108" y="16" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress1" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Size x="42" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Progress2" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="">
+                    <Size x="42" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Progress1" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="Boss1" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" y="-2"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss2" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss1" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss3" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss2" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="Boss4" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss3" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Boss5" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss4" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss6" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss5" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss7" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss6" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+            
+            <Frame parentKey="Boss8" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss7" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss9" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss8" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+
+            <Frame parentKey="Boss10" parentArray="childFrames" inherits="MIOG_SearchFrameRaidBossTemplate">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Boss9" relativePoint="RIGHT" x="4"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

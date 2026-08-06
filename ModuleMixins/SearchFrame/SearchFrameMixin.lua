@@ -108,6 +108,7 @@ function SearchFrameMixin:Refresh()
                     local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
                     
                     local template =
+                    
                     activityInfo.categoryID == 1 and "MIOG_SearchFrameQuestingResultFrameTemplate" or
                     isDungeon and "MIOG_SearchFrameDungeonResultFrameTemplate" or
                     isRaid and "MIOG_SearchFrameRaidResultFrameTemplate" or
@@ -134,7 +135,18 @@ function SearchFrameMixin:Refresh()
 
                             end
                             
-                            local progressData = miog.getRaidProgress(nameTable[1], nameTable[2])
+                            local raidData = miog:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
+                            
+                            if(raidData) then
+                                rating = raidData[1] and raidData[1].tierWeight or 0
+                                secondaryRating = raidData[2] and raidData[2].tierWeight or 0
+
+                            else
+                                rating, secondaryRating = 0, 0
+
+                            end
+
+                            --[[local progressData = miog.getRaidProgress(nameTable[1], nameTable[2])
 
                             if(progressData) then
                                 rating, secondaryRating = miog.getWeightFromRaidProgress(progressData)
@@ -142,7 +154,7 @@ function SearchFrameMixin:Refresh()
                             else
                                 rating, secondaryRating = 0, 0
 
-                            end
+                            end]]
 
                         else
                             rating, secondaryRating = 0, 0

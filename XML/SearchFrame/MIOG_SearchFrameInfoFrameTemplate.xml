@@ -108,7 +108,7 @@
                 </Anchors>
                 
                 <Frames>
-                    <Frame parentKey="Raid1" inherits="MIOG_SearchFrameRaidTemplate" hidden="true">
+                    <Frame parentKey="Raid1" inherits="MIOG_SearchFrameInfoFrameRaidTemplate" hidden="true">
                         <Size y="32" />
 
                         <Anchors>
@@ -117,7 +117,7 @@
                         </Anchors>
                     </Frame>
 
-                    <Frame parentKey="Raid2" inherits="MIOG_SearchFrameRaidTemplate" hidden="true">
+                    <Frame parentKey="Raid2" inherits="MIOG_SearchFrameInfoFrameRaidTemplate" hidden="true">
                         <Size y="34" />
 
                         <Anchors>

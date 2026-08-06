@@ -5483,6 +5483,52 @@ miog.REALMS_TO_LANGUAGE = {
 	["CN-龙骨平原"] = {realmName = "龙骨平原", region = "CN", language = "Chinese"},
 }
 
+miog.SEASON_RAID_DATA = {
+    [17] = {
+        mapIDs = {2912, 2939, 2913, 1592},
+        numOfBosses = 0,
+        bosses = {
+            [2912] = {1,2,3,4,5,6,7,8,9},
+            [1592] = {10}
+        }
+    },
+    [18] = {
+        mapIDs = {3004},
+        numOfBosses = 0,
+        bosses = {
+            [3004] = {1,2,3,4,5,6,7,8},
+        }
+    }
+}
+
+function miog:GetSeasonRaidData()
+	local seasonID = C_MythicPlus.GetCurrentSeason()
+
+	if(seasonID and seasonID > 0) then
+		local table = {
+			[1] = miog.SEASON_RAID_DATA[seasonID],
+			[2] = miog.SEASON_RAID_DATA[seasonID - 1]
+		}
+		
+		for k, v in ipairs(table) do
+			if(v.numOfBosses == 0) then
+				local tierInfo = v.mapIDs
+
+				for mapIndex, mapID in ipairs(tierInfo) do
+					local mapInfo = miog:GetMapInfo(mapID)
+
+					if(mapInfo) then
+						v.numOfBosses = v.numOfBosses + #mapInfo.bosses
+
+					end
+				end
+			end
+		end
+
+		return table
+	end
+end
+
 miog.getRealmData = function(realmName, region)
 	local actualRegion = strupper(region or miog.F.CURRENT_REGION)
 	local fullName = actualRegion .. "-" .. realmName

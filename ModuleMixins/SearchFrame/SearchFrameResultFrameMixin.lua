@@ -6,14 +6,12 @@ local rank = {
     ["DAMAGER"] = 3,
 }
 
-local improve = true
-
 SearchFrameResultFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
 
 function SearchFrameResultFrameMixin:OnMouseDown(button)
     local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
 
-    if(searchResultInfo and not searchResultInfo.isDelisted) then
+    if(searchResultInfo and LFGListFrame.SearchPanel.selectedResult and not searchResultInfo.isDelisted) then
         LFGListSearchEntry_OnClick(self, button)
         LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
 
@@ -350,6 +348,7 @@ function SearchFrameResultFrameMixin:Update()
             else
                 --Custom Category - Custom PVP not adding members
                 --also extension calc on member add or rm
+                --10-40 player template with minimal frames to be implemented
 
                 local maxMembers = activityInfo.maxNumPlayers > 0 and activityInfo.maxNumPlayers or 5
 
@@ -358,8 +357,8 @@ function SearchFrameResultFrameMixin:Update()
                 for i = 1 + searchResultInfo.numMembers, maxMembers, 1 do
                     tinsert(groupInfo, {
                         classFilename = "DUMMY",
-                        specID = 9999,
-                        assignedRole = "TANK",
+                        specID = 20,
+                        assignedRole = "DAMAGER",
                         isLeaver = false,
                         --atlas = GetIconForRole("DAMAGER", true)
                     })
@@ -477,14 +476,24 @@ SearchFrameRaidResultFrameMixin = CreateFromMixins(SearchFrameResultFrameMixin)
 
 function SearchFrameRaidResultFrameMixin:OnLoad()
     SearchFrameResultFrameMixin.OnLoad(self)
+    
+    self.allBossFrames = {}
 
+    for k, v in ipairs(self.Activity.BossListTop.bossFrames) do
+        tinsert(self.allBossFrames, v)
+
+    end
+
+    for k, v in ipairs(self.Activity.BossListBottom.bossFrames) do
+        tinsert(self.allBossFrames, v)
+        
+    end
 end
 
 function SearchFrameRaidResultFrameMixin:ResetCategoryData()
-    for k, v in ipairs(self.Activity.Bosses.bossFrames) do
+    for k, v in ipairs(self.allBossFrames) do
         v.Border:SetTexture()
         v.Icon:SetTexture()
-        v.ignoreInLayout = true
         v:Hide()
     end
 end
@@ -499,30 +508,25 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
 
     if(bossData) then
         local numOfBosses = #bossData
+        local frameIndex = 20 - numOfBosses + 1 - (numOfBosses > 10 and 0 or 10)
 
-        for k, v in miog.rpairs(bossData) do
+        for k, v in ipairs(bossData) do
+            local bossFrame = self.allBossFrames[frameIndex]
             local defeatedBossName = encounterInfo[k]
             local bossDefeated = defeatedBossName == v.name or defeatedBossName == v.altName
-
-            local bossFrame
-            
-            if(numOfBosses > 10) then
-                bossFrame = self.Activity.Bosses.bossFrames[20 - numOfBosses + k]
-
-            else
-                bossFrame = self.Activity.Bosses.bossFrames[10 - numOfBosses + k]
-
-            end
-
-            bossFrame.ignoreInLayout = nil
 
             bossFrame.Icon:SetDesaturated(bossDefeated)
             bossFrame.Border:SetColorTexture((bossDefeated and RED_FONT_COLOR or GREEN_FONT_COLOR):GetRGBA())
             SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
             bossFrame:Show()
-            
+
+            frameIndex = frameIndex + 1
         end
+
+        --self.Activity.BossListTop:MarkDirty()
+        --self.Activity.BossListBottom:MarkDirty()
     end
+
 
     local nameTable
 
@@ -533,38 +537,36 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
             nameTable[2] = GetNormalizedRealmName()
 
         end
+        
+        local raidData = miog:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
 
-        local progressData = miog.getRaidProgress(nameTable[1], nameTable[2])
+        if(raidData) then
+            local entry1, entry2 = raidData.sortedEntries[1], raidData.sortedEntries[2]
 
-        if(progressData) then
-            local orderedData1 = progressData[1]
-            local orderedData2 = progressData[2]
+            if(entry1) then
+                local tier1NumOfBosses = miog:GetNumOfBossesForTier(entry1.tierIndex)
+                self.General.Rating:SetText(tier1NumOfBosses and (entry1.killedBosses .. "/" .. tier1NumOfBosses) or "")
+                self.General.Rating:SetTextColor(miog.DIFFICULTY[entry1.difficulty].miogColors:GetRGBA())
 
-            if(orderedData1) then
-                self.General.Rating:SetText(WrapTextInColorCode(miog.getParsedProgressString(orderedData1.kills, orderedData1.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData1.difficulty].color or miog.DIFFICULTY[orderedData1.difficulty].desaturated))
+            else
+                self.General.Rating:SetText("")
 
             end
 
-            if(orderedData2) then
-                self.General.SecondaryRating:SetText(WrapTextInColorCode(miog.getParsedProgressString(orderedData2.kills, orderedData2.bossCount), orderedData1.isCurrent and miog.DIFFICULTY[orderedData2.difficulty].color or miog.DIFFICULTY[orderedData2.difficulty].desaturated))
+            if(entry2) then
+                local tier2NumOfBosses = miog:GetNumOfBossesForTier(entry2.tierIndex)
+                self.General.SecondaryRating:SetText(tier2NumOfBosses and (entry2.killedBosses .. "/" .. tier2NumOfBosses) or "")
+                self.General.SecondaryRating:SetTextColor(miog.DIFFICULTY[entry2.difficulty].miogColors:GetRGBA())
 
             else
                 self.General.SecondaryRating:SetText("")
-                self.General.SecondaryRating:SetTextColor(WHITE_FONT_COLOR:GetRGBA())
-
 
             end
-
         else
-            local r, g, b, a = WHITE_FONT_COLOR:GetRGBA()
             self.General.Rating:SetText("")
-            self.General.Rating:SetTextColor(r, g, b, a)
-
             self.General.SecondaryRating:SetText("")
-            self.General.SecondaryRating:SetTextColor(r, g, b, a)
 
         end
-
     else
         local r, g, b, a = WHITE_FONT_COLOR:GetRGBA()
         self.General.Rating:SetText("")
@@ -625,5 +627,43 @@ function SearchFramePVPResultFrameMixin:UpdateCategoryData(searchResultInfo)
             self.General.SecondaryRating:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
 
         end
+    end
+end
+
+
+
+SearchFrameBigGroupResultFrameMixin = CreateFromMixins(SearchFrameResultFrameMixin)
+
+function SearchFrameBigGroupResultFrameMixin:OnLoad()
+    SearchFrameResultFrameMixin.OnLoad(self)
+    
+    self.Activity.Members.memberFrames = {}
+
+    for k, v in ipairs(self.Activity.MemberRow1.memberFrames) do
+        tinsert(self.Activity.Members.memberFrames, v)
+
+    end
+
+    for k, v in ipairs(self.Activity.MemberRow2.memberFrames) do
+        tinsert(self.Activity.Members.memberFrames, v)
+        
+    end
+
+    for k, v in ipairs(self.Activity.MemberRow3.memberFrames) do
+        tinsert(self.Activity.Members.memberFrames, v)
+        
+    end
+
+    for k, v in ipairs(self.Activity.MemberRow4.memberFrames) do
+        tinsert(self.Activity.Members.memberFrames, v)
+        
+    end
+end
+
+function SearchFrameBigGroupResultFrameMixin:ResetCategoryData()
+    for k, v in ipairs(self.Activity.Members.memberFrames) do
+        v.Border:SetTexture()
+        v.Icon:SetTexture()
+        v:Hide()
     end
 end
