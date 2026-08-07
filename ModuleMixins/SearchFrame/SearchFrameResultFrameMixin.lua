@@ -11,9 +11,13 @@ SearchFrameResultFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
 function SearchFrameResultFrameMixin:OnMouseDown(button)
     local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
 
-    if(searchResultInfo and LFGListFrame.SearchPanel.selectedResult and not searchResultInfo.isDelisted) then
+    if(searchResultInfo and not searchResultInfo.isDelisted) then
         LFGListSearchEntry_OnClick(self, button)
-        LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+
+        if(LFGListFrame.SearchPanel.selectedResult) then
+            LFGListSearchPanel_SignUp(LFGListFrame.SearchPanel)
+
+        end
 
         self:Update()
     end
@@ -82,7 +86,6 @@ end
 function SearchFrameResultFrameMixin:Reset()
     self.Cancel:Hide()
     self.LeaderCrown:Hide()
-    self.Activity.Expand:SetChecked(false)
 
     local memberParent = self.Activity.Members
 
@@ -99,11 +102,6 @@ function SearchFrameResultFrameMixin:Reset()
     end
 
     self:ResetCategoryData()
-end
-
-local function sortByRole(k1, k2)
-    return rank[k1.assignedRole] < rank[k2.assignedRole]
-
 end
 
 local function sortByRoleAndSpec(k1, k2)
@@ -213,6 +211,8 @@ function SearchFrameResultFrameMixin:Update()
     local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
     if(searchResultInfo) then
+        self.Activity.Expand:SetChecked(not self:IsCollapsed())
+
         self.resultID = data.resultID
 
         local activityID = searchResultInfo.activityIDs[1]
@@ -346,15 +346,9 @@ function SearchFrameResultFrameMixin:Update()
                     end
                 end
             else
-                --Custom Category - Custom PVP not adding members
-                --also extension calc on member add or rm
-                --10-40 player template with minimal frames to be implemented
+                local maxPlayers = activityInfo.maxNumPlayers ~= 0 and activityInfo.maxNumPlayers or 40
 
-                local maxMembers = activityInfo.maxNumPlayers > 0 and activityInfo.maxNumPlayers or 5
-
-                --ceil(searchResultInfo.numMembers / 10) * 10 - searchResultInfo.numMembers
-
-                for i = 1 + searchResultInfo.numMembers, maxMembers, 1 do
+                for i = 1 + searchResultInfo.numMembers, max(activityInfo.maxNumPlayers, 1), 1 do
                     tinsert(groupInfo, {
                         classFilename = "DUMMY",
                         specID = 20,
@@ -364,7 +358,7 @@ function SearchFrameResultFrameMixin:Update()
                     })
                 end
             end
-            
+        
             table.sort(groupInfo, sortByRoleAndSpec)
             
             for frameIndex, frame in ipairs(memberParent.memberFrames) do
@@ -500,6 +494,12 @@ end
 
 function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
     local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(self.resultID) or {}
+    local defeatedEncounters = {}
+
+    for k, v in ipairs(encounterInfo) do
+        defeatedEncounters[v] = true
+
+    end
 
     local activityID = searchResultInfo.activityIDs[1]
     local activityInfo = miog:GetActivityInfo(activityID)
@@ -512,8 +512,7 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
 
         for k, v in ipairs(bossData) do
             local bossFrame = self.allBossFrames[frameIndex]
-            local defeatedBossName = encounterInfo[k]
-            local bossDefeated = defeatedBossName == v.name or defeatedBossName == v.altName
+            local bossDefeated = defeatedEncounters[v.name] or defeatedEncounters[v.altName]
 
             bossFrame.Icon:SetDesaturated(bossDefeated)
             bossFrame.Border:SetColorTexture((bossDefeated and RED_FONT_COLOR or GREEN_FONT_COLOR):GetRGBA())
@@ -525,6 +524,7 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
 
         --self.Activity.BossListTop:MarkDirty()
         --self.Activity.BossListBottom:MarkDirty()
+
     end
 
 
@@ -606,27 +606,25 @@ function SearchFramePVPResultFrameMixin:OnLoad()
 end
 
 function SearchFramePVPResultFrameMixin:UpdateCategoryData(searchResultInfo)
-    if(searchResultInfo) then
-        local pvpRatingInfo = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
+    local pvpRatingInfo = searchResultInfo.leaderPvpRatingInfo and searchResultInfo.leaderPvpRatingInfo[1]
 
-        if(pvpRatingInfo and pvpRatingInfo.rating > 0) then
-            self.General.Rating:SetText(pvpRatingInfo.rating)
-            self.General.Rating:SetTextColor(miog.createCustomColorForRating(pvpRatingInfo.rating):GetRGBA())
+    if(pvpRatingInfo and pvpRatingInfo.rating > 0) then
+        self.General.Rating:SetText(pvpRatingInfo.rating)
+        self.General.Rating:SetTextColor(miog.createCustomColorForRating(pvpRatingInfo.rating):GetRGBA())
 
-        else
-            self.General.Rating:SetText(0)
-            self.General.Rating:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
+    else
+        self.General.Rating:SetText(0)
+        self.General.Rating:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
 
-        end
+    end
 
-        if(pvpRatingInfo and pvpRatingInfo.tier > 0) then
-            self.General.SecondaryRating:SetText(pvpRatingInfo.tier)
+    if(pvpRatingInfo and pvpRatingInfo.tier > 0) then
+        self.General.SecondaryRating:SetText(pvpRatingInfo.tier)
 
-        else
-            self.General.SecondaryRating:SetText(0)
-            self.General.SecondaryRating:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
+    else
+        self.General.SecondaryRating:SetText(0)
+        self.General.SecondaryRating:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
 
-        end
     end
 end
 
@@ -661,9 +659,86 @@ function SearchFrameBigGroupResultFrameMixin:OnLoad()
 end
 
 function SearchFrameBigGroupResultFrameMixin:ResetCategoryData()
-    for k, v in ipairs(self.Activity.Members.memberFrames) do
+    --[[for k, v in ipairs(self.Activity.Members.memberFrames) do
         v.Border:SetTexture()
         v.Icon:SetTexture()
+        v.LeaverIcon:Hide()
         v:Hide()
+    end]]
+end
+
+
+
+SearchFrameRaidResultWithCompositionFrameMixin = CreateFromMixins(SearchFrameRaidResultFrameMixin)
+
+function SearchFrameRaidResultWithCompositionFrameMixin:OnLoad()
+    SearchFrameRaidResultFrameMixin.OnLoad(self)
+
+    for i = 1, 13, 1 do
+        local frame = self.Composition.classes[i]
+        local classInfo = miog.CLASSES[i]
+
+        frame.Icon:SetTexture(classInfo.icon)
+        frame.Border:SetColorTexture(C_ClassColor.GetClassColor(classInfo.name):GetRGBA())
     end
 end
+
+function SearchFrameRaidResultWithCompositionFrameMixin:Reset()
+    SearchFrameRaidResultFrameMixin.Reset(self)
+
+    for i = 1, 13, 1 do
+        local frame = self.Composition.classes[i]
+        frame.Icon:SetDesaturated(true)
+        frame.Border:Hide()
+        frame.Counter:SetText("")
+
+    end
+end
+
+function SearchFrameRaidResultWithCompositionFrameMixin:Update()
+    SearchFrameRaidResultFrameMixin.Update(self)
+
+    local data = self:GetData()
+    local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
+
+    if(searchResultInfo) then
+        local classMap = {
+            ["WARRIOR"] = {},
+            ["PALADIN"] = {},
+            ["HUNTER"] = {},
+            ["ROGUE"] = {},
+            ["PRIEST"] = {},
+            ["DEATHKNIGHT"] = {},
+            ["SHAMAN"] = {},
+            ["MAGE"] = {},
+            ["WARLOCK"] = {},
+            ["MONK"] = {},
+            ["DRUID"] = {},
+            ["DEMONHUNTER"] = {},
+            ["EVOKER"] = {},
+        }
+
+        for i = 1, searchResultInfo.numMembers, 1 do
+            local memberInfo = C_LFGList.GetSearchResultPlayerInfo(data.resultID, i)
+
+            if memberInfo and memberInfo.specName then
+                memberInfo.specID = memberInfo.classFilename and memberInfo.specName and miog.LOCALIZED_SPECIALIZATION_NAME_TO_ID[memberInfo.specName .. "-" .. memberInfo.classFilename]                
+
+                if(memberInfo.specID and classMap[memberInfo.classFilename]) then
+                    classMap[memberInfo.specID] = classMap[memberInfo.specID] and classMap[memberInfo.specID] + 1 or 1
+
+                    local classInfo = miog:GetClassInfoFromFileName(memberInfo.classFilename)
+
+                    if(classInfo) then
+                        local frame = self.Composition.classes[classInfo.classId]
+                        
+                        frame.Icon:SetDesaturated(false)
+                        frame.Border:Show()
+                        frame.Counter:SetText(classMap[memberInfo.specID])
+                    end
+                end
+            end
+        end
+    end
+end
+

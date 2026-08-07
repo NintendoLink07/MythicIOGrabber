@@ -108,21 +108,19 @@ function SearchFrameMixin:Refresh()
                     local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
                     
                     local template =
-                    
-                    activityInfo.categoryID == 1 and "MIOG_SearchFrameQuestingResultFrameTemplate" or
-                    isDungeon and "MIOG_SearchFrameDungeonResultFrameTemplate" or
-                    isRaid and "MIOG_SearchFrameRaidResultFrameTemplate" or
-                    activityInfo.categoryID == 121 and "MIOG_SearchFrameDelvesResultFrameTemplate" or
-                    activityInfo.categoryID == 4 and "MIOG_SearchFrameArenaResultFrameTemplate" or
-                    activityInfo.categoryID == 9 and "MIOG_SearchFrameBattlegroundResultFrameTemplate" or
-                    activityInfo.categoryID == 6 and
-                    (activityInfo.maxNumPlayers <= 5 and "MIOG_SearchFrameSmallGroupResultFrameTemplate" or "MIOG_SearchFrameBigGroupResultFrameTemplate")
-
+                        isDungeon and "MIOG_SearchFrameDungeonResultFrameTemplate" or
+                        isRaid and "MIOG_SearchFrameRaidResultFrameWithCompositionTemplate" or
+                        activityInfo.categoryID == 121 and "MIOG_SearchFrameDelvesResultFrameTemplate" or
+                        activityInfo.categoryID == 4 and "MIOG_SearchFrameArenaResultFrameTemplate" or
+                        activityInfo.categoryID == 9 and "MIOG_SearchFrameBattlegroundResultFrameTemplate" or
+                        activityInfo.categoryID == 1 and (activityInfo.maxNumPlayers > 5 and "MIOG_SearchFrameBigGroupResultFrameTemplate" or "MIOG_SearchFrameSmallGroupResultFrameTemplate") or
+                        activityInfo.categoryID == 6 and (activityInfo.maxNumPlayers <= 5 and activityInfo.maxNumPlayers ~= 0 and "MIOG_SearchFrameSmallGroupResultFrameTemplate" or "MIOG_SearchFrameBigGroupResultFrameTemplate")
+                        
                     local rating, secondaryRating
 
                     if(isDungeon) then
                         rating = searchResultInfo.leaderOverallDungeonScore or 0
-                        secondaryRating = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
+                        --secondaryRating = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
                     
                     elseif(isRaid) then
                         local nameTable
@@ -139,10 +137,11 @@ function SearchFrameMixin:Refresh()
                             
                             if(raidData) then
                                 rating = raidData[1] and raidData[1].tierWeight or 0
-                                secondaryRating = raidData[2] and raidData[2].tierWeight or 0
+                                --secondaryRating = raidData[2] and raidData[2].tierWeight or 0
 
                             else
-                                rating, secondaryRating = 0, 0
+                                rating = 0
+                                --secondaryRating = 0
 
                             end
 
@@ -157,7 +156,8 @@ function SearchFrameMixin:Refresh()
                             end]]
 
                         else
-                            rating, secondaryRating = 0, 0
+                            rating = 0
+                            --secondaryRating = 0
 
                         end
                     
@@ -166,17 +166,17 @@ function SearchFrameMixin:Refresh()
 
                         if(pvpDataExists) then
                             rating = searchResultInfo.leaderPvpRatingInfo[1].rating
-                            secondaryRating = searchResultInfo.leaderPvpRatingInfo[1].tier
+                            --secondaryRating = searchResultInfo.leaderPvpRatingInfo[1].tier
                             
                         else
                             rating = 0
-                            secondaryRating = 0
+                            --secondaryRating = 0
 
                         end
 
                     else
                         rating = 0
-                        secondaryRating = 0
+                        --secondaryRating = 0
 
                     end
 
@@ -185,7 +185,7 @@ function SearchFrameMixin:Refresh()
                         resultID = resultID,
                         activityName = activityInfo.abbreviatedName or activityInfo.fullName,
                         rating = rating,
-                        secondaryRating = secondaryRating,
+                        --secondaryRating = secondaryRating
                         applied = appStatus == "applied",
                     })
                 end
@@ -195,10 +195,17 @@ function SearchFrameMixin:Refresh()
 
     local spCategory = LFGListFrame.SearchPanel.categoryID
 
-    local disableRatingSort = not (spCategory == 1 or spCategory == 6 or spCategory == 121)
+    local disableRatingSort = (spCategory == 1 or spCategory == 6 or spCategory == 121)
 
-    self.Header.RatingSort:SetEnabled(disableRatingSort)
-    self.Header.SecondaryRatingSort:SetEnabled(disableRatingSort)
+    self.Header.RatingSort:SetEnabled(not disableRatingSort)
+
+    if(disableRatingSort) then
+        self.Header.RatingSort.Text:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
+
+    else
+        self.Header.RatingSort.Text:SetTextColor(WHITE_FONT_COLOR:GetRGBA())
+
+    end
 
     if(self.sortOrder == {}) then
         table.sort(resultTable, function(k1, k2)
@@ -428,8 +435,8 @@ function SearchFrameMixin:OnLoad()
 	self.Header.RatingSort:SetBackdrop(visualTable)
 	self.Header.RatingSort:SetBackdropBorderColor(r, g, b, a)
 
-	self.Header.SecondaryRatingSort:SetBackdrop(visualTable)
-	self.Header.SecondaryRatingSort:SetBackdropBorderColor(r, g, b, a)
+	--self.Header.SecondaryRatingSort:SetBackdrop(visualTable)
+	--self.Header.SecondaryRatingSort:SetBackdropBorderColor(r, g, b, a)
 
 	self:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
@@ -476,19 +483,21 @@ function SearchFrameMixin:OnLoad()
                 local bossData = activityInfo.bosses
 
                 if(bossData and #bossData > 10) then
-                    return #bossData > 10 and 60
+                    return #bossData > 10 and 80
+
+                else
+                    return 60
 
                 end
-
             else
-                --return 20 + ceil(searchResultInfo.numMembers / 10) * 20
-                return 20 + ceil(max(activityInfo.maxNumPlayers, 1) / 10) * 20
+                local maxPlayers = activityInfo.maxNumPlayers ~= 0 and activityInfo.maxNumPlayers or (activityInfo.categoryID ~= 6 and 5 or 40)
+                local rows = ceil(maxPlayers / 10)
+                return 20 + rows * 20
 
             end
         end
 
         return 40
-
     end)
 
     self.ScrollBox:Init(view)

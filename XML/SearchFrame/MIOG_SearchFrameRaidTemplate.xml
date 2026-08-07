@@ -3,7 +3,6 @@
     <Frame name="MIOG_SearchFrameRaidTemplate" inherits="HorizontalLayoutFrame" virtual="true">
         <KeyValues>
             <KeyValue key="spacing" value="2" type="number"/>
-            <KeyValue key="childLayoutDirection" value="leftToRight" type="string"/>
         </KeyValues>
 
         <Frames>

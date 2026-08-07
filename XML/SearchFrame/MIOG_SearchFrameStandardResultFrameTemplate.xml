@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_SearchFrameStandardResultFrameTemplate" inherits="BackdropTemplate" mixin="SearchFrameResultFrameMixin" virtual="true">
+        <Size y="40" />
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1"> 
                 <Texture parentKey="Background" setAllPoints="true" vertTile="true" horizTile="true"/>

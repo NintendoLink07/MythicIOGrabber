@@ -141,7 +141,7 @@ function SearchFrameBaseFrameMixin:RefreshStatus()
     --implement in children
 end
 
-function SearchFrameBaseFrameMixin:UpdateVisuals(searchResultInfo)
+function SearchFrameBaseFrameMixin:UpdateVisuals()
     
 end
 
@@ -179,6 +179,10 @@ function SearchFrameBaseFrameMixin:SetStatus(searchResultInfo)
 		if(activityInfo.horizontal) then
 			self.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
 
+			if(self.Background:GetTexture() == nil) then
+				self.Background:SetTexture("interface/lfgframe/ui-lfg-background-randomdungeon.blp", "MIRROR", "MIRROR")
+
+			end
 		else
 			self.Background:SetColorTexture(PANEL_BACKGROUND_COLOR:GetRGBA())
 
@@ -199,4 +203,6 @@ function SearchFrameBaseFrameMixin:SetStatus(searchResultInfo)
 		self.isDelisted = nil
 
 	end
+
+	self:UpdateVisuals()
 end

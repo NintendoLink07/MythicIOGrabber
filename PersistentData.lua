@@ -3321,6 +3321,12 @@ miog.CLASSFILE_TO_INFO = {}
 
 for k, v in pairs(miog.CLASSES) do
 	miog.CLASSFILE_TO_INFO[v.name] = v
+	v.classId = k
+
+end
+
+function miog:GetClassInfoFromFileName(fileName)
+	return miog.CLASSFILE_TO_INFO[fileName]
 end
 
 miog.CLASS_COLORS = {}

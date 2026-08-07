@@ -45,7 +45,7 @@
                         </Scripts>
                     </Button>
 
-                    <Button parentKey="SecondaryRatingSort" inherits="MIOG_SearchFrameSortButtonTemplate">
+                    <!--<Button parentKey="SecondaryRatingSort" inherits="MIOG_SearchFrameSortButtonTemplate">
                         <Size x="88" y="22" />
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT"/>
@@ -59,13 +59,13 @@
                                 self.Text:SetText("2. Rating")
                             </OnLoad>
                         </Scripts>
-                    </Button>
+                    </Button>!-->
 
                     <Button parentKey="RatingSort" inherits="MIOG_SearchFrameSortButtonTemplate">
                         <Size x="87" y="22" />
                         <Anchors>
+                            <Anchor point="BOTTOMRIGHT"/>
                             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"/>
-                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.SecondaryRatingSort" relativePoint="BOTTOMLEFT"/>
                         </Anchors>
 
                         <Scripts>

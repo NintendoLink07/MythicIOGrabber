@@ -27,7 +27,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
                             <Size x="128" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
@@ -37,15 +37,14 @@
                 </Layers>
 
                 <Frames>
-                    <Frame parentKey="Members" inherits="StaticGridLayoutFrame">
+                    <Frame parentKey="Members" inherits="HorizontalLayoutFrame">
                         <KeyValues>
-                            <KeyValue key="childXPadding" value="4" type="number"/>
-                            <KeyValue key="childYPadding" value="2" type="number"/>
+                            <KeyValue key="spacing" value="16" type="number"/>
                         </KeyValues>
 
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT" x="-30"/>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT"/>
+                            <Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="24"/>
+                            <Anchor point="RIGHT" x="-30"/>
                         </Anchors>
 
                         <Frames>
@@ -53,8 +52,7 @@
                                 <Size x="16" y="16" />
 
                                 <KeyValues>
-                                    <KeyValue key="gridColumn" value="1" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                    <KeyValue key="layoutIndex" value="1" type="number"/>
                                 </KeyValues>
                             </Frame>
 
@@ -62,35 +60,31 @@
                                 <Size x="16" y="16" />
 
                                 <KeyValues>
-                                    <KeyValue key="gridColumn" value="2" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                    <KeyValue key="layoutIndex" value="2" type="number"/>
                                 </KeyValues>
                             </Frame>
-                            
+
                             <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
                                 <Size x="16" y="16" />
 
                                 <KeyValues>
-                                    <KeyValue key="gridColumn" value="3" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                    <KeyValue key="layoutIndex" value="3" type="number"/>
                                 </KeyValues>
                             </Frame>
-                            
+
                             <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
                                 <Size x="16" y="16" />
 
                                 <KeyValues>
-                                    <KeyValue key="gridColumn" value="4" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                    <KeyValue key="layoutIndex" value="4" type="number"/>
                                 </KeyValues>
                             </Frame>
-                            
+
                             <Frame parentArray="memberFrames" inherits="MIOG_SearchFrameGroupMemberTemplate">
                                 <Size x="16" y="16" />
 
                                 <KeyValues>
-                                    <KeyValue key="gridColumn" value="5" type="number"/>
-                                    <KeyValue key="gridRow" value="1" type="number"/>
+                                    <KeyValue key="layoutIndex" value="5" type="number"/>
                                 </KeyValues>
                             </Frame>
                         </Frames>

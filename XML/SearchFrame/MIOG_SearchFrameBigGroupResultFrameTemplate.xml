@@ -27,7 +27,7 @@
 
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
                             <Size x="128" />
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
@@ -42,8 +42,7 @@
                     <Frame parentKey="MemberRow1" inherits="MIOG_SearchFrameBigGroupRowTemplate">
                         <Size y="16" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="-4"/>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT"/>
+                            <Anchor point="TOPRIGHT" x="-2" y="-2"/>
                         </Anchors>
                     </Frame>
 

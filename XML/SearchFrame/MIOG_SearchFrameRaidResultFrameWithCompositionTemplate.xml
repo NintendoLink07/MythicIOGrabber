@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_SearchFrameRaidResultFrameWithCompositionTemplate"  inherits="MIOG_SearchFrameRaidResultFrameTemplate" mixin="SearchFrameRaidResultWithCompositionFrameMixin" virtual="true">
+        <Frames>
+            <Frame parentKey="Composition" inherits="MIOG_SearchFrameRaidGroupCompositionTemplate">
+                <Size y="20" />
+
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Activity" relativePoint="BOTTOMRIGHT" x="-8"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

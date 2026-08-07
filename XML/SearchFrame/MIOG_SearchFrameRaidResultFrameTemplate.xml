@@ -11,9 +11,11 @@
             </Frame>
             
             <Frame parentKey="Activity">
+                <Size y="20" />
+
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.General" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="BOTTOMRIGHT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.General" relativePoint="BOTTOMRIGHT"/>
                 </Anchors>
 
                 <Frames>
@@ -40,15 +42,13 @@
                     <Frame parentKey="BossListTop" inherits="MIOG_SearchFrameRaidTemplate">
                         <Size y="16" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="-4"/>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="TOPRIGHT"/>
+                            <Anchor point="TOPRIGHT" x="-8"/>
                         </Anchors>
                     </Frame>
 
                     <Frame parentKey="BossListBottom" inherits="MIOG_SearchFrameRaidTemplate">
                         <Size y="16" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.BossListTop" relativePoint="BOTTOMLEFT" y="-2"/>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.BossListTop" relativePoint="BOTTOMRIGHT" y="-2"/>
                         </Anchors>
                     </Frame>
