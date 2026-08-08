@@ -115,8 +115,11 @@ function ProgressCheckMixin:GetGeneralSettings()
 end
 
 function ProgressCheckMixin:GetCharacterSettings()
-    return self:GetGeneralSettings().characters[UnitGUID("player")]
+    if(not self:GetGeneralSettings().characters[UnitGUID("player")]) then
+        self:RefreshCharacters()
+    end
 
+    return self:GetGeneralSettings().characters[UnitGUID("player")]
 end
 
 function ProgressCheckMixin:GetCharacterMythicPlusSettings()
