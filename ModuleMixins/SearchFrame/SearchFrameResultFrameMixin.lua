@@ -6,6 +6,9 @@ local rank = {
     ["DAMAGER"] = 3,
 }
 
+local RED_R, RED_G, RED_B, RED_A = RED_FONT_COLOR:GetRGBA()
+local GREEN_R, GREEN_G, GREEN_B, GREEN_A = GREEN_FONT_COLOR:GetRGBA()
+
 SearchFrameResultFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
 
 function SearchFrameResultFrameMixin:OnMouseDown(button)
@@ -30,18 +33,16 @@ function SearchFrameResultFrameMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 25, 0);
         LFGListUtil_SetSearchEntryTooltip(GameTooltip, self.resultID);
 
-        local nameTable
-
 		if(searchResultInfo.leaderName) then
-			nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+            local _, realm = strsplit("-", searchResultInfo.leaderName)
 
-			if(nameTable and not nameTable[2]) then
-				nameTable[2] = GetNormalizedRealmName()
+			if(not realm) then
+				realm = GetNormalizedRealmName()
 
 			end
 
-			if(nameTable[2]) then
-				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
+			if(realm) then
+				local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
 				GameTooltip_AddBlankLineToTooltip(GameTooltip)
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
 			end
@@ -223,14 +224,15 @@ function SearchFrameResultFrameMixin:Update()
         local isRaidCategory = activityInfo.categoryID == 3
         local isDelveCategory = activityInfo.categoryID == 121
         local isCustomCategory = activityInfo.categoryID == 6
+        local isPVPCategory = activityInfo.categoryID == 4 or activityInfo.categoryID == 9
 
         local declineData = LFGListFrame.declines and LFGListFrame.declines[searchResultInfo.partyGUID]
         local questTagInfo = searchResultInfo.questID and C_QuestLog.GetQuestTagInfo(searchResultInfo.questID)
         local questDesc = questTagInfo and questTagInfo.tagName
-        local difficultyID = activityInfo.difficultyID
-        local difficultyName = difficultyID and difficultyID ~= 0 and miog:ConvertDifficultyIDToShortName(difficultyID)
+        local difficultyID = activityInfo.difficultyID ~= 0 and activityInfo.difficultyID
+        local difficultyName = difficultyID and miog:ConvertDifficultyIDToShortName(difficultyID)
 
-        local difficultyZoneText = difficultyID and difficultyName or questDesc
+        local difficultyZoneText = difficultyName or questDesc
 
         local titleZoneColor
 
@@ -243,12 +245,20 @@ function SearchFrameResultFrameMixin:Update()
         elseif(declineData) then
             titleZoneColor = DULL_RED_FONT_COLOR
 
-        else
-            titleZoneColor = WHITE_FONT_COLOR
+        elseif(difficultyID) then
+            titleZoneColor = miog:GetColorMatchingDifficultyID(difficultyID)
 
+        elseif(isPVPCategory) then
+            if(activityID == 6) then
+                titleZoneColor = miog:GetColorMatchingDifficultyID(15)
+                
+            else
+                titleZoneColor = miog:GetColorMatchingDifficultyID(16)
+
+            end
         end
 
-        self.Activity.Name:SetText(WrapTextInColorCode((difficultyZoneText and difficultyZoneText .. " - " or "") .. (activityInfo.abbreviatedName or activityInfo.fullName), titleZoneColor:GenerateHexColor()))
+        self.Activity.Name:SetText(WrapTextInColorCode((difficultyZoneText and difficultyZoneText .. " - " or "") .. (activityInfo.abbreviatedName or activityInfo.fullName), (titleZoneColor or WHITE_FONT_COLOR):GenerateHexColor()))
 
         local roles = {
             ["TANK"] = 0,
@@ -346,9 +356,9 @@ function SearchFrameResultFrameMixin:Update()
                     end
                 end
             else
-                local maxPlayers = activityInfo.maxNumPlayers ~= 0 and activityInfo.maxNumPlayers or 40
+                local maxPlayers = activityInfo.maxNumPlayers ~= 0 and activityInfo.maxNumPlayers or (activityInfo.categoryID == 9 and 10 or activityInfo.categoryID ~= 6 and 5 or 40)
 
-                for i = 1 + searchResultInfo.numMembers, max(activityInfo.maxNumPlayers, 1), 1 do
+                for i = 1 + searchResultInfo.numMembers, maxPlayers, 1 do
                     tinsert(groupInfo, {
                         classFilename = "DUMMY",
                         specID = 20,
@@ -492,53 +502,64 @@ function SearchFrameRaidResultFrameMixin:ResetCategoryData()
     end
 end
 
-function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
-    local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(self.resultID) or {}
-    local defeatedEncounters = {}
-
-    for k, v in ipairs(encounterInfo) do
-        defeatedEncounters[v] = true
-
-    end
-
-    local activityID = searchResultInfo.activityIDs[1]
-    local activityInfo = miog:GetActivityInfo(activityID)
-
-    local bossData = activityInfo.bosses
-
+function SearchFrameRaidResultFrameMixin:UpdateBossVisuals(bossData)
     if(bossData) then
+        local encounterInfo = C_LFGList.GetSearchResultEncounterInfo(self.resultID)
+        local defeatedEncounters = {}
+
+        if encounterInfo then
+            for i = 1, #encounterInfo do
+                defeatedEncounters[encounterInfo[i]] = true
+            end
+        end
+
         local numOfBosses = #bossData
         local frameIndex = 20 - numOfBosses + 1 - (numOfBosses > 10 and 0 or 10)
 
-        for k, v in ipairs(bossData) do
+        for i = 1, numOfBosses do
+            local v = bossData[i]
             local bossFrame = self.allBossFrames[frameIndex]
             local bossDefeated = defeatedEncounters[v.name] or defeatedEncounters[v.altName]
 
             bossFrame.Icon:SetDesaturated(bossDefeated)
-            bossFrame.Border:SetColorTexture((bossDefeated and RED_FONT_COLOR or GREEN_FONT_COLOR):GetRGBA())
+
+            if bossDefeated then
+                bossFrame.Border:SetColorTexture(RED_R, RED_G, RED_B, RED_A)
+
+            else
+                bossFrame.Border:SetColorTexture(GREEN_R, GREEN_G, GREEN_B, GREEN_A)
+
+            end
+            
             SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, v.creatureDisplayInfoID)
+            
             bossFrame:Show()
 
             frameIndex = frameIndex + 1
         end
+    end
+end
 
-        --self.Activity.BossListTop:MarkDirty()
-        --self.Activity.BossListBottom:MarkDirty()
+function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
+    local activityID = searchResultInfo.activityIDs[1]
+    local activityInfo = miog:GetActivityInfo(activityID)
+
+    if(not activityInfo.bosses and activityInfo.mapID > 0) then
+        miog:RetrieveJournalInstanceBossData(activityInfo.journalInstanceID)
 
     end
 
-
-    local nameTable
+    self:UpdateBossVisuals(activityInfo.bosses)
 
     if(searchResultInfo.leaderName) then
-        nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+        local name, realm = strsplit("-", searchResultInfo.leaderName)
 
-          if(nameTable and not nameTable[2]) then
-            nameTable[2] = GetNormalizedRealmName()
+        if(not realm) then
+            realm = GetNormalizedRealmName()
 
         end
         
-        local raidData = miog:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
+        local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
 
         if(raidData) then
             local entry1, entry2 = raidData.sortedEntries[1], raidData.sortedEntries[2]
@@ -679,7 +700,10 @@ function SearchFrameRaidResultWithCompositionFrameMixin:OnLoad()
         local classInfo = miog.CLASSES[i]
 
         frame.Icon:SetTexture(classInfo.icon)
+        frame.Icon:SetDesaturated(true)
         frame.Border:SetColorTexture(C_ClassColor.GetClassColor(classInfo.name):GetRGBA())
+        frame.Border:Hide()
+        frame.Counter:SetText("")
     end
 end
 

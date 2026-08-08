@@ -222,7 +222,7 @@ miog.format_num = function(amount, decimal, prefix, neg_prefix)
     return copy
 end
 
-miog.simpleSplit = function(tempString, delimiter)
+miog.splitToTable = function(tempString, delimiter)
 	local resultArray = {}
 	for result in string.gmatch(tempString, "[^"..delimiter.."]+") do
 		resultArray[#resultArray+1] = result

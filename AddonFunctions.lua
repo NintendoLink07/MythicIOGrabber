@@ -11,6 +11,10 @@ local function calcScore(difficulty, kills, current)
     return not current and (kills * 1) or ((100 + kills) ^ difficulty)
 end
 
+function miog:CalculateRaidWeight(difficulty, kills, isCurrent)
+    return calcScore(difficulty, kills, isCurrent)
+end
+
 local function getBlizzardDifficulty(raiderIODifficulty)
 	if(raiderIODifficulty == 1) then
 		return 14
@@ -48,8 +52,12 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
 	if(profile and profile.raidProfile) then
         local seasonRaidData = miog:GetSeasonRaidData()
         local tiers = {sortedEntries = {}}
+        local raidProgress = profile.raidProfile.raidProgress
+        local sortedEntriesIndex = 0
 
-        for k, v in ipairs(profile.raidProfile.raidProgress) do
+        for i = 1, #raidProgress do
+            local v = raidProgress[i]
+
             if(not v.isMainProgress) then
                 local currentTier
                 local tierIndex
@@ -78,6 +86,9 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
 
                 end
 
+                local tierInfo = seasonRaidData[tierIndex]
+                local bossIndexInfo = tierInfo.bosses[v.raid.mapId]
+
                 for x, y in ipairs(v.progress) do
                     currentTier.difficulties[y.difficulty] = currentTier.difficulties[y.difficulty] or {
                         difficulty = y.difficulty,
@@ -89,19 +100,20 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
                     }
 
                     local difficultyTable = currentTier.difficulties[y.difficulty]
+                    local kills = 0
                     
                     for bossIndex, bossData in ipairs(y.progress) do
-                        local tierInfo = seasonRaidData[tierIndex]
-                        local bossIndexInfo = tierInfo.bosses[v.raid.mapId]
                         local bossTierIndex = bossIndexInfo[bossData.index]
 
                         difficultyTable.bosses[bossTierIndex] = bossData.killed
 
                         if(bossData.killed) then
-                            difficultyTable.killedBosses = difficultyTable.killedBosses + 1
+                            kills = kills + 1
 
                         end
                     end
+
+                    difficultyTable.killedBosses = difficultyTable.killedBosses + kills
                 end
 
                 currentTier.name = currentTier.name and currentTier.name .. "/" .. v.raid.shortName or v.raid.shortName
@@ -114,22 +126,36 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
             end
         end
 
-        for k, v in ipairs(tiers) do
-            for x, y in pairs(v.difficulties) do
-                y.weight = calcScore(y.difficulty, y.killedBosses, y.current)
-                y.cleared = y.killedBosses == v.numOfBosses
+        for i = 1, 2 do
+            local currentTier = tiers[i]
 
-                tinsert(v.sortedDifficulties, y)
-                tinsert(tiers.sortedEntries, y)
+            if currentTier then
+                local sortedDiffs = currentTier.sortedDifficulties
+                local sortedDiffsIndex = 0
+                local numOfBosses = currentTier.numOfBosses
+                local tierWeight = 0
 
-                v.tierWeight = v.tierWeight + y.weight
+                for _, diffTable in pairs(currentTier.difficulties) do
+                    local weight = calcScore(diffTable.difficulty, diffTable.killedBosses, diffTable.current)
+                    diffTable.weight = weight
+                    diffTable.cleared = (diffTable.killedBosses == numOfBosses)
 
+                    -- 7. Direct index assignment instead of tinsert
+                    sortedDiffsIndex = sortedDiffsIndex + 1
+                    sortedDiffs[sortedDiffsIndex] = diffTable
+
+                    sortedEntriesIndex = sortedEntriesIndex + 1
+                    tiers.sortedEntries[sortedEntriesIndex] = diffTable
+
+                    tierWeight = tierWeight + weight
+                end
+                
+                currentTier.tierWeight = tierWeight
+
+                table.sort(sortedDiffs, function(k1, k2)
+                    return k1.difficulty > k2.difficulty
+                end)
             end
-
-            table.sort(v.sortedDifficulties, function(k1, k2)
-                return k1.difficulty > k2.difficulty
-
-            end)
         end
 
         table.sort(tiers.sortedEntries, function(k1, k2)

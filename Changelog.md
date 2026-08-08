@@ -5,12 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [3.10] - 2026-08-03
+
+## [3.10] - 2026-08-08
+
+### Added
+
+- Most data for the new raid / dungeons / delves / season has been added.
 
 ### Changed
 
 - [SearchFrame] The search frame has been reworked / recoded to not break any secret value stuff anymore.
     - Performance has been improved by quite a lot.
+    - Progress tracking has been improved by a lot; progress of the same tier will now be accumulated
+    - The subframe will now also show when a listing's status has changed (delist, etc.)
+    - In the footer bar you can toggle whether you wanna see the composition of a raid search result or not
+    - Search results in the custom category will always show the current raid composition
 
 ### Fixed
 
@@ -5047,7 +5056,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.9.16..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10..HEAD
+[3.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10
 [3.9.16]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.16
 [3.9.15a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15a
 [3.9.15]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15

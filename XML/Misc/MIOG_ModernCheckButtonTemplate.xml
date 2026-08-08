@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ModernCheckButtonTemplate" inherits="ResizeLayoutFrame" mixin="ModernCheckButtonMixin" virtual="true">
+        <Frames>
+            <CheckButton parentKey="CheckButton" inherits="MIOG_MinimalCheckButtonTemplate">
+                <Size x="22" y="22" />
+                <Anchors>
+                    <Anchor point="LEFT"/>
+                </Anchors>
+            </CheckButton>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Text" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.Button" relativePoint="RIGHT" x="2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnLeave function="GameTooltip_Hide" />
+        </Scripts>
+    </Frame>
+</Ui>

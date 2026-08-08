@@ -275,6 +275,22 @@
                         <Anchor point="TOPRIGHT" relativeKey="$parent.Raids" y="-124"/>
                     </Anchors>
                 </Texture>
+                
+                <Texture atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="4" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" y="2"/>
+                        <Anchor point="TOPRIGHT" y="2"/>
+                    </Anchors>
+                </Texture>
+                
+                <Texture atlas="dragonflight-weeklyrewards-divider">
+                    <Size y="4" />
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" y="-2"/>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
 

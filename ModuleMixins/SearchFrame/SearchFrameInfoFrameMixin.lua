@@ -181,17 +181,17 @@ function SearchFrameInfoFrameMixin:Update()
         local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
         if(searchResultInfo and searchResultInfo.leaderName) then
-            local nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+            local name, realm = strsplit("-", searchResultInfo.leaderName)
 
-            if(nameTable and not nameTable[2]) then
-                nameTable[2] = GetNormalizedRealmName()
+            if(not realm) then
+                realm = GetNormalizedRealmName()
 
             end
 
-            self:SetRealmData(nameTable[2])
+            self:SetRealmData(realm)
 
             --M+
-            local mplusData = miog:GetMythicPlusDataViaRaiderIO(nameTable[1], nameTable[2])
+            local mplusData = miog:GetMythicPlusDataViaRaiderIO(name, realm)
 
             if(mplusData) then
                 for _, v in ipairs(self.Dungeons.childFrames) do
@@ -217,7 +217,7 @@ function SearchFrameInfoFrameMixin:Update()
                     self.MainChar:SetText("Alt; Main rating is " .. mplusData.mplusMainCurrent.score)
 
                 else
-                    self.MainChar:SetText("Main")
+                    self.MainChar:SetText("M+ Main")
 
                 end
 
@@ -231,49 +231,10 @@ function SearchFrameInfoFrameMixin:Update()
             end
 
             --Raid
-            local raidData = miog:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
-            local seasonRaidData = miog:GetSeasonRaidData()
+            local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
             local bossesKilled = {}
 
             if(raidData) then
-                --[[for k, v in ipairs(raidData) do
-                    local tierBosses = seasonRaidData[k].numOfBosses
-                    local numOfBosses = tierBosses ~= 0 and tierBosses or miog:GetNumOfBossesForTier(k)
-
-                    local raidFrame = self.Raids["Raid" .. k]
-                    
-                    if(raidFrame) then
-                        for difficultyIndex, difficultyData in ipairs(v.sortedDifficulties) do
-                            if(difficultyIndex < 3 and difficultyData) then
-                                local currentProgress = raidFrame.Progress1:GetText() == nil and raidFrame.Progress1 or raidFrame.Progress2:GetText() == nil and raidFrame.Progress2
-                                if(currentProgress) then
-                                    local r, g, b, a = miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA()
-
-                                    currentProgress:SetText(difficultyData.killedBosses .. "/" .. numOfBosses)
-                                    currentProgress:SetTextColor(r, g, b, a)
-
-                                    for bossIndex = 1, 10, 1 do
-                                        local bossKilled = difficultyData.bosses[bossIndex]
-
-                                        if(bossKilled) then
-                                            local bossFrame = raidFrame.childFrames[bossIndex]
-                                            
-                                            if(bossFrame) then
-                                                if(not bossesKilled[bossIndex] or difficultyData.difficulty > bossesKilled[bossIndex]) then
-                                                    bossFrame.Border:SetColorTexture(r, g, b, a)
-                                                    bossesKilled[bossIndex] = difficultyData.difficulty
-                                                    bossFrame.Icon:SetDesaturated(false)
-
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end]]
-
                 for k, v in ipairs(raidData) do
                     local raidFrame = self.Raids["Raid" .. k]
                     local numOfBosses = miog:GetNumOfBossesForTier(v.sortedDifficulties[1].tierIndex)
@@ -283,7 +244,6 @@ function SearchFrameInfoFrameMixin:Update()
                         local difficultyData = v.sortedDifficulties[i]
 
                         if(difficultyData) then
-
                             progressFrame:SetText(numOfBosses and (difficultyData.killedBosses .. "/" .. numOfBosses) or "")
                             progressFrame:SetTextColor(miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA())
 

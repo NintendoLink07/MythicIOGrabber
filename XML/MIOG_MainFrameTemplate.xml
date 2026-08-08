@@ -704,6 +704,13 @@
                                 </Anchors>
                             </Frame>
                             
+                            <Frame parentKey="FilterSettings" inherits="MIOG_FilterSettings" frameStrata="HIGH" hidden="true">
+                                <Size x="300" y="400"/>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.QueueInformation" relativePoint="TOPLEFT"/>
+                                </Anchors>
+                            </Frame>
+                            
                             <Frame parentKey="GroupCreator" inherits="MIOG_GroupCreator" frameStrata="HIGH">
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativeKey="$parent.QueueInformation" relativePoint="TOPRIGHT"/>

@@ -12,14 +12,40 @@
                 </Anchors>
             </Frame>
 
-            --RBG SUPPORT
-
-            <Frame parentKey="Activity" inherits="MIOG_SearchFrameStandardResultFrameActivityRowTemplate">
-                <Size y="20" />
+            <Frame parentKey="Activity">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.General" relativePoint="BOTTOMLEFT"/>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.General" relativePoint="BOTTOMRIGHT"/>
+                    <Anchor point="BOTTOMRIGHT"/>
                 </Anchors>
+
+                <Frames>
+                    <CheckButton parentKey="Expand" inherits="MIOG_SearchFrameExpandButtonTemplate">
+                        <Size x="18" y="18" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT"/>
+                        </Anchors>
+                    </CheckButton>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Name" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" wordwrap="false" nonspacewrap="false">
+                            <Size x="128" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Expand" relativePoint="RIGHT" x="4"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="Members" inherits="MIOG_SearchFrameBigGroupRowTemplate">
+                        <Size y="16" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" x="-2" y="-2"/>
+                        </Anchors>
+                    </Frame>
+                </Frames>
             </Frame>
         </Frames>
     </Frame>

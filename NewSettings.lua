@@ -80,7 +80,8 @@ local defaultSettings = {
     {name = "Also apply raid graphics settings in dungeons", variableName = "MIOG_RaidToDungeonGraphics", key="raidToDungeonGraphics", type="checkbox", tooltip="Applies raid graphics setting automatically whenever you enter a dungeon. (Requires a reload)", default=false, customCallback=function() C_UI.Reload() end},
     {name = "Enable Search Panel Class Spec Tooltips", variableName = "MIOG_ClassSpecTooltip", key="classSpecTooltip", default=true},
     {name = "New filter options", variableName = "MIOG_NewFilterOptions", key="newFilterOptions", default={}},
-    {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={
+    {name = "Filter options", variableName = "MIOG_FilterOptions", key="filterOptions", default={}},
+    {name = "Filter settings", variableName = "MIOG_FilterSettings", key="filterSettings", default={
         ["LFGListFrame.SearchPanel"] = defaultFilters,
         ["LFGListFrame.ApplicationViewer"] = defaultFilters,}
     },

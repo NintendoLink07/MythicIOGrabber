@@ -4,6 +4,7 @@ local dataProvider
 
 local iTable = {}
 local lastID = nil
+local enableRaidComp = false
 
 SearchFrameMixin = {}
 
@@ -84,6 +85,8 @@ function SearchFrameMixin:RefreshSearchStatus()
 end
 
 function SearchFrameMixin:Refresh()
+    enableRaidComp = self.Footer.RaidCompButton:GetChecked()
+
     self.Status:Hide()
     dataProvider = CreateTreeDataProvider()
     local numOfResults, resultList = C_LFGList.GetFilteredSearchResults()
@@ -92,30 +95,44 @@ function SearchFrameMixin:Refresh()
     self.filters = LFGListFrame.SearchPanel.filters
 
     local resultTable = {}
-    
-    for index, resultID in ipairs(resultList) do
+    -- Counter for manual table insertion
+    local resultIndex = #resultTable
+
+    -- 2. Use a standard numeric for-loop instead of ipairs
+    for i = 1, #resultList do
+        local resultID = resultList[i]
         if(resultID and C_LFGList.HasSearchResultInfo(resultID)) then
 			local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
 
             if(searchResultInfo) then
-				local status =  miog.filter.checkIfSearchResultIsEligible(resultID)
 				local _, appStatus = C_LFGList.GetApplicationInfo(resultID)
+                local isApplied = appStatus == "applied"
 				
-				if(appStatus == "applied" or status ~= false) then
+				if(isApplied or miog.filter.checkIfSearchResultIsEligible(resultID) ~= false) then
                     local activityInfo = miog:GetActivityInfo(searchResultInfo.activityIDs[1])
-                    local isDungeon = activityInfo.categoryID == 2
-                    local isRaid = activityInfo.categoryID == 3
-                    local isPvp = activityInfo.categoryID == 4 or activityInfo.categoryID == 7 or activityInfo.categoryID == 8 or activityInfo.categoryID == 9
+                    local categoryID = activityInfo.categoryID
+                    local isDungeon = categoryID == 2
+                    local isRaid = categoryID == 3
+                    local isPvp = categoryID == 4 or categoryID == 9
                     
-                    local template =
-                        isDungeon and "MIOG_SearchFrameDungeonResultFrameTemplate" or
-                        isRaid and "MIOG_SearchFrameRaidResultFrameWithCompositionTemplate" or
-                        activityInfo.categoryID == 121 and "MIOG_SearchFrameDelvesResultFrameTemplate" or
-                        activityInfo.categoryID == 4 and "MIOG_SearchFrameArenaResultFrameTemplate" or
-                        activityInfo.categoryID == 9 and "MIOG_SearchFrameBattlegroundResultFrameTemplate" or
-                        activityInfo.categoryID == 1 and (activityInfo.maxNumPlayers > 5 and "MIOG_SearchFrameBigGroupResultFrameTemplate" or "MIOG_SearchFrameSmallGroupResultFrameTemplate") or
-                        activityInfo.categoryID == 6 and (activityInfo.maxNumPlayers <= 5 and activityInfo.maxNumPlayers ~= 0 and "MIOG_SearchFrameSmallGroupResultFrameTemplate" or "MIOG_SearchFrameBigGroupResultFrameTemplate")
-                        
+                    local template
+
+                    if isDungeon then
+                        template = "MIOG_SearchFrameDungeonResultFrameTemplate"
+                    elseif isRaid then
+                        template = enableRaidComp and "MIOG_SearchFrameRaidResultFrameWithCompositionTemplate" or "MIOG_SearchFrameRaidResultFrameTemplate"
+                    elseif categoryID == 121 then
+                        template = "MIOG_SearchFrameDelvesResultFrameTemplate"
+                    elseif categoryID == 4 then
+                        template = "MIOG_SearchFrameArenaResultFrameTemplate"
+                    elseif categoryID == 9 then
+                        template = "MIOG_SearchFrameBattlegroundResultFrameTemplate"
+                    elseif categoryID == 1 then
+                        template = activityInfo.maxNumPlayers > 5 and "MIOG_SearchFrameBigGroupResultFrameTemplate" or "MIOG_SearchFrameSmallGroupResultFrameTemplate"
+                    elseif categoryID == 6 then
+                        template = (activityInfo.maxNumPlayers <= 5 and activityInfo.maxNumPlayers ~= 0) and "MIOG_SearchFrameSmallGroupResultFrameTemplate" or "MIOG_SearchFrameBigGroupResultFrameTemplate"
+                    end
+
                     local rating, secondaryRating
 
                     if(isDungeon) then
@@ -123,17 +140,15 @@ function SearchFrameMixin:Refresh()
                         --secondaryRating = searchResultInfo.leaderDungeonScoreInfo and searchResultInfo.leaderDungeonScoreInfo[1] and searchResultInfo.leaderDungeonScoreInfo[1].bestRunLevel or 0
                     
                     elseif(isRaid) then
-                        local nameTable
-
                         if(searchResultInfo.leaderName) then
-                            nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+                            local name, realm = strsplit("-", searchResultInfo.leaderName)
 
-                            if(nameTable and not nameTable[2]) then
-                                nameTable[2] = GetNormalizedRealmName()
-
+                            if not realm then
+                                realm = GetNormalizedRealmName()
+                                
                             end
                             
-                            local raidData = miog:GetRaidTierDataViaRaiderIO(nameTable[1], nameTable[2])
+                            local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
                             
                             if(raidData) then
                                 rating = raidData[1] and raidData[1].tierWeight or 0
@@ -180,14 +195,14 @@ function SearchFrameMixin:Refresh()
 
                     end
 
-                    tinsert(resultTable, {
+                    resultIndex = resultIndex + 1
+                    resultTable[resultIndex] = {
                         template = template,
                         resultID = resultID,
                         activityName = activityInfo.abbreviatedName or activityInfo.fullName,
                         rating = rating,
-                        --secondaryRating = secondaryRating
-                        applied = appStatus == "applied",
-                    })
+                        applied = isApplied,
+                    }
                 end
             end
         end
@@ -206,6 +221,8 @@ function SearchFrameMixin:Refresh()
         self.Header.RatingSort.Text:SetTextColor(WHITE_FONT_COLOR:GetRGBA())
 
     end
+
+    --local sortOrder = miog.FilterSettings:GetSortOrder()
 
     if(self.sortOrder == {}) then
         table.sort(resultTable, function(k1, k2)
@@ -435,6 +452,19 @@ function SearchFrameMixin:OnLoad()
 	self.Header.RatingSort:SetBackdrop(visualTable)
 	self.Header.RatingSort:SetBackdropBorderColor(r, g, b, a)
 
+    self.Footer.RaidCompButton.Text:SetText("Enable raid comp")
+    self.Footer.RaidCompButton:SetOnClick(function(selfButton)
+        self:Refresh()
+
+    end)
+
+    self.Footer.RaidCompButton:SetScript("OnEnter", function(selfFrame)
+        GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT")
+        GameTooltip:SetText("Toggle showing the raid composition for a raid search result")
+        GameTooltip:Show()
+
+    end)
+
 	--self.Header.SecondaryRatingSort:SetBackdrop(visualTable)
 	--self.Header.SecondaryRatingSort:SetBackdropBorderColor(r, g, b, a)
 
@@ -481,12 +511,13 @@ function SearchFrameMixin:OnLoad()
 
             if(activityInfo.categoryID == 3) then
                 local bossData = activityInfo.bosses
+                local offset = enableRaidComp and 18 or 0
 
                 if(bossData and #bossData > 10) then
-                    return #bossData > 10 and 80
+                    return 58 + offset
 
                 else
-                    return 60
+                    return 40 + offset
 
                 end
             else
@@ -500,7 +531,7 @@ function SearchFrameMixin:OnLoad()
         return 40
     end)
 
-    self.ScrollBox:Init(view)
+    ScrollUtil.InitScrollBoxWithScrollBar(self.ScrollBox, self:GetParent():GetParent():GetParent().ScrollBarArea.SearchPanelScrollBar, view)
     self.sortOrder = {}
 
     self:HookSearchPanelElements()
@@ -522,4 +553,5 @@ function SearchFrameMixin:OnLoad()
 
         lastID = resultID
     end)
+    
 end

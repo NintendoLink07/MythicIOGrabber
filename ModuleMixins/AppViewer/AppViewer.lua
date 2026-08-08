@@ -379,12 +379,8 @@ end
 local registered = false
 
 function AppViewer:OnShow()
-	if(not registered) then
-		--ScrollUtil.RegisterScrollBoxWithScrollBar(self.ScrollBox, miog.pveFrame2.ScrollBarArea.ApplicationViewerScrollBar)
-		registered = true
-	end
-
 	self:RefreshApplicantList()
+
 end
 
 function AppViewer:OnLoad()
@@ -437,8 +433,7 @@ function AppViewer:OnLoad()
 	end
 
 	view:SetElementFactory(CustomFactory)
-	self.ScrollBox:Init(view)
-
+    ScrollUtil.InitScrollBoxWithScrollBar(self.ScrollBox, self:GetParent():GetParent():GetParent().ScrollBarArea.ApplicationViewerScrollBar, view)
 	self.ScrollBox:SetDataProvider(treeDataProvider)
 	self.SortButtons:RegisterDataProvider(treeDataProvider, "applicantID")
 

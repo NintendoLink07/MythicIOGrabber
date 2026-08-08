@@ -14,28 +14,6 @@ local pvpActivityIDs = {
 	9,
 }
 
-local standardLayout = {
-    --guid = "",
-    --name = "",
-    --fileName = "",
-    specID = 0,
-    itemlevel = 0,
-    mythicPlus = {
-        score = 0,
-        dungeons = {},
-    },
-    raiding = {
-        progressWeight = 0,
-        raids = {},
-        progress = {},
-    },
-    pvp = {
-        highestRating = 0
-    },
-    lockouts = {},
-    greatVault = {},
-}
-
 ProgressCheckMixin = {}
 
 local function ProgressCheckDiffFrame_OnEnter(selfFrame, mapID, data, difficultyIndex)
@@ -277,7 +255,7 @@ function ProgressCheckMixin:UpdateRaidData()
                     })
 
                     raidSettings[difficultyIndex].numOfBosses = raidSettings[difficultyIndex].numOfBosses + 1
-				    raidingSettings.progressWeight = raidingSettings.progressWeight + miog.calculateRaidWeight(difficultyIndex, raidSettings[difficultyIndex].kills, raidSettings[difficultyIndex].numOfBosses, 1)
+				    raidingSettings.progressWeight = raidingSettings.progressWeight + miog:CalculateRaidWeight(difficultyIndex, raidSettings[difficultyIndex].kills, raidSettings[difficultyIndex].numOfBosses, true)
                 end
             end
         end
@@ -785,6 +763,10 @@ function ProgressCheckMixin:OnEvent(event, ...)
     elseif(event == "PVP_RATED_STATS_UPDATE") then
         self:UpdatePVPData()
 
+    elseif(event == "PLAYER_ENTERING_WORLD") then
+        C_Timer.After(10, function()
+            self:UpdateAllData()
+        end)
     end
 end
 

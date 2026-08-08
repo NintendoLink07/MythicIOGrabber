@@ -180,12 +180,20 @@ function SearchFrameBaseFrameMixin:SetStatus(searchResultInfo)
 			self.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
 
 			if(self.Background:GetTexture() == nil) then
-				self.Background:SetTexture("interface/lfgframe/ui-lfg-background-randomdungeon.blp", "MIRROR", "MIRROR")
+				if(activityInfo.categoryID == 3) then
+					self.Background:SetTexture("interface/lfgframe/ui-lfg-background-randomdungeon.blp", "MIRROR", "MIRROR")
 
+				elseif(activityInfo.categoryID == 121) then
+					self.Background:SetAtlas(activityInfo.atlas)
+
+				end
 			end
+		elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 9) then
+			self.Background:SetTexture(activityInfo.categoryID == 4 and ("interface/lfgframe/ui-lfg-background-randomscenario.blp") or "interface/lfgframe/ui-lfg-background-heroicscenario.blp", "MIRROR", "MIRROR")
+			
 		else
 			self.Background:SetColorTexture(PANEL_BACKGROUND_COLOR:GetRGBA())
-
+			
 		end
 		
 		self:RefreshStatus()

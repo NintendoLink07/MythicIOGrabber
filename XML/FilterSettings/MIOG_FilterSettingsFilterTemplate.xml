@@ -1,0 +1,38 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_FilterSettingsFilterTemplate" mixin="FilterSettingsFilterMixin" registerForDrag="true" movable="true" enableMouse="true" virtual="true">
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Index" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnMouseDown method="OnMouseDown" />
+            <OnMouseUp method="OnMouseUp" />
+        </Scripts>
+
+        <Frames>
+            <Button parentKey="Reset" inherits="UIPanelCloseButton" mixin="FilterSettingsFilterCloseButtonMixin">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" x="-2"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick method="OnClick" />
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
+</Ui>

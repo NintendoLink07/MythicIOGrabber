@@ -47,6 +47,7 @@ FuzzyAlgorithm.lua
 ##
 
 
+Mixins\ModernCheckButtonMixin.lua
 Mixins\SortingMixin.lua
 Mixins\MultiStateButtonMixin.lua
 Mixins\FilterMixin.lua
@@ -82,6 +83,8 @@ Mixins\TextCellMixin.lua
 Mixins\TextureCellMixin.lua
 
 Mixins\AnchorSystemMixin.lua
+
+ModuleMixins\FilterSettings\FilterSettingsMixin.lua
 
 ModuleMixins\GroupCreator\GroupCreatorMixin.lua
 
@@ -129,6 +132,7 @@ ModuleMixins\ProgressCheck\ProgressCheckMixin.lua
 
 
 
+XML\Misc\MIOG_ModernCheckButtonTemplate.xml
 XML\Misc\MIOG_MultiStateButtonTemplate.xml
 XML\Misc\MIOG_SortButtonTemplate.xml
 XML\Misc\MIOG_SortButtonWithTextTemplate.xml
@@ -142,6 +146,9 @@ XML\Misc\MIOG_MinimalHorizontalScrollBarTemplate.xml
 XML\Misc\MIOG_IconWithTextTemplate.xml
 XML\Misc\MIOG_SearchBoxFilterTemplate.xml
 XML\Misc\MIOG_ProgressBarTemplate.xml
+
+XML\FilterSettings\MIOG_FilterSettingsFilterTemplate.xml
+XML\FilterSettings\MIOG_FilterSettings.xml
 
 XML\GroupCreator\MIOG_GroupCreator.xml
 

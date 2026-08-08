@@ -6,7 +6,7 @@
                 <Size y="20" />
 
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.Activity" relativePoint="BOTTOMRIGHT" x="-8"/>
+                    <Anchor point="BOTTOMRIGHT" x="-8" y="2"/>
                 </Anchors>
             </Frame>
         </Frames>

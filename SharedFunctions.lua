@@ -1246,7 +1246,7 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 	else
 		if(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
 			if(pvpData.tier and pvpData.tier ~= "N/A") then
-				local tierResult = miog.simpleSplit(PVPUtil.GetTierName(pvpData.tier), " ")
+				local tierResult = miog.splitToTable(PVPUtil.GetTierName(pvpData.tier), " ")
 				primaryIndicator:SetText(wticc(tostring(pvpData.rating), miog.createCustomColorForRating(pvpData.rating):GenerateHexColor()))
 				secondaryIndicator:SetText(strsub(tierResult[1], 0, tierResult[2] and 2 or 4) .. ((tierResult[2] and "" .. tierResult[2]) or ""))
 
@@ -1567,9 +1567,7 @@ local function createFullNameValuesFrom(type, value)
 		if(string.find(value, "-")) then
 			fullName = value
 
-			local nameTable = miog.simpleSplit(fullName, "-")
-			shortName = nameTable[1]
-			realm = nameTable[2]
+            shortName, realm = strsplit("-", fullName)
 
 		else
 			shortName = value
@@ -1608,69 +1606,6 @@ local function createFullNameValuesFrom(type, value)
 end
 
 miog.createFullNameValuesFrom = createFullNameValuesFrom
-
-local function createFullNameFrom(type, value)
-	local realm = GetNormalizedRealmName()
-	local name
-
-	if(not realm) then
-		if(type == "unitName" and string.find(value, "-")) then
-			return value
-		end
-
-		return
-	end
-
-	if(type == "unitID") then
-		if(value == "player") then
-			local shortName, realm2 = UnitFullName(value)
-
-			if(shortName and realm2) then
-				name = shortName .. "-" .. realm2
-
-			else
-				name = UnitNameUnmodified("player") .. "-" .. realm
-			
-			end
-		else
-			name = GetUnitName(value, true)
-		
-		end
-	elseif(type == "unitName") then
-		local nameTable = miog.simpleSplit(value, "-")
-
-		if(nameTable[2]) then
-			return value
-
-		else
-			name = nameTable[1] .. "-" .. realm
-
-		end
-	end
-
-	return name
-end
-
-miog.createFullNameFrom = createFullNameFrom
-
-local function createShortNameFrom(type, value)
-	if(type == "unitID") then
-		return UnitName(value)
-
-	else
-		local nameTable = miog.simpleSplit(value, "-")
-
-		if(not nameTable[2]) then
-			return value
-
-		else
-			return nameTable[1]
-
-		end
-	end
-end
-
-miog.createShortNameFrom = createShortNameFrom
 
 miog.changeTheme = function(index)
 	local titleBarTexHeight = 0.0465
@@ -1735,16 +1670,16 @@ end
 end)]]
 
 miog.createSplitName = function(name)
-	local nameTable = miog.simpleSplit(name, "-")
+	local shortName, realm = strsplit("-", name)
 	local wasFullName = true
 
-	if(not nameTable[2]) then
-		nameTable[2] = GetNormalizedRealmName()
+	if(not realm) then
+		realm = GetNormalizedRealmName()
 		wasFullName = false
 
 	end
 
-	return nameTable[1], nameTable[2], wasFullName
+	return shortName, realm, wasFullName
 end
 
 miog.getActiveSortMethods = function(panel)
@@ -1757,15 +1692,6 @@ miog.getActiveSortMethods = function(panel)
 	end
 
 	return numberOfActiveMethods
-end
-
-miog.checkEgoTrip = function(name)
-	local fullName = createFullNameFrom("unitName", name)
-	
-	if(fullName == "Rhany-Ravencrest" or fullName == "Gerhanya-Ravencrest" or fullName == "Latimeria-Ravencrest") then
-		GameTooltip:AddLine("You've found the creator of this addon.\nHow lucky!")
-
-	end
 end
 
 local function desaturateTexture(bool, texture)

@@ -349,18 +349,16 @@ function QueueManagerApplicationFrameMixin:OnEnter()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 25, 0);
         LFGListUtil_SetSearchEntryTooltip(GameTooltip, resultID);
 
-        local nameTable
-
 		if(searchResultInfo.leaderName) then
-			nameTable = miog.simpleSplit(searchResultInfo.leaderName, "-")
+            local _, realm = strsplit("-", searchResultInfo.leaderName)
 
-			if(nameTable and not nameTable[2]) then
-				nameTable[2] = GetNormalizedRealmName()
+			if(not realm) then
+				realm = GetNormalizedRealmName()
 
 			end
 
-			if(nameTable[2]) then
-				local countryFlag, language = miog.getRealmData(nameTable[2], miog.F.CURRENT_REGION)
+			if(realm) then
+				local countryFlag, language = miog.getRealmData(realm, miog.F.CURRENT_REGION)
 				GameTooltip_AddBlankLineToTooltip(GameTooltip)
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
                 GameTooltip:Show()

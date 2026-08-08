@@ -712,256 +712,13 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 			{icon = "interface/icons/interface/icons/inv_121_achievement_raid_ulatek.blp"},
 		},
 	},
-}
-
--- wagotools groupfinderactivity csv, sort by group id and create dataset with mapID, groupID and activityID
-miog.GROUP_INFO = {
-	[1] = {groupName = "Siege of Orgrimmar", orderIndex = 1},
-	[2] = {groupName = "Eastern Kingdoms", 	orderIndex = 0},
-	[3] = {groupName = "Kalimdor", orderIndex = 0},
-	[5] = {groupName = "Deadmines", orderIndex = 0},
-	[6] = {groupName = "Bloodmaul Slag Mines", orderIndex = 0},
-	[7] = {groupName = "Iron Docks", orderIndex = 0},
-	[8] = {groupName = "Auchindoun", orderIndex = 0},
-	[9] = {groupName = "Skyreach", orderIndex = 11},
-	[10] = {groupName = "Grimrail Depot", orderIndex = 1},
-	[11] = {groupName = "The Everbloom", orderIndex = 0},
-	[12] = {groupName = "Shadowmoon Burial Grounds", orderIndex = 10},
-	[13] = {groupName = "Upper Blackrock Spire", orderIndex = 0},
-	[14] = {groupName = "Highmaul", orderIndex = 0},
-	[15] = {groupName = "Blackrock Foundry", orderIndex = 0},
-	[16] = {groupName = "Naxxramas", orderIndex = 0},
-	[17] = {groupName = "Icecrown Citadel", orderIndex = 0},
-	[18] = {groupName = "Scholomance", orderIndex = 0},
-	[19] = {groupName = "Shadowfang Keep", orderIndex = 0},
-	[20] = {groupName = "Hellfire Ramparts", orderIndex = 0},
-	[21] = {groupName = "Blood Furnace", orderIndex = 0},
-	[22] = {groupName = "Shattered Halls", orderIndex = 0},
-	[23] = {groupName = "Slave Pens", orderIndex = 0},
-	[24] = {groupName = "Underbog", orderIndex = 0},
-	[25] = {groupName = "The Steamvault", orderIndex = 0},
-	[26] = {groupName = "Mana-Tombs", orderIndex = 0},
-	[27] = {groupName = "Auchenai Crypts", orderIndex = 0},
-	[28] = {groupName = "Sethekk Halls", orderIndex = 0},
-	[29] = {groupName = "Shadow Labyrinth", orderIndex = 0},
-	[30] = {groupName = "Scarlet Halls", orderIndex = 0},
-	[31] = {groupName = "Scarlet Monastery", orderIndex = 0},
-	[32] = {groupName = "The Escape from Durnholde", orderIndex = 0},
-	[33] = {groupName = "Opening of the Dark Portal", orderIndex = 0},
-	[34] = {groupName = "The Mechanar", orderIndex = 0},
-	[35] = {groupName = "The Botanica", orderIndex = 0},
-	[36] = {groupName = "The Arcatraz", orderIndex = 0},
-	[37] = {groupName = "Magisters' Terrace", orderIndex = 0},
-	[38] = {groupName = "Utgarde Keep", orderIndex = 0},
-	[39] = {groupName = "Utgarde Pinnacle", orderIndex = 0},
-	[40] = {groupName = "Azjol-Nerub", orderIndex = 0},
-	[41] = {groupName = "The Oculus", orderIndex = 0},
-	[42] = {groupName = "Halls of Lightning", orderIndex = 0},
-	[43] = {groupName = "Halls of Stone", orderIndex = 0},
-	[44] = {groupName = "The Culling of Stratholme", orderIndex = 0},
-	[45] = {groupName = "Drak'Tharon Keep", orderIndex = 0},
-	[46] = {groupName = "Gundrak", orderIndex = 0},
-	[47] = {groupName = "Ahn'kahet: The Old Kingdom", orderIndex = 0},
-	[48] = {groupName = "Violet Hold", orderIndex = 0},
-	[49] = {groupName = "The Nexus", orderIndex = 0},
-	[50] = {groupName = "Trial of the Champion", orderIndex = 0},
-	[51] = {groupName = "The Forge of Souls", orderIndex = 0},
-	[52] = {groupName = "Pit of Saron", orderIndex = 11},
-	[53] = {groupName = "Halls of Reflection", orderIndex = 0},
-	[54] = {groupName = "Throne of the Tides", orderIndex = 0},
-	[55] = {groupName = "Blackrock Caverns", orderIndex = 0},
-	[56] = {groupName = "Grim Batol", orderIndex = 0},
-	[57] = {groupName = "Halls of Origination", orderIndex = 0},
-	[58] = {groupName = "The Stonecore", orderIndex = 0},
-	[59] = {groupName = "The Vortex Pinnacle", orderIndex = 0},
-	[60] = {groupName = "Lost City of the Tol'vir", orderIndex = 0},
-	[61] = {groupName = "Temple of the Jade Serpent", orderIndex = 10},
-	[62] = {groupName = "Stormstout Brewery", orderIndex = 0},
-	[63] = {groupName = "Shado-Pan Monastery", orderIndex = 0},
-	[64] = {groupName = "Mogu'shan Palace", orderIndex = 0},
-	[65] = {groupName = "Siege of Niuzao Temple", orderIndex = 0},
-	[66] = {groupName = "Gate of the Setting Sun", orderIndex = 0},
-	[67] = {groupName = "The Everbloom", orderIndex = 0},
-	[68] = {groupName = "Draenor", orderIndex = 0},
-	[69] = {groupName = "Outland", orderIndex = 0},
-	[70] = {groupName = "Northrend", orderIndex = 0},
-	[71] = {groupName = "Pandaria", orderIndex = 0},
-	[73] = {groupName = "Trial of the Crusader", orderIndex = 0},
-	[74] = {groupName = "The Ruby Sanctum", orderIndex = 0},
-	[75] = {groupName = "Blackwing Descent", orderIndex = 0},
-	[76] = {groupName = "The Bastion of Twilight", orderIndex = 0},
-	[77] = {groupName = "Throne of the Four Winds", orderIndex = 0},
-	[78] = {groupName = "Firelands", orderIndex = 0},
-	[79] = {groupName = "Dragon Soul", orderIndex = 0},
-	[80] = {groupName = "Mogu'shan Vaults", orderIndex = 5},
-	[81] = {groupName = "Heart of Fear", orderIndex = 4},
-	[82] = {groupName = "Terrace of Endless Spring", orderIndex = 3},
-	[83] = {groupName = "Throne of Thunder", orderIndex = 2},
-	[84] = {groupName = "Random Pandaria Dungeon", orderIndex = 0},
-	[86] = {groupName = "Theramore's Fall", orderIndex = 0},
-	[102] = {groupName = "A Brewing Storm", orderIndex = 0},
-	[103] = {groupName = "Battle on the High Seas", orderIndex = 0},
-	[104] = {groupName = "Blood in the Snow", orderIndex = 0},
-	[105] = {groupName = "Crypt of Forgotten Kings", orderIndex = 0},
-	[106] = {groupName = "Dark Heart of Pandaria", orderIndex = 0},
-	[107] = {groupName = "Random Pandaria Scenario", orderIndex = 0},
-	[108] = {groupName = "The Secrets of Ragefire", orderIndex = 0},
-	[109] = {groupName = "Random Draenor Dungeon", orderIndex = 0},
-	[110] = {groupName = "Hellfire Citadel", orderIndex = 0},
-	[111] = {groupName = "Random Legion Dungeon", orderIndex = 0},
-	[112] = {groupName = "Eye of Azshara", orderIndex = 9},
-	[113] = {groupName = "Darkheart Thicket", orderIndex = 12},
-	[114] = {groupName = "Halls of Valor", orderIndex = 10},
-	[115] = {groupName = "Neltharion's Lair", orderIndex = 10},
-	[116] = {groupName = "Assault on Violet Hold", orderIndex = 40},
-	[117] = {groupName = "Vault of the Wardens", orderIndex = 13},
-	[118] = {groupName = "Black Rook Hold", orderIndex = 17},
-	[119] = {groupName = "Maw of Souls", orderIndex = 40},
-	[120] = {groupName = "Court of Stars", orderIndex = 10},
-	[121] = {groupName = "The Arcway", orderIndex = 40},
-	[122] = {groupName = "Emerald Nightmare", orderIndex = 40},
-	[123] = {groupName = "The Nighthold", orderIndex = 3},
-	[124] = {groupName = "Broken Isles", orderIndex = 0},
-	[125] = {groupName = "Return to Karazhan", orderIndex = 41},
-	[126] = {groupName = "Trial of Valor", orderIndex = 2},
-	[127] = {groupName = "Lower Karazhan", orderIndex = 5},
-	[128] = {groupName = "Upper Karazhan", orderIndex = 6},
-	[129] = {groupName = "Cathedral of Eternal Night", orderIndex = 41},
-	[130] = {groupName = "Dreadscar Rift", orderIndex = 0},
-	[131] = {groupName = "Tomb of Sargeras", orderIndex = 4},
-	[132] = {groupName = "Antorus, the Burning Throne", orderIndex = 5},
-	[133] = {groupName = "Seat of the Triumvirate", orderIndex = 11},
-	[134] = {groupName = "Argus", orderIndex = 0},
-	[135] = {groupName = "Uldir", orderIndex = 0},
-	[136] = {groupName = "Random Battle for Azeroth Dungeon", orderIndex = 0},
-	[137] = {groupName = "Atal'Dazar", orderIndex = 30},
-	[138] = {groupName = "The Underrot", orderIndex = 10},
-	[139] = {groupName = "Temple of Sethraliss", orderIndex = 30},
-	[140] = {groupName = "THE MOTHERLODE!!", orderIndex = 30},
-	[141] = {groupName = "Kings' Rest", orderIndex = 30},
-	[142] = {groupName = "Freehold", orderIndex = 10},
-	[143] = {groupName = "Shrine of the Storm", orderIndex = 30},
-	[144] = {groupName = "Tol Dagor", orderIndex = 30},
-	[145] = {groupName = "Waycrest Manor", orderIndex = 30},
-	[146] = {groupName = "Siege of Boralus", orderIndex = 30},
-	[247] = {groupName = "Kul Tiras", orderIndex = 0},
-	[248] = {groupName = "Zandalar", orderIndex = 0},
-	[249] = {groupName = "Island Expeditions", orderIndex = 0},
-	[251] = {groupName = "Battle of Dazar'alor", orderIndex = 0},
-	[252] = {groupName = "Crucible of Storms", orderIndex = 0},
-	[253] = {groupName = "Operation: Mechagon", orderIndex = 30},
-	[254] = {groupName = "The Eternal Palace", orderIndex = 0},
-	[255] = {groupName = "Battle for Stromgarde", orderIndex = 0},
-	[256] = {groupName = "Operation: Mechagon - Junkyard", orderIndex = 30},
-	[257] = {groupName = "Operation: Mechagon - Workshop", orderIndex = 30},
-	[258] = {groupName = "Ny'alotha, the Waking City", orderIndex = 0},
-	[259] = {groupName = "Plaguefall", orderIndex = 20},
-	[260] = {groupName = "De Other Side", orderIndex = 20},
-	[261] = {groupName = "Halls of Atonement", orderIndex = 20},
-	[262] = {groupName = "Mists of Tirna Scithe", orderIndex = 20},
-	[263] = {groupName = "Sanguine Depths", orderIndex = 20},
-	[264] = {groupName = "Spires of Ascension", orderIndex = 20},
-	[265] = {groupName = "The Necrotic Wake", orderIndex = 20},
-	[266] = {groupName = "Theater of Pain", orderIndex = 20},
-	[267] = {groupName = "Castle Nathria", orderIndex = 0},
-	[269] = {groupName = "World Bosses", orderIndex = 0},
-	[270] = {groupName = "Shadowlands", orderIndex = 0},
-	[271] = {groupName = "Sanctum of Domination", orderIndex = 0},
-	[272] = {groupName = "Tazavesh, the Veiled Market", orderIndex = 20},
-	[273] = {groupName = "Twisting Corridors", orderIndex = 0},
-	[274] = {groupName = "Skoldus Hall", orderIndex = 1},
-	[275] = {groupName = "Upper Reaches", orderIndex = 1},
-	[276] = {groupName = "Soulforges", orderIndex = 0},
-	[277] = {groupName = "Mort'regar", orderIndex = 0},
-	[278] = {groupName = "Fracture Chambers", orderIndex = 0},
-	[279] = {groupName = "Coldheart Interstitia", orderIndex = 0},
-	[280] = {groupName = "Tazavesh: Streets of Wonder", orderIndex = 20},
-	[281] = {groupName = "Tazavesh: So'leah's Gambit", orderIndex = 20},
-	[282] = {groupName = "Sepulcher of the First Ones", orderIndex = 0},
-	[283] = {groupName = "The Jailer's Gauntlet", orderIndex = 0},
-	[284] = {groupName = "Dragon Isles", orderIndex = 0},
-	[302] = {groupName = "Algeth'ar Academy", orderIndex = 11},
-	[303] = {groupName = "Brackenhide Hollow", orderIndex = 10},
-	[304] = {groupName = "Halls of Infusion", orderIndex = 10},
-	[305] = {groupName = "Neltharus", orderIndex = 10},
-	[306] = {groupName = "Ruby Life Pools", orderIndex = 10},
-	[307] = {groupName = "The Azure Vault", orderIndex = 10},
-	[308] = {groupName = "The Nokhud Offensive", orderIndex = 10},
-	[309] = {groupName = "Uldaman: Legacy of Tyr", orderIndex = 10},
-	[310] = {groupName = "Vault of the Incarnates", orderIndex = 0},
-	[313] = {groupName = "Aberrus, the Shadowed Crucible", orderIndex = 0},
-	[315] = {groupName = "Dawn of the Infinite", orderIndex = 20},
-	[316] = {groupName = "Galakrond's Fall - Dawn of the Infinite", orderIndex = 20},
-	[317] = {groupName = "Murozond's Rise - Dawn of the Infinite", orderIndex = 20},
-	[318] = {groupName = "Galakrond's Fall - Dawn of the Infinite", orderIndex = 20},
-	[319] = {groupName = "Amirdrassil, the Dream's Hope", orderIndex = 0},
-	[322] = {groupName = "Darkflame Cleft", orderIndex = 10},
-	[323] = {groupName = "Ara-Kara, City of Echoes", orderIndex = 10},
-	[324] = {groupName = "Priory of the Sacred Flame", orderIndex = 10},
-	[325] = {groupName = "The Rookery", orderIndex = 10},
-	[326] = {groupName = "The Dawnbreaker", orderIndex = 10},
-	[327] = {groupName = "Cinderbrew Meadery", orderIndex = 10},
-	[328] = {groupName = "The Stonevault", orderIndex = 10},
-	[329] = {groupName = "City of Threads", orderIndex = 10},
-	[331] = {groupName = "Fungal Folly", orderIndex = 0},
-	[332] = {groupName = "Kriegval's Rest", orderIndex = 0},
-	[333] = {groupName = "Earthcrawl Mines", orderIndex = 0},
-	[334] = {groupName = "Zekvir's Lair", orderIndex = 13},
-	[335] = {groupName = "The Waterworks", orderIndex = 0},
-	[336] = {groupName = "The Dread Pit", orderIndex = 0},
-	[337] = {groupName = "Nightfall Sanctum", orderIndex = 0},
-	[338] = {groupName = "Mycomancer Cavern", orderIndex = 0},
-	[339] = {groupName = "The Sinkhole", orderIndex = 0},
-	[340] = {groupName = "Skittering Breach", orderIndex = 0},
-	[341] = {groupName = "The Underkeep", orderIndex = 0},
-	[342] = {groupName = "Tak-Rethan Abyss", orderIndex = 0},
-	[343] = {groupName = "The Spiral Weave", orderIndex = 0},
-	[344] = {groupName = "Greenstone Village", orderIndex = 0},
-	[346] = {groupName = "Unga Ingoo", orderIndex = 0},
-	[347] = {groupName = "Arena of Annihilation", orderIndex = 0},
-	[348] = {groupName = "Brewmoon Festival", orderIndex = 0},
-	[351] = {groupName = "Assault on Zan'vess", orderIndex = 0},
-	[352] = {groupName = "Dagger in the Dark", orderIndex = 0},
-	[353] = {groupName = "A Little Patience", orderIndex = 0},
-	[354] = {groupName = "Domination Point", orderIndex = 0},
-	[355] = {groupName = "Lion's Landing", orderIndex = 0},
-	[362] = {groupName = "Nerub-ar Palace", orderIndex = 0},
-	[363] = {groupName = "Khaz Algar", orderIndex = 0},
-	[370] = {groupName = "Windrunner Spire", orderIndex = 10},
-	[371] = {groupName = "Operation: Floodgate", orderIndex = 10},
-	[372] = {groupName = "Blackrock Depths", orderIndex = 0},
-	[373] = {groupName = "Excavation Site 9", orderIndex = 0},
-	[374] = {groupName = "Sidestreet Sluice", orderIndex = 0},
-	[375] = {groupName = "Underpin's Demolition Competition", orderIndex = 0},
-	[377] = {groupName = "Liberation of Undermine", orderIndex = 0},
-	[378] = {groupName = "Manaforge Omega", orderIndex = 0},
-	[381] = {groupName = "Eco-Dome Al'dani", orderIndex = 10},
-	[382] = {groupName = "The Blinding Vale", orderIndex = 10},
-	[392] = {groupName = "Den of Nalorakk", orderIndex = 10},
-	[394] = {groupName = "Archival Assault", orderIndex = 0},
-	[395] = {groupName = "Voidrazor Sanctuary", orderIndex = 0},
-	[396] = {groupName = "Murder Row", orderIndex = 0},
-	[397] = {groupName = "Midnight", orderIndex = 0},
-	[398] = {groupName = "Voidscar Arena", orderIndex = 10},
-	[399] = {groupName = "Magisters' Terrace", orderIndex = 10},
-	[400] = {groupName = "Maisara Caverns", orderIndex = 10},
-	[401] = {groupName = "Nexus-Point Xenas", orderIndex = 10},
-	[402] = {groupName = "Voidspire", orderIndex = 0},
-	[403] = {groupName = "March on Quel'Danas", orderIndex = 0},
-	[404] = {groupName = "The Dreamrift", orderIndex = 0},
-	[405] = {groupName = "Collegiate Calamity", orderIndex = 0},
-	[406] = {groupName = "Parhelion Plaza", orderIndex = 0},
-	[407] = {groupName = "Sunkiller Sanctum", orderIndex = 0},
-	[408] = {groupName = "Torment's Rise", orderIndex = 0},
-	[409] = {groupName = "Shadowguard Point", orderIndex = 0},
-	[410] = {groupName = "The Grudge Pit", orderIndex = 0},
-	[411] = {groupName = "Atal'Aman", orderIndex = 0},
-	[412] = {groupName = "The Gulf of Memory", orderIndex = 0},
-	[413] = {groupName = "The Shadow Enclave", orderIndex = 0},
-	[414] = {groupName = "Twilight Crypts", orderIndex = 0},
-	[415] = {groupName = "The Darkway", orderIndex = 0},
-	[422] = {groupName = "Sporefall", orderIndex = 0},
-
+	[429] = {
+		abbreviatedName = "TTG",
+		mapID = 2987,
+		bossIcons = {
+			{icon = "interface/icons/achievement_boss_elitenagamale.blp"},
+		},
+	},
 }
 
 miog.MAP_INFO = {
@@ -1358,32 +1115,30 @@ miog.MAP_INFO = {
 
 	
 	--interface/delves/110
-	[2664] = {abbreviatedName = "FF", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "fungalfolly",},
-	[2679] = {abbreviatedName = "MMC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "mycomancercavern",},
-	[2680] = {abbreviatedName = "ECM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "earthcrawlmines",},
-	[2681] = {abbreviatedName = "KR", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "kriegvalsrest",},
-	[2682] = {abbreviatedName = "ZL", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "zekvirslair",},
-	[2683] = {abbreviatedName = "WW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "delve_waterworks",},
-	[2684] = {abbreviatedName = "DP", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "dreadpit",},
-	[2685] = {abbreviatedName = "SB", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "skitteringbreach",},
-	[2686] = {abbreviatedName = "NFS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "nightfallsanctum",},
-	[2687] = {abbreviatedName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
-	[2688] = {abbreviatedName = "SW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "spiralweave",},
-	[2689] = {abbreviatedName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
-	[2690] = {abbreviatedName = "UK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underkeep",},
-	[2692] = {abbreviatedName = "HOA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "hallofawakening",},
-	[2710] = {abbreviatedName = "ATM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "awakeningthemachine",},
-	[2767] = {abbreviatedName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole",},
-	[2768] = {abbreviatedName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss",},
+	[2664] = {abbreviatedName = "FF", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "fungalfolly", atlas="delve-entrance-background-fungal-folly"},
+	[2679] = {abbreviatedName = "MMC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "mycomancercavern", atlas="delve-entrance-background-mycomancer-cavern"},
+	[2680] = {abbreviatedName = "ECM", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "earthcrawlmines", atlas="delve-entrance-background-earthcrawl-mines"},
+	[2681] = {abbreviatedName = "KR", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "kriegvalsrest", atlas="delve-entrance-background-kriegvals-rest"},
+	[2682] = {abbreviatedName = "ZL", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "zekvirslair", atlas="delve-entrance-background-zekvirs-lair"},
+	[2683] = {abbreviatedName = "WW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "delve_waterworks", atlas="delve-entrance-background-the-waterworks"},
+	[2684] = {abbreviatedName = "DP", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "dreadpit", atlas="delve-entrance-background-the-dread-pit"},
+	[2685] = {abbreviatedName = "SB", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "skitteringbreach", atlas="delve-entrance-background-skittering-breach"},
+	[2686] = {abbreviatedName = "NFS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "nightfallsanctum", atlas="delve-entrance-background-nightfall-sanctum"},
+	[2687] = {abbreviatedName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole", atlas="delve-entrance-background-the-sinkhole"},
+	[2688] = {abbreviatedName = "SW", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "spiralweave", atlas="delve-entrance-background-the-spiral-weave"},
+	[2689] = {abbreviatedName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss", atlas="delve-entrance-background-tak-rethan-abyss"},
+	[2690] = {abbreviatedName = "UK", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underkeep", atlas="delve-entrance-background-the-underkeep"},
+	[2767] = {abbreviatedName = "SH", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sinkhole", atlas="delve-entrance-background-the-sinkhole"},
+	[2768] = {abbreviatedName = "TRA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "takrethanabyss", atlas="delve-entrance-background-tak-rethan-abyss"},
 
 	--interface/delves/111
-	[2815] = {abbreviatedName = "ES9", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "excavationsite9",},
-	[2826] = {abbreviatedName = "SS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sidestreetsluice",},
-	[2831] = {abbreviatedName = "UDC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underpinsdemolitioncompetition",},
+	[2815] = {abbreviatedName = "ES9", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "excavationsite9", atlas="delve-entrance-background-the-undermine"},
+	[2826] = {abbreviatedName = "SS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "sidestreetsluice", atlas="delves-entrance-background-sewers"},
+	[2831] = {abbreviatedName = "UDC", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "underpinsdemolitioncompetition", atlas="delve-entrance-background-goblin-boss"},
 
 	--interface/delves/112
-	[2803] = {abbreviatedName = "AA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "archivalassault",},
-	[2951] = {abbreviatedName = "VRS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "voidrazorsanctuary",},
+	[2803] = {abbreviatedName = "AA", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "archivalassault", atlas="delve-entrance-background-Archival-Assault"},
+	[2951] = {abbreviatedName = "VRS", icon = miog.C.STANDARD_FILE_PATH .. "/infoIcons/delves.png", fileName = "voidrazorsanctuary", atlas="delve-entrance-background-Voidrazor-Sanctuary"},
 	
 	[2773] = {abbreviatedName = "OF", fileName = "waterworks"},
 	[2774] = {abbreviatedName = "WRLD", fileName = "khazalgar",},
@@ -1531,9 +1286,49 @@ miog.MAP_INFO = {
 		}
 	},
 
+	[2933] = {abbreviatedName = "CC", fileName = "collegiatecalamity", atlas="delve-entrance-background-collegiate-calamity"},
+	[2952] = {abbreviatedName = "TSE", fileName = "theshadowenclave", atlas="delve-entrance-background-the-shadow-enclave"},
+	[2953] = {abbreviatedName = "PP", fileName = "parhelionplaza", atlas="delve-entrance-background-parhelion-plaza"},
+	[2961] = {abbreviatedName = "TC", fileName = "twilightcrypts", atlas="delve-entrance-background-twilight-crypts"},
+	[2962] = {abbreviatedName = "AA", fileName = "atalaman", atlas="delve-entrance-background-atal-aman"},
+	[2963] = {abbreviatedName = "TGP", fileName = "thegrudgepit", atlas="delve-entrance-background-the-grudge-pit"},
+	[2964] = {abbreviatedName = "TGOM", fileName = "thegulfofmemory", atlas="delve-entrance-background-gulf-of-memory"},
+	[2965] = {abbreviatedName = "SS", fileName = "sunkillersanctum", atlas="delve-entrance-background-sunkiller-sanctum"},
+	[2966] = {abbreviatedName = "TR", fileName = "tormentsrise", atlas="delve-entrance-background-torments-rise"},
+	[2979] = {abbreviatedName = "SP", fileName = "shadowguardpoint", atlas="delve-entrance-background-shadowguard-point"},
+	[3003] = {abbreviatedName = "DW", fileName = "darkway", atlas="delve-entrance-background-the-darkway"},
+
+	[3038] = {abbreviatedName = "GI", fileName = "gnarldorisle", atlas="delve-entrance-background-gnarldor-isle"},
+	[3077] = {abbreviatedName = "TROG", fileName = "theringofglory", atlas="delve-entrance-background-the-ring-of-glory"},
+	[3079] = {abbreviatedName = "VD", fileName = "venomfalldeeps", atlas="delve-entrance-background-venomfall-deeps"},
+
+	[2993] = {abbreviatedName = "AOF", fileName = "dungeonaltaroffangs"},
+	[2987] = {
+		abbreviatedName = "TTG",
+		fileName = "tideboundgrotto",
+		bossData = {
+			[1] = {
+				icon = "interface/icons/achievement_boss_elitenagamale.blp",
+				achievementIDs = {
+					63683,
+					63681,
+					63682,
+				}
+			}
+		},
+		bossIcons = {
+			{icon = "interface/icons/achievement_boss_elitenagamale.blp"},
+		},
+		achievementIDs = {
+			63683,
+			63681,
+			63682,
+		},
+	},
 	
 	[3004] = {
 		abbreviatedName = "VA",
+		fileName = "raidulatek",
 		bossData = {
 			[1] = {
 				icon = "interface/icons/interface/icons/inv_121_raid_achievement_priestess.blp",
@@ -1746,6 +1541,12 @@ miog.CHALLENGE_MODE_INFO = {
 	[559] = {name = "Nexus-Point Xenas", mapID = 2915},
 	[560] = {name = "Maisara Caverns", mapID = 2874},
 	[583] = {name = "Seat of the Triumvirate", mapID = 1753},
+
+	[584] = {name = "The Blinding Vale", mapID = 2859},
+	[585] = {name = "Voidscar Arena", mapID = 2923},
+	[586] = {name = "Den of Nalorakk", mapID = 2825},
+	[587] = {name = "Murder Row", mapID = 2813},
+	[588] = {name = "Altar of Fangs", mapID = 2993},
 }
 
 miog.LFG_ID_INFO = {
@@ -2141,6 +1942,7 @@ function miog:CreateMapPointer(mapID)
 
 				mapDB.iconName = mapInfo.iconName
 				mapDB.fileName = mapInfo.fileName
+				mapDB.atlas = mapInfo.atlas
 
 				mapDB.abbreviatedName = mapInfo.abbreviatedName
 				mapDB.icon = mapInfo.icon
@@ -2162,7 +1964,7 @@ function miog:CreateMapPointer(mapID)
 					elseif(mapDB.pvp) then
 						mapDB.horizontal = "interface/addons/mythiciograbber/res/backgrounds/pvp/horizontal/" .. mapDB.fileName .. ".png"
 						mapDB.vertical = "interface/addons/mythiciograbber/res/backgrounds/pvp/vertical/" .. mapDB.fileName .. ".png"
-						
+
 					else
 						mapDB.horizontal = "interface/lfgframe/ui-lfg-background-" .. mapDB.fileName .. ".blp"
 						mapDB.vertical = "interface/lfgframe/ui-lfg-background-" .. mapDB.fileName .. ".blp"
@@ -2448,10 +2250,11 @@ function miog:IntegrateMapDataIntoActivity(activityID)
 	if(mapDB) then
 		activityDB.abbreviatedName = mapDB.abbreviatedName
 		activityDB.icon = mapDB.icon
-		activityDB.fileName =mapDB.fileName
+		activityDB.fileName = mapDB.fileName
 		activityDB.toastBG = mapDB.toastBG
 		activityDB.pvp = mapDB.pvp
 		activityDB.horizontal = mapDB.horizontal
+		activityDB.atlas = mapDB.atlas
 		activityDB.vertical = mapDB.vertical
 		activityDB.bossIcons = mapDB.bossIcons
 
@@ -2471,6 +2274,7 @@ function miog:IntegrateMapDataIntoGroup(groupID, mapID)
 			groupDB.toastBG = mapDB.toastBG
 			groupDB.pvp = mapDB.pvp
 			groupDB.horizontal = mapDB.horizontal
+			groupDB.atlas = mapDB.atlas
 			groupDB.vertical = mapDB.vertical
 			groupDB.bossIcons = mapDB.bossIcons
 
@@ -2528,9 +2332,14 @@ end
 function miog:CreateGroup(groupID, overwrite)
 	if(groupID) then
 		if(groupID > 0 and (overwrite or not database.pointers.groups[groupID])) then
-			local name, groupOrder = C_LFGList.GetActivityGroupInfo(groupID)
+			local name = C_LFGList.GetActivityGroupInfo(groupID)
 
-			database.pointers.groups[groupID] = {name = name, groupOrder = groupOrder, activities = C_LFGList.GetAvailableActivities(nil, groupID), bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons}
+			database.pointers.groups[groupID] = {
+				name = name,
+				--groupOrder = groupOrder,
+				activities = C_LFGList.GetAvailableActivities(nil, groupID),
+				--bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
+			}
 		end
 	end
 end

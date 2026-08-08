@@ -172,12 +172,11 @@ local function createPVEFrameReplacement()
 
 	end
 
-	
-
 	pveFrame2:SetResizeBounds(PVEFrame:GetWidth() + 20, PVEFrame:GetHeight(), PVEFrame:GetWidth() * 2, PVEFrame:GetHeight()* 2)
 
 	if(pveFrame2:GetPoint() == nil) then
 		pveFrame2:SetPoint(PVEFrame:GetPoint())
+
 	end
 
 	miog.pveFrame2 = pveFrame2
