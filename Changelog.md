@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [3.11] - 2026-08-12
+
+### Changed
+
+- [SearchFrame] The search frame will now also update all search results with the newest available data after a short delay when no new data has been received.
+
+- [FilterPanel] The filter panel has been reworked from the ground up.
+    - The performance has been improved when many filters are active.
+    - The new way to sort all search results / applications is via the updated [FilterPanel]
+        - Just drag the parameter(s) into the drop zone; you can order them however you like
+
+
+
 
 ## [3.10] - 2026-08-08
 

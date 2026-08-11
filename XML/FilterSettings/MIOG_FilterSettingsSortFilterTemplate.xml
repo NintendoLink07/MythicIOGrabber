@@ -1,0 +1,59 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_FilterSettingsSortFilterTemplate" mixin="FilterSettingsSortFilterMixin" registerForDrag="true" movable="true" enableMouse="true" virtual="true">
+        <Frames>
+            <Button parentKey="Reset" inherits="UIPanelCloseButton" mixin="FilterSettingsSortFilterCloseButtonMixin" hidden="true">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="RIGHT" x="-2"/>
+                </Anchors>
+
+                <Scripts>
+                    <OnClick method="OnClick" />
+                </Scripts>
+            </Button>
+            
+            <Button parentKey="SortDirection" mixin="FilterSettingsSortFilterDirectionButtonMixin">
+                <Size x="14" y="14" />
+                <Anchors>
+                    <Anchor point="LEFT"/>
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Icon" atlas="auctionhouse-ui-sortarrow" setAllPoints="true" />
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnClick method="OnClick" />
+                </Scripts>
+            </Button>
+        </Frames>
+
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Index" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.SortDirection" relativePoint="RIGHT" x="4"/>
+                    </Anchors>
+                </FontString>
+
+                <FontString parentKey="Name" font="GameFontHighlight" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+
+            <Layer level="ARTWORK">
+                <Texture parentKey="DragHighlight" atlas="UI-CharacterCreate-LargeButton-Yellow-Highlight" hidden="true" setAllPoints="true" />
+            </Layer>
+        </Layers>
+
+        <Scripts>
+            <OnMouseDown method="OnMouseDown" />
+            <OnMouseUp method="OnMouseUp" />
+        </Scripts>
+    </Frame>
+</Ui>

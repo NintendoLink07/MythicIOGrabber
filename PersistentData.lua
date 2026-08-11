@@ -2324,6 +2324,8 @@ function miog:DetermineHighestDifficultyActivityIDForGroup(groupID)
 					groupDB.highestDifficultyActivityID = v
 
 				end
+
+				tinsert(groupDB.difficulties, activityInfo.redirectedDifficultyID)
 			end
 		end
 	end
@@ -2339,6 +2341,7 @@ function miog:CreateGroup(groupID, overwrite)
 				--groupOrder = groupOrder,
 				activities = C_LFGList.GetAvailableActivities(nil, groupID),
 				--bossIcons = miog.GROUP_ACTIVITY_ID_INFO[groupID] and miog.GROUP_ACTIVITY_ID_INFO[groupID].bossIcons
+				difficulties = {}
 			}
 		end
 	end
@@ -2844,7 +2847,7 @@ miog.ITEM_LEVEL_DATA = {
 		},
 	},
 	[16] = {
-		raidMapIDs = {2912, 2913, 2939},
+		raidMapIDs = {2912, 2913, 2939, 1592},
 		referenceMinLevel = 207,
 		referenceMinLevelStepIndex = 4,
 		referenceMaxLevel = 289,
@@ -2925,6 +2928,91 @@ miog.ITEM_LEVEL_DATA = {
 				{steps = 9, name="World Vault"},
 				{steps = 11, name="Pinnacle"},
 				{steps = 14, name="Worldboss"},
+			},
+		},
+	},
+	[18] = {
+		raidMapIDs = {3004},
+		referenceMinLevel = 246,
+		referenceMinLevelStepIndex = 4,
+		referenceMaxLevel = 337,
+		firstTrackStartLevel = 259,
+
+		itemLevelList = {},
+		logicList = {},
+		trackItemLevelList = {},
+		tooltipList = {},
+
+		tracks = {
+			{name = "Adventurer", length = 6},
+			{name = "Veteran", length = 6},
+			{name = "Champion", length = 6},
+			{name = "Hero", length = 6},
+			{name = "Myth", length = 6},
+
+		},
+
+		data = {
+			dungeon = {
+				{steps = 2, name="Normal"},
+				{steps = 7, vaultOffset = 4, name="HC"},
+				{steps = 12, vaultOffset = 3, name="M"},
+				{steps = 13, vaultOffset = 3, name="+2"},
+				{steps = 13, vaultOffset = 3, name="+3"},
+				{steps = 14, vaultOffset = 3, name="+4"},
+				{steps = 15, vaultOffset = 2, name="+5"},
+				{steps = 16, vaultOffset = 2, name="+6"},
+				{steps = 16, vaultOffset = 3, name="+7"},
+				{steps = 17, vaultOffset = 2, name="+8"},
+				{steps = 17, vaultOffset = 2, name="+9"},
+				{steps = 18, vaultOffset = 2, name="+10"},
+			},
+			raid = {
+				{steps = 8, name="LFR"},
+				{steps = 9, name="LFR"},
+				{steps = 10, name="LFR"},
+				{steps = 11, name="LFR"},
+				{steps = 12, name="N"},
+				{steps = 13, name="N"},
+				{steps = 14, name="N"},
+				{steps = 15, name="N"},
+				{steps = 16, name="HC"},
+				{steps = 17, name="HC"},
+				{steps = 18, name="HC"},
+				{steps = 19, name="HC"},
+				{steps = 20, name="M"},
+				{steps = 21, name="M"},
+				{steps = 22, name="M"},
+				{steps = 23, name="M"},
+				{steps = 28, name="M", tooltip="Last 2 bosses"},
+
+			},
+			
+			delves = {
+				{steps = 4, vaultOffset = 4, name="T1"},
+				{steps = 5, vaultOffset = 4, name="T2"},
+				{steps = 6, vaultOffset = 4, name="T3"},
+				{steps = 7, vaultOffset = 4, name="T4"},
+				{steps = 8, vaultOffset = 4, name="T5"},
+				{steps = 9, vaultOffset = 5, name="T6"},
+				{steps = 12, vaultOffset = 3, name="T7"},
+				{steps = 13, vaultOffset = 3, name="T8+"},
+				{steps = 16, name="T11*", tooltip="At Journey 9"},
+				{steps = 9, name="T4DB"},
+				{steps = 11, name="T5DB"},
+				{steps = 12, name="T6DB"},
+				{steps = 13, name="T7DB"},
+				{steps = 16, name="T8DB+"},
+			},
+			prey = {
+				{steps = 4, vaultOffset = 4, name="Normal"},
+				{steps = 8, vaultOffset = 4, name="Hard"},
+				{steps = 12, vaultOffset = 4, name="NM"},
+			},
+			other = {
+				{steps = 12, name="World Boss NM"},
+				{steps = 16, name="World Boss HC"},
+				{steps = 20, name="World Boss M"},
 			},
 		},
 	},
@@ -5329,7 +5417,7 @@ function miog:GetSeasonRaidData()
 			if(v.numOfBosses == 0) then
 				local tierInfo = v.mapIDs
 
-				for mapIndex, mapID in ipairs(tierInfo) do
+				for _, mapID in ipairs(tierInfo) do
 					local mapInfo = miog:GetMapInfo(mapID)
 
 					if(mapInfo) then

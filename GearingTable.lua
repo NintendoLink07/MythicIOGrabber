@@ -66,7 +66,7 @@ end
 miog.gearing.getColorForItemlevel = getColorForItemlevel
 
 local function retrieveSeasonID()
-    miog.F.SEASON_ID = 16 or C_MythicPlus.GetCurrentSeason()
+    miog.F.SEASON_ID = 18 or C_MythicPlus.GetCurrentSeason()
 
     if(miog.F.SEASON_ID < 1) then
         for k in pairs(miog.ITEM_LEVEL_DATA) do

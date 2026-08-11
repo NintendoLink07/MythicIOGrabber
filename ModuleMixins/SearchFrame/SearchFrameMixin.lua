@@ -1,6 +1,6 @@
 local addonName, miog = ...
 
-local dataProvider
+local dataProvider = CreateTreeDataProvider()
 
 local iTable = {}
 local lastID = nil
@@ -48,33 +48,6 @@ function SearchFrameMixin:TriggerSort(button, id)
     self:Refresh()
 end
 
-local function sortResults(k1, k2)
-    if(k1.applied ~= k2.applied) then
-        return k1.applied
-
-    end
-
-    for _, v in ipairs(iTable) do
-        local sortElement = v.state
-        local id = v.id
-
-        local val1 = k1[id]
-        local val2 = k2[id]
-
-        if(val1 ~= val2) then
-            if(sortElement == 1) then
-                return val1 > val2
-
-            elseif(sortElement == 2) then
-                return val1 < val2
-                
-            end
-        end
-    end
-
-    return k1.resultID < k2.resultID
-end
-
 function SearchFrameMixin:RefreshSearchStatus()
     if(dataProvider) then
         dataProvider:Flush()
@@ -88,7 +61,7 @@ function SearchFrameMixin:Refresh()
     enableRaidComp = self.Footer.RaidCompButton:GetChecked()
 
     self.Status:Hide()
-    dataProvider = CreateTreeDataProvider()
+    dataProvider:Flush()
     local numOfResults, resultList = C_LFGList.GetFilteredSearchResults()
 
     self.categoryID = LFGListFrame.SearchPanel.categoryID
@@ -199,6 +172,7 @@ function SearchFrameMixin:Refresh()
                     resultTable[resultIndex] = {
                         template = template,
                         resultID = resultID,
+                        leaderName = searchResultInfo.leaderName,
                         activityName = activityInfo.abbreviatedName or activityInfo.fullName,
                         rating = rating,
                         applied = isApplied,
@@ -222,25 +196,51 @@ function SearchFrameMixin:Refresh()
 
     end
 
-    --local sortOrder = miog.FilterSettings:GetSortOrder()
+    local sortOrder = miog.FilterSettings:GetSortOrder()
 
-    if(self.sortOrder == {}) then
+    if(not sortOrder) then
         table.sort(resultTable, function(k1, k2)
             return k1.resultID < k2.resultID
             
         end)
     else
         iTable = {}
-        local numElements = 0
 
-        for k, v in pairs(self.sortOrder) do
-            iTable[v.index] = {id = k, state = v.state}
-            numElements = numElements + 1
+        local sortIndex = 1
 
+        for k, v in pairs(sortOrder) do
+            iTable[sortIndex] = {index = v.index, id = k, state = v.state}
+            sortIndex = sortIndex + 1
         end
+        
+        table.sort(iTable, function(k1, k2) return k1.index < k2.index end)
 
-        table.sort(resultTable, sortResults)
+        table.sort(resultTable, function(k1, k2)
+            if(k1.applied ~= k2.applied) then
+                return k1.applied
 
+            end
+
+            for _, v in ipairs(iTable) do
+                local sortElement = v.state
+                local id = v.id
+
+                local val1 = k1[id]
+                local val2 = k2[id]
+
+                if(val1 ~= val2) then
+                    if(sortElement == 1) then
+                        return val1 > val2
+
+                    elseif(sortElement == 2) then
+                        return val1 < val2
+                        
+                    end
+                end
+            end
+
+            return k1.resultID < k2.resultID
+        end)
     end
 
     local numOfFinishedResults = #resultTable
@@ -280,6 +280,26 @@ function SearchFrameMixin:FindInfoFrame(resultID)
     end)
 end
 
+function SearchFrameMixin:HasNewImportantData(resultID)
+    local node = dataProvider:FindElementDataByPredicate(function(node)
+        local data = node:GetData()
+        return data.template and data.template ~= "MIOG_SearchFrameInfoFrameTemplate" and data.resultID == resultID
+    end, true)
+
+    if(node) then
+        local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+
+        if(searchResultInfo) then
+            if(searchResultInfo.leaderName and not node:GetData().leaderName) then
+                return true
+
+            end
+        end
+    end
+end
+
+local timer
+
 function SearchFrameMixin:OnEvent(event, ...)
     if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         self:Refresh()
@@ -290,17 +310,29 @@ function SearchFrameMixin:OnEvent(event, ...)
     elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
         local resultID = ...
 
-        local frame = self:FindNodeFrame(resultID)
+        if(self:HasNewImportantData(resultID)) then
+            if(timer) then
+                timer:Cancel()
 
-        if(frame) then
-            frame:Update()
+            end
 
-            if(not frame:IsCollapsed()) then
-                local infoFrame = self:FindInfoFrame(resultID)
+            timer = C_Timer.NewTimer(0.5, function()
+                self:Refresh()
+            
+            end)
+        else
+            local frame = self:FindNodeFrame(resultID)
 
-                if(infoFrame) then
-                    infoFrame:Update()
+            if(frame) then
+                frame:Update()
 
+                if(not frame:IsCollapsed()) then
+                    local infoFrame = self:FindInfoFrame(resultID)
+
+                    if(infoFrame) then
+                        infoFrame:Update()
+
+                    end
                 end
             end
         end
@@ -538,6 +570,7 @@ function SearchFrameMixin:OnLoad()
     self:AddInputBoxesToDialog()
 
 	miog.SearchFrame = self
+    miog.FilterSettings:SetCallback("LFGListFrame.SearchPanel", function() self:Refresh() end)
 
     hooksecurefunc("LFGListSearchPanel_SelectResult", function(searchPanel, resultID)
         if(lastID and miog:GetSecureSearchResultInfo(lastID)) then

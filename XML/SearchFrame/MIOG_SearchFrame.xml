@@ -125,7 +125,7 @@
                         </Scripts>
                     </Button>
 
-                    <CheckButton parentKey="RaidCompButton" inherits="MIOG_ModernCheckButtonTemplate">
+                    <CheckButton parentKey="RaidCompButton" inherits="MIOG_ModernCheckButtonFrameTemplate">
                         <Size y="20" />
                         <Anchors>
                             <Anchor point="RIGHT" x="-2"/>

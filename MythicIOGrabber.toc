@@ -1,10 +1,10 @@
-## Interface: 120007
+## Interface: 120100, 120007
 ## Title: Mythic IO Grabber
 ## Author: Rhany-Ravencrest
 ## OptionalDeps: RaiderIO, MythicIO - Resources, Blizzard_WeeklyRewards
 ## IconTexture: Interface\AddOns\MythicIOGrabber\res\infoIcons\logo_noText_128.png
 ## Notes: Replacement addon for Blizzard Dungeons & Raids frame
-## Version: 3.10
+## Version: 3.11
 ## SavedVariables: MIOG_NewSettings
 ## SavedVariablesPerCharacter: MIOG_CharacterSettings
 ## AddonCompartmentFunc: MIOG_OpenInterfaceOptions
@@ -132,7 +132,7 @@ ModuleMixins\ProgressCheck\ProgressCheckMixin.lua
 
 
 
-XML\Misc\MIOG_ModernCheckButtonTemplate.xml
+XML\Misc\MIOG_ModernCheckButtonFrameTemplate.xml
 XML\Misc\MIOG_MultiStateButtonTemplate.xml
 XML\Misc\MIOG_SortButtonTemplate.xml
 XML\Misc\MIOG_SortButtonWithTextTemplate.xml
@@ -147,7 +147,9 @@ XML\Misc\MIOG_IconWithTextTemplate.xml
 XML\Misc\MIOG_SearchBoxFilterTemplate.xml
 XML\Misc\MIOG_ProgressBarTemplate.xml
 
-XML\FilterSettings\MIOG_FilterSettingsFilterTemplate.xml
+XML\FilterSettings\MIOG_FilterSettingsDropdownTemplate.xml
+XML\FilterSettings\MIOG_FilterSettingsActivityFilterTemplate.xml
+XML\FilterSettings\MIOG_FilterSettingsSortFilterTemplate.xml
 XML\FilterSettings\MIOG_FilterSettings.xml
 
 XML\GroupCreator\MIOG_GroupCreator.xml

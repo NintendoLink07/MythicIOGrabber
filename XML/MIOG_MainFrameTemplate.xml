@@ -704,7 +704,7 @@
                                 </Anchors>
                             </Frame>
                             
-                            <Frame parentKey="FilterSettings" inherits="MIOG_FilterSettings" frameStrata="HIGH" hidden="true">
+                            <Frame parentKey="FilterSettings" inherits="MIOG_FilterSettings" frameStrata="HIGH">
                                 <Size x="300" y="400"/>
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativeKey="$parent.QueueInformation" relativePoint="TOPLEFT"/>

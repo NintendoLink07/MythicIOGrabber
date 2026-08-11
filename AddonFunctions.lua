@@ -221,3 +221,21 @@ function miog:GetMythicPlusDataViaRaiderIO(playerName, realm, region)
 		return mplusData, intimeInfo, overtimeInfo
 	end
 end
+
+function miog:GetOrderedMythicPlusMapTable()
+    local mapTable = C_ChallengeMode.GetMapTable()
+    local orderedMapTable = {}
+
+    for k, mapChallengeModeID in ipairs(mapTable) do
+        local name, id, timeLimit, texture, backgroundTexture, mapID = C_ChallengeMode.GetMapUIInfo(mapChallengeModeID)
+        local mapInfo = miog:GetMapInfo(mapID)
+        tinsert(orderedMapTable, {id = id, name = name, texture = texture, abbreviatedName = mapInfo.abbreviatedName, activityID = mapInfo.activityID})
+    end
+
+    table.sort(orderedMapTable, function(k1, k2)
+        return k1.name < k2.name
+
+    end)
+
+    return orderedMapTable
+end

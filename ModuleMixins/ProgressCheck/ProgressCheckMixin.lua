@@ -115,8 +115,11 @@ function ProgressCheckMixin:GetGeneralSettings()
 end
 
 function ProgressCheckMixin:GetCharacterSettings()
-    if(not self:GetGeneralSettings().characters[UnitGUID("player")]) then
+    local generalSettings = self:GetGeneralSettings()
+
+    if(not generalSettings.characters or not generalSettings.characters[UnitGUID("player")]) then
         self:RefreshCharacters()
+
     end
 
     return self:GetGeneralSettings().characters[UnitGUID("player")]
