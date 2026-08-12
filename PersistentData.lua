@@ -5388,14 +5388,16 @@ miog.REALMS_TO_LANGUAGE = {
 
 miog.SEASON_RAID_DATA = {
     [17] = {
+		seasonID = 17,
         mapIDs = {2912, 2939, 2913, 1592},
         numOfBosses = 0,
         bosses = {
             [2912] = {1,2,3,4,5,6,7,8,9},
             [1592] = {10}
-        }
+        },
     },
     [18] = {
+		seasonID = 18,
         mapIDs = {3004},
         numOfBosses = 0,
         bosses = {
@@ -5404,16 +5406,55 @@ miog.SEASON_RAID_DATA = {
     }
 }
 
+function miog:GetSeasonRaidDataOrdered()
+	local seasonID = C_MythicPlus.GetCurrentSeason()
+
+	if(seasonID and seasonID > 0) then
+		local tbl = {
+			[1] = miog.SEASON_RAID_DATA[seasonID],
+			[2] = miog.SEASON_RAID_DATA[seasonID - 1]
+		}
+		
+		for k, v in ipairs(tbl) do
+			if(v.numOfBosses == 0) then
+				local tierInfo = v.mapIDs
+
+				for _, mapID in ipairs(tierInfo) do
+					local mapInfo = miog:GetMapInfo(mapID)
+
+					if(mapInfo) then
+						v.numOfBosses = v.numOfBosses + #mapInfo.bosses
+
+					end
+				end
+			end
+		end
+
+		return tbl
+	end
+end
+
+function miog:GetSeasonRaidDataWithMapID(mapID)
+	for k, v in pairs(miog.SEASON_RAID_DATA) do
+		for bossMapID, bossData in pairs(v.bosses) do
+			if(mapID == bossMapID) then
+				return bossData
+
+			end
+		end
+	end
+end
+
 function miog:GetSeasonRaidData()
 	local seasonID = C_MythicPlus.GetCurrentSeason()
 
 	if(seasonID and seasonID > 0) then
 		local table = {
-			[1] = miog.SEASON_RAID_DATA[seasonID],
-			[2] = miog.SEASON_RAID_DATA[seasonID - 1]
+			[seasonID] = miog.SEASON_RAID_DATA[seasonID],
+			[seasonID - 1] = miog.SEASON_RAID_DATA[seasonID - 1]
 		}
 		
-		for k, v in ipairs(table) do
+		for k, v in pairs(table) do
 			if(v.numOfBosses == 0) then
 				local tierInfo = v.mapIDs
 

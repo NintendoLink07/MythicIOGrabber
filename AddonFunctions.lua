@@ -28,8 +28,17 @@ local function getBlizzardDifficulty(raiderIODifficulty)
 	end
 end
 
-function miog:GetNumOfBossesForTier(tierIndex)
+function miog:GetNumOfBossesForSeasonID(seasonID)
     local seasonRaidData = miog:GetSeasonRaidData()
+
+    if(seasonRaidData) then
+        return seasonRaidData[seasonID] and seasonRaidData[seasonID].numOfBosses
+
+    end
+end
+
+function miog:GetNumOfBossesForTierIndex(tierIndex)
+    local seasonRaidData = miog:GetSeasonRaidDataOrdered()
 
     if(seasonRaidData) then
         return seasonRaidData[tierIndex] and seasonRaidData[tierIndex].numOfBosses
@@ -46,11 +55,12 @@ end
 
 function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
     local profile = self:GetRaiderIOProfile(playerName, realm, region)
+    local currentSeason = C_MythicPlus.GetCurrentSeason()
 
     local mapsDone = {}
 
 	if(profile and profile.raidProfile) then
-        local seasonRaidData = miog:GetSeasonRaidData()
+        local seasonRaidData = miog:GetSeasonRaidDataOrdered()
         local tiers = {sortedEntries = {}}
         local raidProgress = profile.raidProfile.raidProgress
         local sortedEntriesIndex = 0
@@ -69,6 +79,7 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
                         tierWeight = 0,
                         difficulties = {},
                         sortedDifficulties = {},
+                        mapID = v.raid.mapId,
                     }
                     currentTier = tiers[1]
                     tierIndex = 1
@@ -80,14 +91,14 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
                         tierWeight = 0,
                         difficulties = {},
                         sortedDifficulties = {},
+                        mapID = v.raid.mapId,
                     }
                     currentTier = tiers[2]
                     tierIndex = 2
 
                 end
 
-                local tierInfo = seasonRaidData[tierIndex]
-                local bossIndexInfo = tierInfo.bosses[v.raid.mapId]
+                local bossIndexInfo = miog:GetSeasonRaidDataWithMapID(v.raid.mapId)
 
                 for x, y in ipairs(v.progress) do
                     currentTier.difficulties[y.difficulty] = currentTier.difficulties[y.difficulty] or {
@@ -102,18 +113,24 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
                     local difficultyTable = currentTier.difficulties[y.difficulty]
                     local kills = 0
                     
-                    for bossIndex, bossData in ipairs(y.progress) do
-                        local bossTierIndex = bossIndexInfo[bossData.index]
+                    if(bossIndexInfo) then
+                        for _, bossData in ipairs(y.progress) do
+                            local bossTierIndex = bossIndexInfo[bossData.index]
 
-                        difficultyTable.bosses[bossTierIndex] = bossData.killed
+                            difficultyTable.bosses[bossTierIndex] = bossData.killed
 
-                        if(bossData.killed) then
-                            kills = kills + 1
+                            if(bossData.killed) then
+                                kills = kills + 1
 
+                            end
                         end
-                    end
 
-                    difficultyTable.killedBosses = difficultyTable.killedBosses + kills
+                        difficultyTable.killedBosses = difficultyTable.killedBosses + kills
+
+                    else
+                        print("NOTHING FOR", v.raid.mapId)
+
+                    end
                 end
 
                 currentTier.name = currentTier.name and currentTier.name .. "/" .. v.raid.shortName or v.raid.shortName

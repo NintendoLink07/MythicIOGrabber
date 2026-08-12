@@ -78,7 +78,7 @@
                                 self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT");
                                 self:RegisterEvent("QUEST_LOG_UPDATE");
 
-                                SetDesaturation(LFDMicroButton:GetDisabledTexture(), true);
+                                --SetDesaturation(LFDMicroButton:GetDisabledTexture(), true);
                                 self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER");
 
                                 self.disabledTooltip =	function()
@@ -704,7 +704,7 @@
                                 </Anchors>
                             </Frame>
                             
-                            <Frame parentKey="FilterSettings" inherits="MIOG_FilterSettings" frameStrata="HIGH">
+                            <Frame parentKey="FilterSettings" inherits="MIOG_FilterSettings" frameStrata="HIGH" hidden="true">
                                 <Size x="300" y="400"/>
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativeKey="$parent.QueueInformation" relativePoint="TOPLEFT"/>

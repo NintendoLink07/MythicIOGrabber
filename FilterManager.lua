@@ -881,7 +881,7 @@ local function refreshFilters()
 		filterManager.Activities.CheckButton:SetChecked(activitiesSetting == nil and false or activitiesSetting)
 
 		local allGroups = {}
-		local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.CurrentExpansion)
+		local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, miog:IsPlayerAtMaxLevel() and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.CurrentExpansion)
 
 		table.sort(seasonGroups, sortActivityGroup)
 

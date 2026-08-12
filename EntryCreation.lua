@@ -381,7 +381,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 		local raidList = {}
 
 		if(LFGListFrame.CategorySelection.selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
-			local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
+			local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
 
 			for k, v in ipairs(groups) do
 				local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
@@ -407,7 +407,7 @@ local function gatherAllActivities(dropdown, rootDescription)
 	elseif(LFGListFrame.CategorySelection.selectedCategory == 121) then
 		local delvesTable = {}
 
-		local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
+		local groups = C_LFGList.GetAvailableActivityGroups(LFGListFrame.CategorySelection.selectedCategory, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters);
 		
 		for k, v in ipairs(groups) do
 			local activities = C_LFGList.GetAvailableActivities(LFGListFrame.CategorySelection.selectedCategory, v)
@@ -770,7 +770,7 @@ local function setupActivities(dropdown, rootDescription)
 		elseif(categoryID == 3) then
 			if(LFGListFrame.CategorySelection.selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
 				groups1 = {
-					groups = C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
+					groups = C_LFGList.GetAvailableActivityGroups(categoryID, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
 					icons = true
 				}
 
@@ -781,7 +781,7 @@ local function setupActivities(dropdown, rootDescription)
 			end
 		elseif(categoryID == 121) then
 			groups1 = {
-				groups =  C_LFGList.GetAvailableActivityGroups(categoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
+				groups =  C_LFGList.GetAvailableActivityGroups(categoryID, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.CategorySelection.selectedFilters),
 				icons = true
 			}
 

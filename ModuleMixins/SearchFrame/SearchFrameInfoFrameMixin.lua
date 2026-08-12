@@ -18,49 +18,63 @@ function SearchFrameInfoFrameMixin:SetupMapTable()
 end
 
 function SearchFrameInfoFrameMixin:SetupRaids()
-    local bossIndex = 1
-    local seasonRaidData = miog:GetSeasonRaidData()
+    local seasonRaidData = miog:GetSeasonRaidDataOrdered()
+    if not seasonRaidData then return end
 
-    if(seasonRaidData) then
-        for raidIndex, tierInfo in ipairs(seasonRaidData) do
-            local raidFrame = self.Raids["Raid" .. raidIndex]
+    for raidIndex, tierInfo in ipairs(seasonRaidData) do
+        local raidFrame = self.Raids["Raid" .. raidIndex]
 
-            if(raidFrame) then
-                local name
+        if raidFrame then
+            local bossFrameIndex = 1
+            local nameParts = {}
+            local mapIDs = tierInfo.mapIDs
 
-                for _, mapID in ipairs(tierInfo.mapIDs) do
+            if mapIDs then
+                for mapIndex = 1, #mapIDs do
+                    local mapID = mapIDs[mapIndex]
+                    self.mapIDToRaid[mapID] = raidFrame
+
                     local mapInfo = miog:GetMapInfo(mapID)
-
-                    if(mapInfo) then
-                        name = name and (name .. "/" .. mapInfo.abbreviatedName) or mapInfo.abbreviatedName
-
-                        if(mapInfo.bosses and #mapInfo.bosses > 0) then
-                            for _, bossInfo in ipairs(mapInfo.bosses) do
-                                local bossFrame = raidFrame.childFrames[bossIndex]
-
-                                if(bossFrame) then
-                                    SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossInfo.creatureDisplayInfoID)
-                                    bossFrame:Show()
-
-                                end
-
-                                bossIndex = bossIndex + 1
-                            end
-
-                            raidFrame:Show()
-
-                        else
-                            raidFrame:Hide()
-
+                    if mapInfo then
+                        if mapInfo.abbreviatedName then
+                            nameParts[#nameParts + 1] = mapInfo.abbreviatedName
                         end
 
-                    else
-                        raidFrame:Hide()
+                        local bosses = mapInfo.bosses
+                        if bosses then
+                            local childFrames = raidFrame.childFrames
 
+                            for i = 1, #bosses do
+                                local bossInfo = bosses[i]
+                                local nextBossFrame = childFrames and childFrames[bossFrameIndex]
+
+                                if nextBossFrame then
+                                    SetPortraitTextureFromCreatureDisplayID(nextBossFrame.Icon, bossInfo.creatureDisplayInfoID)
+                                    nextBossFrame:Show()
+                                end
+
+                                bossFrameIndex = bossFrameIndex + 1
+                            end
+                        end
                     end
                 end
+            end
 
-                raidFrame.Name:SetText(name)
+            local hasBosses = (bossFrameIndex > 1)
+            raidFrame:SetShown(hasBosses)
+
+            local childFrames = raidFrame.childFrames
+            if childFrames then
+                for i = bossFrameIndex, 10 do
+                    local unusedFrame = childFrames[i]
+                    if unusedFrame then
+                        unusedFrame:Hide()
+                    end
+                end
+            end
+
+            if raidFrame.Name then
+                raidFrame.Name:SetText(table.concat(nameParts, "/"))
             end
         end
     end
@@ -80,18 +94,21 @@ function SearchFrameInfoFrameMixin:Reset()
             raidFrame.Progress1:SetText("")
             raidFrame.Progress2:SetText("")
 
-            for _, v in ipairs(raidFrame.childFrames) do
+            for k = 1, 10, 1 do
+                local v = raidFrame.childFrames[k]
+
                 v.Border:SetColorTexture(RED_FONT_COLOR:GetRGBA())
                 v.Icon:SetDesaturated(true)
-
             end
         end
     end
 
-    self.KeysDone.levels = nil
+    self:SetKeyLevels()
 end
 
 function SearchFrameInfoFrameMixin:OnLoad()
+    self.mapIDToRaid = {}
+
     self:Reset()
     self:SetupMapTable()
     self:SetupRaids()
@@ -140,31 +157,37 @@ function SearchFrameInfoFrameMixin:SetRealmData(realm)
 end
 
 function SearchFrameInfoFrameMixin:SetKeyLevels(mplusData)
-    self.KeysDone:SetText(
-        WrapTextInColorCode((mplusData.keystoneMilestone2 or 0), miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
-        WrapTextInColorCode((mplusData.keystoneMilestone4 or 0), miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
-        WrapTextInColorCode((mplusData.keystoneMilestone7 or 0), miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
-        WrapTextInColorCode((mplusData.keystoneMilestone10 or 0), miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
-        WrapTextInColorCode((mplusData.keystoneMilestone12 or 0), miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
-        WrapTextInColorCode((mplusData.keystoneMilestone15 or 0), miog.ITEM_QUALITY_COLORS[7].pureHex)
-    )
+    if(mplusData) then
+        self.KeysDone:SetText(
+            WrapTextInColorCode((mplusData.keystoneMilestone2 or 0), miog.ITEM_QUALITY_COLORS[2].pureHex) .. " - " ..
+            WrapTextInColorCode((mplusData.keystoneMilestone4 or 0), miog.ITEM_QUALITY_COLORS[3].pureHex) .. " - " ..
+            WrapTextInColorCode((mplusData.keystoneMilestone7 or 0), miog.ITEM_QUALITY_COLORS[4].pureHex) .. " - " ..
+            WrapTextInColorCode((mplusData.keystoneMilestone10 or 0), miog.ITEM_QUALITY_COLORS[5].pureHex) .. " - " ..
+            WrapTextInColorCode((mplusData.keystoneMilestone12 or 0), miog.ITEM_QUALITY_COLORS[6].pureHex) .. " - " ..
+            WrapTextInColorCode((mplusData.keystoneMilestone15 or 0), miog.ITEM_QUALITY_COLORS[7].pureHex)
+        )
 
-    self.KeysDone:SetScript("OnEnter", function(selfFontString)
-        GameTooltip:SetOwner(selfFontString, "ANCHOR_RIGHT")
-        GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
-        GameTooltip:AddLine("2-3: " .. (mplusData.keystoneMilestone2 or 0))
-        GameTooltip:AddLine("4-6: " .. (mplusData.keystoneMilestone4 or 0))
-        GameTooltip:AddLine("7-9: " .. (mplusData.keystoneMilestone7 or 0))
-        GameTooltip:AddLine("10-11: " .. (mplusData.keystoneMilestone10 or 0))
-        GameTooltip:AddLine("12-14: " .. (mplusData.keystoneMilestone12 or 0))
-        GameTooltip:AddLine("15+: " .. (mplusData.keystoneMilestone15 or 0))
-        GameTooltip:Show()
-    
-    end)
+        self.KeysDone:SetScript("OnEnter", function(selfFontString)
+            GameTooltip:SetOwner(selfFontString, "ANCHOR_RIGHT")
+            GameTooltip:SetText("The amount of keys in a specific keylevel bracket that have been completed:")
+            GameTooltip:AddLine("2-3: " .. (mplusData.keystoneMilestone2 or 0))
+            GameTooltip:AddLine("4-6: " .. (mplusData.keystoneMilestone4 or 0))
+            GameTooltip:AddLine("7-9: " .. (mplusData.keystoneMilestone7 or 0))
+            GameTooltip:AddLine("10-11: " .. (mplusData.keystoneMilestone10 or 0))
+            GameTooltip:AddLine("12-14: " .. (mplusData.keystoneMilestone12 or 0))
+            GameTooltip:AddLine("15+: " .. (mplusData.keystoneMilestone15 or 0))
+            GameTooltip:Show()
+        
+        end)
+    else
+        self.KeysDone:SetText("")
+        self.KeysDone:SetScript("OnEnter", nil)
+
+    end
 end
 
 function SearchFrameInfoFrameMixin:Update()
-    if(IsPlayerAtEffectiveMaxLevel()) then
+    if(miog:IsPlayerAtMaxLevel()) then
         local data = self:GetData()
         local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
@@ -178,7 +201,6 @@ function SearchFrameInfoFrameMixin:Update()
 
             self:SetRealmData(realm)
 
-            --M+
             local mplusData = miog:GetMythicPlusDataViaRaiderIO(name, realm)
 
             if(mplusData) then
@@ -199,7 +221,7 @@ function SearchFrameInfoFrameMixin:Update()
 
                         end
                     end
-                end     
+                end
 
                 if(mplusData.mplusMainCurrent and mplusData.mplusMainCurrent.score > 0) then
                     self.MainChar:SetText("Alt; Main rating is " .. mplusData.mplusMainCurrent.score)
@@ -218,37 +240,39 @@ function SearchFrameInfoFrameMixin:Update()
                 end
             end
 
-            --Raid
             local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
             local bossesKilled = {}
 
             if(raidData) then
                 for k, v in ipairs(raidData) do
-                    local raidFrame = self.Raids["Raid" .. k]
-                    local numOfBosses = miog:GetNumOfBossesForTier(v.sortedDifficulties[1].tierIndex)
+                    local raidFrame = self.mapIDToRaid[v.mapID]
 
-                    for i = 1, 2, 1 do
-                        local progressFrame = raidFrame["Progress" .. i]
-                        local difficultyData = v.sortedDifficulties[i]
+                    if(raidFrame) then
+                        local numOfBosses = v.numOfBosses
 
-                        if(difficultyData) then
-                            progressFrame:SetText(numOfBosses and (difficultyData.killedBosses .. "/" .. numOfBosses) or "")
-                            progressFrame:SetTextColor(miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA())
+                        for i = 1, 2, 1 do
+                            local progressFrame = raidFrame["Progress" .. i]
+                            local difficultyData = v.sortedDifficulties[i]
+                            
+                            if(difficultyData) then
+                                progressFrame:SetText(numOfBosses and (difficultyData.killedBosses .. "/" .. numOfBosses) or "")
+                                progressFrame:SetTextColor(miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA())
 
-                            local r, g, b, a = miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA()
+                                local r, g, b, a = miog.DIFFICULTY[difficultyData.difficulty].miogColors:GetRGBA()
 
-                            for bossIndex = 1, 10, 1 do
-                                local bossKilled = difficultyData.bosses[bossIndex]
+                                for bossIndex = 1, 10, 1 do
+                                    local bossKilled = difficultyData.bosses[bossIndex]
 
-                                if(bossKilled) then
-                                    local bossFrame = raidFrame.childFrames[bossIndex]
-                                    
-                                    if(bossFrame) then
-                                        if(not bossesKilled[bossIndex] or difficultyData.difficulty > bossesKilled[bossIndex]) then
-                                            bossFrame.Border:SetColorTexture(r, g, b, a)
-                                            bossesKilled[bossIndex] = difficultyData.difficulty
-                                            bossFrame.Icon:SetDesaturated(false)
+                                    if(bossKilled) then
+                                        local bossFrame = raidFrame.childFrames[bossIndex]
+                                        
+                                        if(bossFrame) then
+                                            if(not bossesKilled[bossIndex] or difficultyData.difficulty > bossesKilled[bossIndex]) then
+                                                bossFrame.Border:SetColorTexture(r, g, b, a)
+                                                bossesKilled[bossIndex] = difficultyData.difficulty
+                                                bossFrame.Icon:SetDesaturated(false)
 
+                                            end
                                         end
                                     end
                                 end

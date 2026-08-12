@@ -671,7 +671,7 @@ miog.retrieveCurrentSeasonDungeonActivityGroups = function()
 end
 
 miog.retrieveCurrentRaidActivityGroups = function()
-	return C_LFGList.GetAvailableActivityGroups(3, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
+	return C_LFGList.GetAvailableActivityGroups(3, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.CurrentExpansion) or Enum.LFGListFilter.Recommended)
 end
 
 miog.retrieveCurrentSeasonDungeonActivityIDs = function(justIDs, sort)
@@ -703,7 +703,7 @@ end
 miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 	local mythicPlusActivities = {}
 
-	if(IsPlayerAtEffectiveMaxLevel()) then
+	if(miog:IsPlayerAtMaxLevel()) then
 		local groups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.Recommended))
 
 		--[[if(#groups ~= #miog.BACKUP_SEASONAL_IDS[2]) then
@@ -737,10 +737,15 @@ miog.retrieveCurrentSeasonDungeonActivityIDsForMPlus = function(justIDs, sort)
 	return mythicPlusActivities
 end
 
+function miog:IsPlayerAtMaxLevel()
+	local maxLevel = GameRulesUtil.GetEffectiveMaxLevelForPlayer()
+	return UnitLevel("player") >= maxLevel
+end
+
 miog.retrieveCurrentRaidActivityIDs = function(sort)
 	local raidActivities = {}
 
-	if(IsPlayerAtEffectiveMaxLevel()) then
+	if(miog:IsPlayerAtMaxLevel()) then
 		local groups = C_LFGList.GetAvailableActivityGroups(3, Enum.LFGListFilter.CurrentExpansion)
 
 		for k, v in ipairs(groups) do

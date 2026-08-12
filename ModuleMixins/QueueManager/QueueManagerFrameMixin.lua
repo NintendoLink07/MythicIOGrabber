@@ -166,7 +166,7 @@ function QueueManagerLFGFrameMixin:OnEnter()
 
     GameTooltip:AddLine(string.format(DUNGEON_DIFFICULTY_BANNER_TOOLTIP, GetDifficultyInfo(difficulty)))
 
-    if(IsPlayerAtEffectiveMaxLevel() and minLevel == UnitLevel("player")) then
+    if(miog:IsPlayerAtMaxLevel() and minLevel == UnitLevel("player")) then
         GameTooltip:AddLine("Max level dungeon")
         
     else

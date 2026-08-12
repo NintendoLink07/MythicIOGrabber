@@ -565,7 +565,7 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
             local entry1, entry2 = raidData.sortedEntries[1], raidData.sortedEntries[2]
 
             if(entry1) then
-                local tier1NumOfBosses = miog:GetNumOfBossesForTier(entry1.tierIndex)
+                local tier1NumOfBosses = miog:GetNumOfBossesForTierIndex(entry1.tierIndex)
                 self.General.Rating:SetText(tier1NumOfBosses and (entry1.killedBosses .. "/" .. tier1NumOfBosses) or "")
                 self.General.Rating:SetTextColor(miog.DIFFICULTY[entry1.difficulty].miogColors:GetRGBA())
 
@@ -575,7 +575,7 @@ function SearchFrameRaidResultFrameMixin:UpdateCategoryData(searchResultInfo)
             end
 
             if(entry2) then
-                local tier2NumOfBosses = miog:GetNumOfBossesForTier(entry2.tierIndex)
+                local tier2NumOfBosses = miog:GetNumOfBossesForTierIndex(entry2.tierIndex)
                 self.General.SecondaryRating:SetText(tier2NumOfBosses and (entry2.killedBosses .. "/" .. tier2NumOfBosses) or "")
                 self.General.SecondaryRating:SetTextColor(miog.DIFFICULTY[entry2.difficulty].miogColors:GetRGBA())
 

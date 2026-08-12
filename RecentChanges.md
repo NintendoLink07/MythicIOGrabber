@@ -1,20 +1,10 @@
-## [3.10](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10) - 2026-08-08
+## [3.10.1](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.1) - 2026-08-12
 
-### Added
-
-- Most data for the new raid / dungeons / delves / season has been added.
-
-### Changed
-
-- [SearchFrame] The search frame has been reworked / recoded to not break any secret value stuff anymore.
-    - Performance has been improved by quite a lot.
-    - Progress tracking has been improved by a lot; progress of the same tier will now be accumulated
-    - The subframe will now also show when a listing's status has changed (delist, etc.)
-    - In the footer bar you can toggle whether you wanna see the composition of a raid search result or not
-    - Search results in the custom category will always show the current raid composition
 
 ### Fixed
 
-- [Progress] Fixed some minor errors regarding progression tracking.
+- Multiple errors regarding 12.1 have been fixed (player max level can't be queried anymore).
 
-- More secret values fixes.
+- [SearchFrame] Fixed an error regarding RaiderIO saying data is current but ingame the season id is already at next season.
+
+- [SearchFrame] Keys done this season should now be correctly queried from RaiderIO data.

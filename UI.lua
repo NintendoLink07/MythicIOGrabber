@@ -11,7 +11,7 @@ local panels
         panel (table/string) - The panel to activate and display.
 ]]
 local function setProgressPanelInfo(categoryID)
-	if(IsPlayerAtEffectiveMaxLevel()) then
+	if(miog:IsPlayerAtMaxLevel()) then
 		local isDungeon = categoryID == 2
 		local isRaid = categoryID == 3
 		local isCorrectCategory = isDungeon or isRaid

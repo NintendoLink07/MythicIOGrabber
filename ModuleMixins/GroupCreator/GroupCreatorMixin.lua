@@ -133,7 +133,7 @@ function GroupCreatorMixin:AddGroupsAndActivities(rootDescription, groupsData, a
 end
 
 function GroupCreatorMixin:GetSimpleDelveGroups()
-	return C_LFGList.GetAvailableActivityGroups(currentCategoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.EntryCreation.selectedFilters)
+	return C_LFGList.GetAvailableActivityGroups(currentCategoryID, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.EntryCreation.selectedFilters)
 
 end
 
@@ -200,7 +200,7 @@ function GroupCreatorMixin:SetupGroups(dropdown, rootDescription)
 		elseif(currentCategoryID == 3) then
 			if(LFGListFrame.EntryCreation.selectedFilters ~= Enum.LFGListFilter.NotRecommended) then
 				groups1 = {
-					groups = C_LFGList.GetAvailableActivityGroups(currentCategoryID, IsPlayerAtEffectiveMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.EntryCreation.selectedFilters),
+					groups = C_LFGList.GetAvailableActivityGroups(currentCategoryID, miog:IsPlayerAtMaxLevel() and bit.bor(Enum.LFGListFilter.Recommended, Enum.LFGListFilter.PvE) or LFGListFrame.EntryCreation.selectedFilters),
 					icons = true
 				}
 

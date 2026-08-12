@@ -5,16 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [3.11] - 2026-08-12
 
-### Changed
+## [3.10.1] - 2026-08-12
 
-- [SearchFrame] The search frame will now also update all search results with the newest available data after a short delay when no new data has been received.
+### Fixed
 
-- [FilterPanel] The filter panel has been reworked from the ground up.
-    - The performance has been improved when many filters are active.
-    - The new way to sort all search results / applications is via the updated [FilterPanel]
-        - Just drag the parameter(s) into the drop zone; you can order them however you like
+- Multiple errors regarding 12.1 have been fixed (player max level can't be queried anymore).
+
+- [SearchFrame] Fixed an error regarding RaiderIO saying data is current but ingame the season id is already at next season.
+
+- [SearchFrame] Keys done this season should now be correctly queried from RaiderIO data.
 
 
 
@@ -5069,7 +5069,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.1..HEAD
+[3.10.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.1
 [3.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10
 [3.9.16]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.16
 [3.9.15a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.9.15a

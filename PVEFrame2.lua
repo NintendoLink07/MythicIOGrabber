@@ -206,7 +206,7 @@ local function createPVEFrameReplacement()
 
 		miog.F.CURRENT_REGION = miog.F.CURRENT_REGION or miog.C.REGIONS[GetCurrentRegion()]
 
-		local isMaxLevel = IsPlayerAtEffectiveMaxLevel()
+		local isMaxLevel = miog:IsPlayerAtMaxLevel()
 
 		if(isMaxLevel) then
 			miog.MainTab.Information.KeystoneStatusBar.ThresholdBar:SetMinMaxValues(0, 100)
