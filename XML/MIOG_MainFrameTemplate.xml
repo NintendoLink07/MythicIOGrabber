@@ -694,6 +694,12 @@
                                             <KeyValue key="layoutIndex" value="25" type="number" />
                                         </KeyValues>
                                     </Button>
+
+                                    <Button parentKey="RenownBar6" inherits="MIOG_RenownBarTemplate" hidden="true">
+                                        <KeyValues>
+                                            <KeyValue key="layoutIndex" value="26" type="number" />
+                                        </KeyValues>
+                                    </Button>
                                 </Frames>
                             </Frame>
                             

@@ -11,7 +11,7 @@ miog.getRaiderIOProfile = function(playerName, realm, region)
 end
 
 miog.updateCurrencies = function()
-	local currentSeason = miog.C.BACKUP_SEASON_ID or C_MythicPlus.GetCurrentSeason()
+	local currentSeason = C_MythicPlus.GetCurrentSeason()
 
 	if(currentSeason > -1) then
 		local currencyTable = miog.CURRENCY_INFO[currentSeason]
@@ -25,6 +25,13 @@ miog.updateCurrencies = function()
 				local currentFrame = miog.pveFrame2.Currency[tostring(k)]
 				local text = tostring(currencyInfo.quantity)
 
+				if(currencyInfo.maxQuantity > 0) then
+					if(currencyInfo.totalEarned > 0) then
+						local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
+
+					end
+				end
+
 				if(currencyInfo.totalEarned > 0) then
 					if(currencyInfo.maxQuantity > 0) then
 						local leftToEarn = currencyInfo.maxQuantity - currencyInfo.totalEarned
@@ -34,7 +41,7 @@ miog.updateCurrencies = function()
 					end
 
 				elseif(currencyInfo.maxQuantity > 0) then
-					text = text .. "/" .. currencyInfo.maxQuantity
+					text = text .. "(" .. currencyInfo.maxQuantity .. ")"
 
 				end
 

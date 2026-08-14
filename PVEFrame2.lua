@@ -255,6 +255,8 @@ local function createPVEFrameReplacement()
 			{id = 2704},
 			{id = 2710},
 			{id = 2792},
+			{id = 2772},
+			
 		}
 
 		for k, v in ipairs(renownFactions) do

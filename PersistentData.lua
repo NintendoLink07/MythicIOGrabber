@@ -562,6 +562,17 @@ miog.CURRENCY_INFO = {
 		--{id = 3310,}, --cofferkey shards
 		{id = 3212,}, --spark
 		{id = 3316,}, --voidlight
+	},
+	[18] = {
+		{id = 3442,},
+		{id = 3443,},
+		{id = 3444,},
+		{id = 3445,},
+		{id = 3446,},
+		{id = 3465,}, --manaflux
+		--{id = 3310,}, --cofferkey shards
+		{id = 3509,}, --spark
+		{id = 3316,}, --voidlight
 	}
 }
 
