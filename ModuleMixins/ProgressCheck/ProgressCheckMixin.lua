@@ -17,26 +17,29 @@ local pvpActivityIDs = {
 ProgressCheckMixin = {}
 
 local function ProgressCheckDiffFrame_OnEnter(selfFrame, mapID, data, difficultyIndex)
-    local mapInfo = miog:GetMapInfo(mapID)
+    if(data[difficultyIndex]) then
+        local mapInfo = miog:GetMapInfo(mapID)
 
-    GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
-    GameTooltip_AddHighlightLine(GameTooltip, mapInfo.instanceName)
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT");
+        GameTooltip_AddHighlightLine(GameTooltip, mapInfo.instanceName)
+        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        
+        for k, v in ipairs(data[difficultyIndex].bosses) do
+            if(v.id) then
+                local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
 
-    for k, v in ipairs(data[difficultyIndex].bosses) do
-        if(v.id) then
-            local name, criteriaType, completed, quantity, reqQuantity, charName, flags, assetID, quantityString, criteriaID, eligible, duration, elapsed = GetAchievementCriteriaInfoByID(v.id, 1, true)
+                if(not name) then
+                    name = mapInfo.bosses[k].name .. " kills"
 
-            if(not name) then
-                name = mapInfo.bosses[k].name .. " kills"
+                end
 
+                GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
             end
-
-            GameTooltip:AddDoubleLine(v.count or v.quantity or 0, name)
         end
+
+        GameTooltip:Show()
     end
     
-    GameTooltip:Show()
 end
 
 local function getChestsLevelForID(challengeMapID, durationSec)

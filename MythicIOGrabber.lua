@@ -15,7 +15,7 @@ miog.debug.timer = nil
 local function loadBaseData()
 	C_LFGList.RequestAvailableActivities()
 	
-	miog:CreateJournalDB()
+	--miog:CreateJournalDB()
 
 	for _, categoryID in pairs(miog.CUSTOM_CATEGORY_ORDER) do
 		for _, activityID in ipairs(C_LFGList.GetAvailableActivities(categoryID)) do
@@ -49,6 +49,9 @@ local function mainEvents(_, event, ...)
 
 		end
 
+		if NumyFunctionProfiler then
+			NumyFunctionProfiler:WrapModules('OwnerName', 'ModuleName', miog, 4);
+		end
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		--miog.checkAllSeasonalMapIDs()
 		loadBaseData()

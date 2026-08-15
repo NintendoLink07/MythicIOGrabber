@@ -724,7 +724,7 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 		},
 	},
 	[429] = {
-		abbreviatedName = "TTG",
+		abbreviatedName = "TG",
 		mapID = 2987,
 		bossIcons = {
 			{icon = "interface/icons/achievement_boss_elitenagamale.blp"},
@@ -1315,15 +1315,16 @@ miog.MAP_INFO = {
 
 	[2993] = {abbreviatedName = "AOF", fileName = "dungeonaltaroffangs"},
 	[2987] = {
-		abbreviatedName = "TTG",
+		abbreviatedName = "TG",
 		fileName = "tideboundgrotto",
 		bossData = {
 			[1] = {
 				icon = "interface/icons/achievement_boss_elitenagamale.blp",
 				achievementIDs = {
-					63683,
-					63681,
-					63682,
+					63613,
+					63614,
+					63615,
+					63616,
 				}
 			}
 		},
@@ -1331,9 +1332,10 @@ miog.MAP_INFO = {
 			{icon = "interface/icons/achievement_boss_elitenagamale.blp"},
 		},
 		achievementIDs = {
-			63683,
-			63681,
-			63682,
+			63613,
+			63614,
+			63615,
+			63616,
 		},
 	},
 	
@@ -1630,92 +1632,6 @@ local database = {
 	}
 }
 
---- used usually during prepatch
-local manualData = {
-	activity = {
-		--MIDNIGHT
-			--Dungeons
-				--The Blinding Vale
-				1699, --N
-				1700, --H
-				1701, --M
-
-				--Voidscar Arena
-				1754, --N
-				1755, --H
-				1756, --M
-
-				--Den of Nalorakk
-				1721, --N
-				1722, --H
-				1723, --M
-
-				--Murder Row
-				1749, --N
-				1750, --H
-				1751, --M
-
-				--Nexus-Point Xenas
-				1765, --N
-				1766, --H
-				1767, --M
-				1768, --M+
-
-				--Maisara Caverns
-				1761, --N
-				1762, --H
-				1763, --M
-				1764, --M+
-
-				--Windrunner Spire
-				1539, --N
-				1540, --H
-				1541, --M
-				1542, --M+
-
-				--Magisters' Terrace
-				1757, --N
-				1758, --H
-				1759, --M
-				1760, --M+
-
-			--M+
-				--Seat of the Triumvirate
-				1622, --M
-				486, --M+
-
-				--Pit of Saron
-				1769, --M
-				1770, --M+
-
-				--Algeth'ar Academy
-				1159, --M
-				1160, --M+
-
-				--Skyreach
-				404, --M
-				182, --M+
-
-			--Raids
-				--The Voidspire
-				1772, --N
-				1773, --H
-				1774, --M
-
-				--March on Quel'Danas
-				1775, --N
-				1776, --H
-				1777, --M
-
-				--The Dreamrift
-				1778, --N
-				1779, --H
-				1780, --M
-
-	}
-}
-
-miog.manualData = manualData
 miog.database = database
 
 function miog:GetUnlistedActivities()

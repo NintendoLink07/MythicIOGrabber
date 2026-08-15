@@ -308,7 +308,7 @@ function GroupCreatorMixin:SetupGroups(dropdown, rootDescription)
 				end
 			end
 
-			local activityButton = rootDescription:CreateRadio("More...", function() end, function()
+			rootDescription:CreateRadio("More...", function() end, function()
 				LFGListEntryCreationActivityFinder_Show(LFGListFrame.EntryCreation.ActivityFinder, LFGListFrame.EntryCreation.selectedCategory, nil, LFGListFrame.EntryCreation.selectedFilters)
 
 			end)

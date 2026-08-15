@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.10.3] - 2026-08-15
+
+### Fixed
+
+- Loading times / responsiveness has been improved a lot.
+
+- [ProgressCheck] Fixed Tidebound Grotto achievement ids.
+
+- [ProgressCheck] Fixed a rare issue that produces an error when no raid data is available for a character.
+
+### Upcoming
+
+- [FilterPanel] rework in v3.11.
+
+- [ApplicationViewer] secret value fixes v3.12.
+
+- [GroupOrganizer] performance fixes in v4.
+
+
+
+
 ## [3.10.2] - 2026-08-14
 
 ### Added
@@ -5086,7 +5107,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.2..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.3..HEAD
+[3.10.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.3
 [3.10.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.2
 [3.10.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.1
 [3.10]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10
