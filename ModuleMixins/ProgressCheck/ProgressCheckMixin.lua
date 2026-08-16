@@ -14,6 +14,8 @@ local pvpActivityIDs = {
 	9,
 }
 
+local numOfLockoutFrames = 1
+
 ProgressCheckMixin = {}
 
 local function ProgressCheckDiffFrame_OnEnter(selfFrame, mapID, data, difficultyIndex)
@@ -659,9 +661,9 @@ function ProgressCheckMixin:UpdateDataColumns()
             end
         end
 
-        local lockoutIndices = {} 
+        local lockoutIndices = {}
         local lockoutInstances = {}
-        local frameIndex = 1
+        numOfLockoutFrames = 1
 
         for _, characterInfo in pairs(self.settings.characters) do
             lockoutIndices[characterInfo.name] = {}
@@ -670,7 +672,7 @@ function ProgressCheckMixin:UpdateDataColumns()
                 local instanceInfo = v[1]
                 
                 if(not lockoutInstances[instanceInfo.name]) then
-                    local descFrame = self.InfoColumn.CellList.cellTable[frameIndex]
+                    local descFrame = self.InfoColumn.CellList.cellTable[numOfLockoutFrames]
 
                     if(descFrame) then
                         lockoutInstances[instanceInfo.name] = true
@@ -678,7 +680,7 @@ function ProgressCheckMixin:UpdateDataColumns()
                         descFrame.Text:SetText(instanceInfo.name)
                         descFrame:Show()
 
-                        local backgroundImage = self["Background" .. frameIndex]
+                        local backgroundImage = self["Background" .. numOfLockoutFrames]
 
                         if(backgroundImage) then
                             local mapInfo = miog:GetMapInfo(instanceInfo.mapID)
@@ -697,15 +699,15 @@ function ProgressCheckMixin:UpdateDataColumns()
                             
                         end
 
-                        frameIndex = frameIndex + 1
+                        numOfLockoutFrames = numOfLockoutFrames + 1
                     end
                 end
 
-                tinsert(lockoutIndices[characterInfo.name], {infoIndex = frameIndex, dataIndex = k})
+                tinsert(lockoutIndices[characterInfo.name], {infoIndex = numOfLockoutFrames - 1, dataIndex = k})
             end
         end
 
-         table.sort(orderedList, function(k1, k2)
+        table.sort(orderedList, function(k1, k2)
             if(k1.guid == playerGUID) then
                 return true
 
@@ -1037,10 +1039,21 @@ function ProgressCheckMixin:OnLoad()
                     end
                 end
             elseif(data.template == "MIOG_ProgressCheckCharacterLockoutsTemplate") then
-                for k, v in ipairs(data.lockoutIndices) do
-                    local lockoutFrame = frame.CellList:CreateFrame()
-                    lockoutFrame:SetData(data.lockouts.instances[v.dataIndex])
+                local frames = {}
 
+                for i = 1, numOfLockoutFrames - 1, 1 do
+                    local lockoutFrame = frame.CellList:CreateFrame()
+
+                    frames[i] = lockoutFrame
+                end
+
+                for k, v in ipairs(data.lockoutIndices) do
+                    local lockoutFrame = frames[v.infoIndex]
+
+                    if(lockoutFrame) then
+                        lockoutFrame:SetData(data.lockouts.instances[v.dataIndex])
+
+                    end
                 end
             end
         end

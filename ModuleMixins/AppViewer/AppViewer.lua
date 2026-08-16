@@ -60,19 +60,6 @@ function AppViewer:CreateDebugApplicants(numApplicants)
 	end
 end
 
-function AppViewer:FindApplicantFrame(applicantID)
-	local frame = self.ScrollBox:FindFrameByPredicate(function(localFrame, node)
-		local data = node:GetData()
-
-		if(data) then
-			return data.applicantID == applicantID
-
-		end
-	end)
-
-	return frame
-end
-
 function AppViewer:RemoveApplicantFrame(applicantID)
 	local index, node = treeDataProvider:FindByPredicate(function(node)
 		local data = node:GetData()
@@ -86,7 +73,8 @@ function AppViewer:RemoveApplicantFrame(applicantID)
 	treeDataProvider:Remove(node)
 end
 
-function AppViewer:AddApplicant(applicantID, activityID)
+function AppViewer:AddApplicant(applicantID)
+	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local applicantData = miog:GetSecureApplicantData(applicantID)
 
 	if(applicantData and miog:CanAccessValue(applicantData.comment)) then
@@ -98,8 +86,6 @@ function AppViewer:AddApplicant(applicantID, activityID)
 		local allDataAvailable = true
 
 		local overallPrimary, overallSecondary, overallRole, overallItemLevel = 0, 0, 0, 0
-
-		local isRaid = categoryID == 3
 		local raidTable = {}
 
 		for k = 1, applicantData.numMembers do
@@ -113,7 +99,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 				if(categoryID == 2) then
 					primary = dungeonScore
 
-					local dungeonInfo = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activityID)
+					local dungeonInfo = C_LFGList.GetApplicantDungeonScoreForListing(applicantID, 1, activeEntry.activityIDs[1])
 					secondary = dungeonInfo.bestRunLevel
 					
 				elseif(categoryID == 3) then
@@ -123,7 +109,7 @@ function AppViewer:AddApplicant(applicantID, activityID)
 					raidTable[k] = raidData
 				
 				elseif(categoryID == 4 or categoryID == 7 or categoryID == 8 or categoryID == 9) then
-					local pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activityID)
+					local pvpRatingInfo = C_LFGList.GetApplicantPvpRatingInfoForListing(applicantID, 1, activeEntry.activityIDs[1])
 
 					primary = pvpRatingInfo.rating
 					secondary = pvpRatingInfo.bracket
@@ -197,27 +183,6 @@ function AppViewer:AddApplicant(applicantID, activityID)
 	end
 end
 
-function AppViewer:RefreshApplicantList()
-	C_LFGList.RefreshApplicants()
-
-    treeDataProvider:Flush()
-	treeDataProvider:SetAllCollapsed(true)
-
-    local applicantList = C_LFGList.GetApplicants()
-	local activeEntry = C_LFGList.GetActiveEntryInfo()
-
-	if(applicantList and #applicantList > 0) then
-		for _, applicantID in ipairs(applicantList) do
-			self:AddApplicant(applicantID, activeEntry.activityIDs[1])
-			
-		end
-
-    	self.SortButtons:Sort()
-	end
-
-	--self:CreateDebugApplicants(3)
-end
-
 function AppViewer:RetrieveAndSetEntryInfo()
 	local activeEntry = C_LFGList.GetActiveEntryInfo()
 
@@ -263,31 +228,26 @@ function AppViewer:RetrieveAndSetEntryInfo()
 end
 
 function AppViewer:Refresh()
-	local activeEntry = C_LFGList.GetActiveEntryInfo()
 	local applicantList = C_LFGList.GetApplicants()
 
 	if(applicantList and #applicantList > 0) then
+		treeDataProvider:Flush()
+		treeDataProvider:SetAllCollapsed(true)
+
 		for _, applicantID in ipairs(applicantList) do
-			local applicantExists = treeDataProvider:ContainsByPredicate(function(node)
-				local data = node:GetData()
+			self:AddApplicant(applicantID)
 
-				if(data) then
-					return data.applicantID == applicantID
-
-				end
-			end, true)
-
-			if(not applicantExists) then
-				self:AddApplicant(applicantID, activeEntry.activityIDs[1])
-
-			end
 		end
+
+    	self.SortButtons:Sort()
 	end
+
+	--self:CreateDebugApplicants(3)
 end
 
 function AppViewer:OnEvent(event, ...)
 	if(event == "PLAYER_ENTERING_WORLD") then
-		self:RefreshApplicantList()
+		self:Refresh()
 
 	elseif(event == "LFG_LIST_ACTIVE_ENTRY_UPDATE") then
 		local justCreated = ...
@@ -330,36 +290,29 @@ function AppViewer:OnEvent(event, ...)
 		end
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...
-		local applicantData = miog:GetSecureApplicantData(applicantID)
-		local canInvite = LFGListUtil_IsEntryEmpowered()
-		local frame = self:FindApplicantFrame(applicantID)
+		local frame = self.ScrollBox:FindFrameByPredicate(function(localFrame, node)
+		local data = node:GetData()
+			if(data) then
+				return data.applicantID == applicantID
+
+			end
+		end)
 
 		if(frame) then
-			if(not applicantData) then
-				if(canInvite) then
-					frame:RefreshStatus("unknown")
+			local applicantData = miog:GetSecureApplicantData(applicantID)
 
-				else
-					self:RemoveApplicantFrame(applicantID)
-
-				end
-			else
+			if(applicantData) then
 				local appStatus = applicantData.pendingApplicationStatus or applicantData.applicationStatus
 
 				if(appStatus ~= "applied") then
 					if(appStatus == "timedout" or appStatus == "cancelled" or appStatus == "failed" or appStatus == "invitedeclined" or appStatus == "inviteaccepted" or appStatus == "declined" or appStatus == "declined_full" or appStatus == "declined_delisted") then
-						if(canInvite) then
-							frame:RefreshStatus(appStatus)
-
-						else
-							self:RemoveApplicantFrame(applicantID)
-
-						end
-					elseif(appStatus == "invited") then
 						frame:RefreshStatus(appStatus)
 
 					end
 				end
+			elseif(LFGListUtil_IsEntryEmpowered()) then
+				frame:RefreshStatus("unknown")
+
 			end
 		end
 	elseif(event == "PARTY_LEADER_CHANGED") then
@@ -379,7 +332,7 @@ end
 local registered = false
 
 function AppViewer:OnShow()
-	self:RefreshApplicantList()
+	self:Refresh()
 
 end
 

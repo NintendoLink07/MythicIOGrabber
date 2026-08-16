@@ -1,17 +1,8 @@
-## [3.10.3](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.3) - 2026-08-15
+## [3.10.4](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4) - 2026-08-16
 
 ### Fixed
 
-- Loading times / responsiveness has been improved a lot.
+- World raids should now be recognized where they should be recognized.
 
-- [ProgressCheck] Fixed Tidebound Grotto achievement ids.
-
-- [ProgressCheck] Fixed a rare issue that produces an error when no raid data is available for a character.
-
-### Upcoming
-
-- [FilterPanel] rework in v3.11.
-
-- [ApplicationViewer] secret value fixes v3.12.
-
-- [GroupOrganizer] performance fixes in v4.
+- [Progress] Fixed an error occuring when two characters had different lockout.
+You will have to relog with characters that have an active lockout for changes to be active.

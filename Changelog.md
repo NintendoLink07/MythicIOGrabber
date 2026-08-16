@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.10.4] - 2026-08-16
+
+### Fixed
+
+- World raids should now be recognized where they should be recognized.
+
+- [Progress] Fixed an error occuring when two characters had different lockout.
+You will have to relog with characters that have an active lockout for changes to be active.
+
+
+
+
 ## [3.10.3] - 2026-08-15
 
 ### Fixed
@@ -5107,7 +5119,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.3..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4..HEAD
+[3.10.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4
 [3.10.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.3
 [3.10.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.2
 [3.10.1]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.1

@@ -290,6 +290,7 @@ miog.DIFFICULTY_ID_TO_COLOR = {
 	[DifficultyUtil.ID.RaidTimewalker] = miog.ITEM_QUALITY_COLORS[3].color,
 	[DifficultyUtil.ID.RaidStory] = miog.ITEM_QUALITY_COLORS[1].color,
 	[DifficultyUtil.ID.RaidMythicFlexible] = miog.ITEM_QUALITY_COLORS[4].color,
+	[DifficultyUtil.ID.RaidWorld] = miog.ITEM_QUALITY_COLORS[1].color,
 }
 
 function miog:GetColorMatchingDifficultyID(difficultyID)
@@ -316,6 +317,7 @@ miog.DIFFICULTY_ID_TO_SHORT_NAME = {
 	[DifficultyUtil.ID.RaidTimewalker] = "TW",
 	[DifficultyUtil.ID.RaidStory] = "ST",
 	[DifficultyUtil.ID.RaidMythicFlexible] = "M",
+	[DifficultyUtil.ID.RaidWorld] = "W",
 }
 
 function miog:ConvertDifficultyIDToShortName(difficultyID)
@@ -342,12 +344,13 @@ miog.BETTER_DIFFICULTY_ORDER = {
 
 	--NEW RAIDS
 	[220] = 30,
-	[17] = 31,
-	[33] = 32,
-	[14] = 33,
-	[15] = 34,
-	[233] = 35,
-	[16] = 36,
+	[250] = 31,
+	[17] = 32,
+	[33] = 33,
+	[14] = 34,
+	[15] = 35,
+	[233] = 36,
+	[16] = 37,
 
 	--DELVE
 	[208] = 40
@@ -371,6 +374,8 @@ miog.DIFFICULTY_ORDER = {
 	[24] = 6,
 	[33] = 7,
 	[220] = 9,
+	[233] = 3.5,
+	[250] = 6,
 }
 
 miog.EJ_DIFFICULTIES = {
@@ -391,6 +396,7 @@ miog.EJ_DIFFICULTIES = {
 	DifficultyUtil.ID.RaidTimewalker,
 	DifficultyUtil.ID.Raid40,
 	DifficultyUtil.ID.RaidStory,
+	--DifficultyUtil.ID.RaidWorld,
 }
 
 
@@ -406,6 +412,7 @@ miog.DIFFICULTY = {
 }
 
 miog.CUSTOM_DIFFICULTY_ORDER = {
+	["W"] = 0,
 	["LFR"] = 1,
 	["N"] = 2,
 	["H"] = 3,
@@ -444,6 +451,7 @@ miog.DUNGEON_DIFFICULTIES = {
 }
 
 miog.RAID_DIFFICULTIES = {
+	--DifficultyUtil.ID.RaidWorld,
 	DifficultyUtil.ID.PrimaryRaidLFR,
 	DifficultyUtil.ID.PrimaryRaidNormal,
 	DifficultyUtil.ID.PrimaryRaidHeroic,

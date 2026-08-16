@@ -27,6 +27,10 @@ end
 
 
 
+
+
+
+
 ProgressCheckLockoutsCellMixin = {}
 
 function ProgressCheckLockoutsCellMixin:OnEnter()
@@ -57,7 +61,6 @@ end
 
 function ProgressCheckLockoutsCellMixin:SetData(data)
     self:Reset()
-
     self.data = data
 
     local string = ""
@@ -66,7 +69,7 @@ function ProgressCheckLockoutsCellMixin:SetData(data)
         local color = miog.DIFFICULTY_ID_TO_COLOR[instanceInfo.difficultyID]
 
         if(color) then
-            string = string .. WrapTextInColorCode(instanceInfo.shortDifficulty, color:GenerateHexColor()) .. " "
+            string = string .. WrapTextInColorCode(instanceInfo.shortDifficulty or "N/A", color:GenerateHexColor()) .. " "
 
         end
         
@@ -74,6 +77,12 @@ function ProgressCheckLockoutsCellMixin:SetData(data)
 
     self.Text:SetText(string)
 end
+
+
+
+
+
+
 
 
 ProgressCheckColoredCellMixin = {}

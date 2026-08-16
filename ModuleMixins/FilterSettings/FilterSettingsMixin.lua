@@ -100,10 +100,14 @@ end
 
 local activitiesPerRow = 4
 
+--[[
+    --2; filtered by Blizzard
+    --everything else; filtered by MIOG since Blizzard doesnt save filters for other categories
+]]
 function FilterSettings:SetupActivityFilters()
-    local isDungeon, isRaid, isDelve = categoryID == 2, categoryID == 3, categoryID == 121
+    local isDungeon, isRaid, isDelve, isArena = categoryID == 2, categoryID == 3, categoryID == 121, categoryID == 4
 
-    if(isDungeon or isRaid or isDelve) then
+    if(isDungeon or isRaid or isDelve or isArena) then
         local orderedGroups = {}
         local done = {}
 
@@ -187,7 +191,31 @@ function FilterSettings:SetupActivityFilters()
                 frame.gridColumn = calcIndex - ((rowIndex - 1) * activitiesPerRow)
                 frame.gridRow = ceil(calcIndex / activitiesPerRow)
                 frame.CheckButton:SetScript("OnClick", function(checkBox)
-                    self:SetMIOGSetting({"groups", 0}, checkBox:GetChecked())
+                    self:SetMIOGSetting({"groups", activityID}, checkBox:GetChecked())
+                        
+                end)
+
+                frame:Show()
+
+            end
+
+        elseif(isArena) then
+            local restActivities = C_LFGList.GetAvailableActivities(categoryID)
+
+            for index, activityID in ipairs(restActivities) do
+                local calcIndex = baseIndex + index
+                local activityInfo = miog:GetActivityInfo(activityID)
+
+                local frame = self.ActivitiesFilterFramePool:Acquire()
+
+                frame.Text:SetText(activityInfo.shortName)
+                frame:SetSize(100, 20)
+
+                local rowIndex = ceil(calcIndex / activitiesPerRow)
+                frame.gridColumn = calcIndex - ((rowIndex - 1) * activitiesPerRow)
+                frame.gridRow = ceil(calcIndex / activitiesPerRow)
+                frame.CheckButton:SetScript("OnClick", function(checkBox)
+                    self:SetMIOGSetting({"groups", activityID}, checkBox:GetChecked())
                         
                 end)
 
@@ -312,6 +340,9 @@ function FilterSettings:Setup(originalFrame)
 
         self:SetupSortFilters()
         self:SetupActivityFilters()
+
+        self.FilterList.Difficulty:SetShown(categoryID == 2 or categoryID == 3 or categoryID == 121)
+
         
         --[[
             needsTank 	boolean? = false 	
