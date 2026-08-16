@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.10.4a] - 2026-08-16
+
+### Fixed
+
+- Anything drag-and-drop related should work again.
+
+
+
+
 ## [3.10.4] - 2026-08-16
 
 ### Fixed
@@ -5119,7 +5128,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4a..HEAD
+[3.10.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4a
 [3.10.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4
 [3.10.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.3
 [3.10.2]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.2

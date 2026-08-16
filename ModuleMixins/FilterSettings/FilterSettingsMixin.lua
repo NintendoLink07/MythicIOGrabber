@@ -596,7 +596,7 @@ function FilterSettings:DropSortFilter(filterFrame)
     local sortIndex = #sortDrop:GetLayoutChildren()
 
     for k, v in ipairs(sortDrop:GetLayoutChildren()) do
-        if(v ~= filterFrame and MouseIsOver(v, 0, 10)) then
+        if(v ~= filterFrame and v:IsMouseOver(0, 10)) then
             local filterInfo = categoryFilters[categoryID][v.originalIndex]
             local filterSettings = self:GetSortSetting(filterInfo.id)
 
@@ -606,10 +606,10 @@ function FilterSettings:DropSortFilter(filterFrame)
         end
     end
 
-    if(MouseIsOver(sortDrop) and filterFrame:GetParent() ~= sortDrop) then
+    if(sortDrop:IsMouseOver() and filterFrame:GetParent() ~= sortDrop) then
         self:SetFilter(filterFrame, sortIndex + 1)
 
-    elseif(MouseIsOver(bucket)) then
+    elseif(bucket:IsMouseOver()) then
         self:ResetSortFilter(filterFrame)
 
     else

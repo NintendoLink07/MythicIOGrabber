@@ -27,7 +27,7 @@ function RaidViewMixin:IsFrameOverGroup()
     for i = 1, 8 do
         local group = self["Group" .. i]
 
-        if(group and MouseIsOver(group)) then
+        if(group and group:IsMouseOver()) then
             return group
 
         end
@@ -41,7 +41,7 @@ function RaidViewMixin:IsFrameOverAnyOtherFrame(frame)
         for memberIndex = 1, 5 do
             local memberFrame = children[memberIndex]
 
-            if(memberFrame and MouseIsOver(memberFrame) and memberFrame ~= frame) then
+            if(memberFrame and memberFrame:IsMouseOver() and memberFrame ~= frame) then
                 return memberFrame
 
             end

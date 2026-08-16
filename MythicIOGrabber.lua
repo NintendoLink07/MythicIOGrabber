@@ -49,9 +49,9 @@ local function mainEvents(_, event, ...)
 
 		end
 
-		--if NumyFunctionProfiler then
-		--	NumyFunctionProfiler:WrapModules('MythicIOGrabber', 'miog', miog, 4);
-		--end
+		if NumyFunctionProfiler then
+			NumyFunctionProfiler:WrapModules('MythicIOGrabber', 'miog', miog, 4);
+		end
 	elseif(event == "PLAYER_ENTERING_WORLD") then
 		--miog.checkAllSeasonalMapIDs()
 		loadBaseData()

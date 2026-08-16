@@ -190,7 +190,7 @@ local function tryToSetFrame(self, populateFirstSlot)
 
         if(space) then
             if(not space.occupied or hadSlotBefore and self.occupiedSpace == space) then
-                if(populateFirstSlot or not populateFirstSlot and MouseIsOver(space)) then
+                if(populateFirstSlot or not populateFirstSlot and space:IsMouseOver()) then
                     newSlotFound = true
 
                     finalSpace = space
@@ -198,7 +198,7 @@ local function tryToSetFrame(self, populateFirstSlot)
 
                     break
                 end
-            elseif(MouseIsOver(space) and self.occupiedSpace and space.occupiedBy and self.saveID ~= space.occupiedBy.saveID) then
+            elseif(space:IsMouseOver() and self.occupiedSpace and space.occupiedBy and self.saveID ~= space.occupiedBy.saveID) then
                 swapElements(self, space.occupiedBy)
                 swapFrames = true
 
@@ -262,7 +262,7 @@ local function createElementFrame(classID)
         self:StopMovingOrSizing()
         tryToSetFrame(self)
 
-        if(MouseIsOver(self) and self.occupiedSpace) then
+        if(self:IsMouseOver() and self.occupiedSpace) then
             self.SpecPicker:Show()
 
         end

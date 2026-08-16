@@ -374,13 +374,13 @@ result to form the selection text. If there are multiple selected elements, the 
 end
 
 local function iterateOverList(button, searchFor)
-    if(searchFor == "mouseover" and MouseIsOver(button) or searchFor == "selection" and selectedElements[button]) then
+    if(searchFor == "mouseover" and button:IsMouseOver() or searchFor == "selection" and selectedElements[button]) then
         return true
     end
 
     if(button.List) then
         for k, v in ipairs(button.List:GetLayoutChildren()) do
-            if(searchFor == "mouseover" and MouseIsOver(v) or searchFor == "selection" and selectedElements[v]) then
+            if(searchFor == "mouseover" and v:IsMouseOver() or searchFor == "selection" and selectedElements[v]) then
                 return true
             end
         end
