@@ -42,7 +42,7 @@
                     <Frame parentKey="MemberRow1" inherits="MIOG_SearchFrameBigGroupRowTemplate">
                         <Size y="16" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" x="-2" y="-2"/>
+                            <Anchor point="TOPRIGHT" x="-4" y="-2"/>
                         </Anchors>
                     </Frame>
 

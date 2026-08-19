@@ -615,16 +615,18 @@ QueueManagerListingFrameMixin = CreateFromMixins(QueueManagerFrameMixin)
 function QueueManagerListingFrameMixin:GetTimerFunction(currentTime, value)
     return function()
         if(C_LFGList.HasActiveEntryInfo()) then
-            local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+            local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
-            if(activeEntryInfo.duration and not issecretvalue(activeEntryInfo.duration)) then
-                value = value - 1
+            if(activeEntryInfo) then
+                if(activeEntryInfo.duration and not issecretvalue(activeEntryInfo.duration)) then
+                    value = value - 1
 
-                local calc = currentTime - value
+                    local calc = currentTime - value
 
-                self.timer:SetTimeFromStart(calc, activeEntryInfo.duration)
-                self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
+                    self.timer:SetTimeFromStart(calc, activeEntryInfo.duration)
+                    self.Age:SetText(SecondsToClock(self.timer:GetRemainingDuration()))
 
+                end
             end
         end
     end
@@ -645,7 +647,7 @@ function QueueManagerListingFrameMixin:SetTimerInfo()
 end
 
 function QueueManagerListingFrameMixin:Update()
-    local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+    local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
     if(activeEntryInfo) then
         local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
@@ -673,7 +675,7 @@ function QueueManagerListingFrameMixin:OnClick()
 end
 
 function QueueManagerListingFrameMixin:OnEnter()
-    local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+    local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
     if(activeEntryInfo) then
         local numApplicants, numActiveApplicants = C_LFGList.GetNumApplicants()

@@ -10,8 +10,11 @@ function ProgressCheckCellListMixin:OnLoad()
         frame:Hide()
         frame.layoutIndex = nil
         frame.Text:SetText("")
-        frame:Reset()
 
+        if(frame.Reset) then
+            frame:Reset()
+
+        end
     end)
 
 end

@@ -4,6 +4,7 @@ local dataProvider = CreateDataProvider()
 
 local EMPTY_STRING = "---"
 local grayColor = miog.CLRSCC.colors.gray
+local updateTimer
 
 local pvpActivityIDs = {
 	1,
@@ -123,7 +124,7 @@ function ProgressCheckMixin:GetCharacterSettings()
     local generalSettings = self:GetGeneralSettings()
 
     if(not generalSettings.characters or not generalSettings.characters[UnitGUID("player")]) then
-        self:RefreshCharacters()
+        self:RefreshCurrentCharacter()
 
     end
 
@@ -357,15 +358,12 @@ function ProgressCheckMixin:UpdateAllData()
     self:UpdateLockouts()
 end
 
-function ProgressCheckMixin:RefreshCharacters()
-    C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
-    
+function ProgressCheckMixin:RefreshCurrentCharacter()
 	local playersGUID = UnitGUID("player")
-
 	local localizedClass, fileName, localizedRace, englishRace, sex, name = GetPlayerInfoByGUID(playersGUID)
 	local specID = GetSpecializationInfo(GetSpecialization())
 
-	if(playersGUID) then
+    if(playersGUID) then
         self.settings.characters[playersGUID] = {
             guid = playersGUID,
             name = name,
@@ -393,6 +391,12 @@ function ProgressCheckMixin:RefreshCharacters()
 
         self:UpdateAllData()
 	end
+end
+
+function ProgressCheckMixin:RefreshOtherCharacters()
+    C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
+
+    local localizedClass, fileName, localizedRace, englishRace, sex, name
 
 	for guid in pairs(self:RefreshCharacterList()) do
 		localizedClass, fileName, localizedRace, englishRace, sex, name = GetPlayerInfoByGUID(guid)
@@ -400,7 +404,7 @@ function ProgressCheckMixin:RefreshCharacters()
 		local charSettings = self.settings.characters[guid]
 
         if(charSettings) then
-            if(charSettings.fileName ~= fileName) then
+            if(fileName and charSettings.fileName ~= fileName) then
                 charSettings.specID = 0
                 charSettings.itemlevel = 0
 
@@ -734,7 +738,7 @@ end
 
 function ProgressCheckMixin:Refresh()
     self:SetSize(self:GetParent():GetSize())
-    self:RefreshCharacters()
+    self:RefreshOtherCharacters()
 
     self:UpdateDataColumns()
 end
@@ -775,8 +779,8 @@ function ProgressCheckMixin:OnEvent(event, ...)
         self:UpdatePVPData()
 
     elseif(event == "PLAYER_ENTERING_WORLD") then
-        C_Timer.After(10, function()
-            self:UpdateAllData()
+        updateTimer = C_Timer.NewTimer(3, function()
+            self:RefreshCurrentCharacter()
         end)
     end
 end

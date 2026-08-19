@@ -2,7 +2,7 @@
 ..\..\FrameXML\UI.xsd">
     <Frame name="MIOG_SearchFrameBigGroupRowTemplate" inherits="HorizontalLayoutFrame" virtual="true">
         <KeyValues>
-            <KeyValue key="spacing" value="1" type="number"/>
+            <KeyValue key="spacing" value="3" type="number"/>
         </KeyValues>
 
         <Frames>

@@ -44,7 +44,7 @@ local function mainEvents(_, event, ...)
 		miog.loadRawData()
 		miog.createFrames()
 		
-		if(C_LFGList.HasActiveEntryInfo()) then
+		if(miog:GetSecureActiveEntryInfo()) then
 			miog.setActivePanel(nil, LFGListFrame.ApplicationViewer)
 
 		end
@@ -119,23 +119,26 @@ local function mainEvents(_, event, ...)
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo()) then
 			if(miog.EntryCreation and not miog.EntryCreation:IsVisible()) then
-				local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
-				local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
+            	local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
-				LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
+				if(activeEntryInfo) then
+					local activityInfo = miog:GetActivityInfo(activeEntryInfo.activityIDs[1])
 
-				--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
-				--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
+					LFGListEntryCreation_ClearAutoCreateMode(LFGListFrame.EntryCreation);
 
-				LFGListFrame.CategorySelection.selectedCategory = activityInfo.categoryID
-				LFGListFrame.CategorySelection.selectedFilters = activityInfo.filters
+					--local isDifferentCategory = LFGListFrame.CategorySelection.selectedCategory ~= categoryFrame.categoryID
+					--local isSeparateCategory = C_LFGList.GetLfgCategoryInfo(categoryFrame.categoryID).separateRecommended
 
-				LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+					LFGListFrame.CategorySelection.selectedCategory = activityInfo.categoryID
+					LFGListFrame.CategorySelection.selectedFilters = activityInfo.filters
 
-				LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
-				--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
-				
-				miog.initializeActivityDropdown()
+					LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+
+					LFGListEntryCreation_SetBaseFilters(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters)
+					--LFGListEntryCreation_Select(LFGListFrame.EntryCreation, LFGListFrame.CategorySelection.selectedFilters, LFGListFrame.CategorySelection.selectedCategory);
+					
+					miog.initializeActivityDropdown()
+				end
 			end
 		end
 

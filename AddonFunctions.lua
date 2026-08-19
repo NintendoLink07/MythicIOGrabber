@@ -127,9 +127,6 @@ function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
 
                         difficultyTable.killedBosses = difficultyTable.killedBosses + kills
 
-                    else
-                        print("NOTHING FOR", v.raid.mapId)
-
                     end
                 end
 

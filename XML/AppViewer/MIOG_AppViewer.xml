@@ -151,9 +151,7 @@
 
                         <Scripts>
                             <OnClick>
-                                local appViewer = self:GetParent():GetParent()
-                                
-                                appViewer:RefreshApplicantList()
+                                self:GetParent():GetParent():Refresh()
                             </OnClick>
                         </Scripts>
                     </Button>

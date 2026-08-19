@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+## [3.10.5] - 2026-08-19
+
+### Fixed
+
+- [Progress] Fixed an issue trying to update data right after 2 loading screens.
+
+- Again; more secret value fixes.
+
+### Known issues
+
+- [AppViewer] The app viewer is sometimes not getting shown correctly.
+This is because of secret value issues.
+This will be fixed in v3.11.
+
+- Lockouts aren't being saved correctly on all characters.
+This will be fixed in v3.10.6 (coming on the 20th or 21st).
+
+
+
+
 ## [3.10.4a] - 2026-08-16
 
 ### Fixed
@@ -5128,7 +5148,8 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4a..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4b..HEAD
+[3.10.4b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4b
 [3.10.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4a
 [3.10.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4
 [3.10.3]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.3

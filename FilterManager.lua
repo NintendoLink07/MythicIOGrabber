@@ -41,9 +41,15 @@ local function getCurrentCategoryID(panel)
 		LFGListFrame.CategorySelection.selectedCategory
 
 	elseif(panel == "ApplicationViewer") then
-		return C_LFGList.HasActiveEntryInfo() and miog:GetActivityInfo(C_LFGList.GetActiveEntryInfo().activityIDs[1]).categoryID or
-		LFGListFrame.CategorySelection.selectedCategory
+		local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
+		if(activeEntryInfo) then
+			return miog:GetActivityInfo(activeEntryInfo.activityIDs[1]).categoryID
+			
+		else
+			return LFGListFrame.CategorySelection.selectedCategory
+
+		end
 	end
 end
 
@@ -807,241 +813,241 @@ local function refreshFilters()
 	local filterManager = miog.FilterManager
 	local panel, categoryID = getCurrentPanelAndCategoryID()
 
-	for classIndex, classInfo in ipairs(miog.OFFICIAL_CLASSES) do
-		local singleClassFilter = filterManager.ClassFilters["Class" .. classIndex]
-		local r, g, b = GetClassColor(classInfo.name)
+	if(panel) then
+		for classIndex, classInfo in ipairs(miog.OFFICIAL_CLASSES) do
+			local singleClassFilter = filterManager.ClassFilters["Class" .. classIndex]
+			local r, g, b = GetClassColor(classInfo.name)
 
-		local classSetting = retrieveSetting("classes", classIndex)
-		local classIsChecked = classSetting == nil and true or classSetting
-		singleClassFilter.ClassFrame.CheckButton:SetChecked(classIsChecked)
+			local classSetting = retrieveSetting("classes", classIndex)
+			local classIsChecked = classSetting == nil and true or classSetting
+			singleClassFilter.ClassFrame.CheckButton:SetChecked(classIsChecked)
 
-		singleClassFilter.Background:SetColorTexture(r, g, b, classIsChecked and 0.5 or 0.05)
-		singleClassFilter.ClassFrame.Icon:SetDesaturated(not classIsChecked)
+			singleClassFilter.Background:SetColorTexture(r, g, b, classIsChecked and 0.5 or 0.05)
+			singleClassFilter.ClassFrame.Icon:SetDesaturated(not classIsChecked)
 
-		for i = 1, #classInfo.specs, 1 do
-			local specID = classInfo.specs[i]
-			local specFrame = singleClassFilter["Spec" .. i]
+			for i = 1, #classInfo.specs, 1 do
+				local specID = classInfo.specs[i]
+				local specFrame = singleClassFilter["Spec" .. i]
 
-			if(specFrame) then
-				local specSetting = retrieveSetting("specs", specID)
-				local specIsChecked = specSetting == nil and true or specSetting
-				specFrame.CheckButton:SetChecked(specIsChecked)
-				specFrame.CheckButton:SetEnabled(classIsChecked)
-				specFrame.Icon:SetDesaturated(not specIsChecked or not classIsChecked)
+				if(specFrame) then
+					local specSetting = retrieveSetting("specs", specID)
+					local specIsChecked = specSetting == nil and true or specSetting
+					specFrame.CheckButton:SetChecked(specIsChecked)
+					specFrame.CheckButton:SetEnabled(classIsChecked)
+					specFrame.Icon:SetDesaturated(not specIsChecked or not classIsChecked)
 
+				end
 			end
 		end
-	end
 
-	local lustFit = retrieveSetting("lustfit")
-	filterManager.LustFit.CheckButton:SetChecked(lustFit == nil and false or lustFit)
+		local lustFit = retrieveSetting("lustfit")
+		filterManager.LustFit.CheckButton:SetChecked(lustFit == nil and false or lustFit)
 
-	local ressSetting = retrieveSetting("ressfit")
-	filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and false or ressSetting)
-	
-	local isLFG = panel == "SearchPanel"
-	local isArenaPvp = categoryID == 4 or categoryID == 7
-	local isDungeon = categoryID == 2
-	local isMainRaid = categoryID == 3
-	local isLegacyRaid = categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended
-	local isDelve = categoryID == 121
-	local isPvE =  isDungeon or isMainRaid or isDelve
-	local isLFGRaid = isLFG and isMainRaid and not isLegacyRaid
-	local isRatingCategory = isDungeon or isArenaPvp
-	local isActivityCategory = isLFG and isPvE or isArenaPvp
-
-	filterManager.Status:SetShown(isLFG)
-	filterManager.PartyFit:SetShown(isLFG)
-	filterManager.Decline:SetShown(isLFG)
-	filterManager.Spacer:SetShown(isLFG)
-	filterManager.Tank:SetShown(isLFG)
-	filterManager.Healer:SetShown(isLFG)
-	filterManager.Damager:SetShown(isLFG)
-	filterManager.Age:SetShown(isLFG)
-	filterManager.Rating:SetShown(isLFG and isRatingCategory)
-	filterManager.Difficulty:SetShown(isLFG and isPvE)
-	filterManager.Activities:SetShown(isActivityCategory and not isLegacyRaid)
-	filterManager.ActivityGrid:SetShown(filterManager.Activities:IsShown())
-	filterManager.ActivityBosses:SetShown(isLFGRaid)
-
-	if(isLFG) then
-		local partySetting = retrieveSetting("partyfit")
-		filterManager.PartyFit.CheckButton:SetChecked(partySetting == nil and false or partySetting)
-
-		local decline = retrieveSetting("decline")
-		filterManager.Decline.CheckButton:SetChecked(decline == nil and false or decline)
+		local ressSetting = retrieveSetting("ressfit")
+		filterManager.RessFit.CheckButton:SetChecked(ressSetting == nil and false or ressSetting)
 		
-		refreshInputFilters()
-		refreshSpinnerFilters()
+		local isLFG = panel == "SearchPanel"
+		local isArenaPvp = categoryID == 4 or categoryID == 7
+		local isDungeon = categoryID == 2
+		local isMainRaid = categoryID == 3
+		local isLegacyRaid = categoryID == 3 and LFGListFrame.CategorySelection.selectedFilters == Enum.LFGListFilter.NotRecommended
+		local isDelve = categoryID == 121
+		local isPvE =  isDungeon or isMainRaid or isDelve
+		local isLFGRaid = isLFG and isMainRaid and not isLegacyRaid
+		local isRatingCategory = isDungeon or isArenaPvp
+		local isActivityCategory = isLFG and isPvE or isArenaPvp
 
-		local difficultySetting = retrieveSetting("difficulty")
-		filterManager.Difficulty.CheckButton:SetChecked(difficultySetting.enabled == nil and false or difficultySetting.enabled)
+		filterManager.Status:SetShown(isLFG)
+		filterManager.PartyFit:SetShown(isLFG)
+		filterManager.Decline:SetShown(isLFG)
+		filterManager.Spacer:SetShown(isLFG)
+		filterManager.Tank:SetShown(isLFG)
+		filterManager.Healer:SetShown(isLFG)
+		filterManager.Damager:SetShown(isLFG)
+		filterManager.Age:SetShown(isLFG)
+		filterManager.Rating:SetShown(isLFG and isRatingCategory)
+		filterManager.Difficulty:SetShown(isLFG and isPvE)
+		filterManager.Activities:SetShown(isActivityCategory and not isLegacyRaid)
+		filterManager.ActivityGrid:SetShown(filterManager.Activities:IsShown())
+		filterManager.ActivityBosses:SetShown(isLFGRaid)
 
-		local activitiesSetting = retrieveSetting("activities", "enabled")
-		filterManager.Activities.CheckButton:SetChecked(activitiesSetting == nil and false or activitiesSetting)
+		if(isLFG) then
+			local partySetting = retrieveSetting("partyfit")
+			filterManager.PartyFit.CheckButton:SetChecked(partySetting == nil and false or partySetting)
 
-		local allGroups = {}
-		local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, miog:IsPlayerAtMaxLevel() and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.CurrentExpansion)
+			local decline = retrieveSetting("decline")
+			filterManager.Decline.CheckButton:SetChecked(decline == nil and false or decline)
+			
+			refreshInputFilters()
+			refreshSpinnerFilters()
 
-		table.sort(seasonGroups, sortActivityGroup)
+			local difficultySetting = retrieveSetting("difficulty")
+			filterManager.Difficulty.CheckButton:SetChecked(difficultySetting.enabled == nil and false or difficultySetting.enabled)
 
-		for k, groupID in ipairs(seasonGroups) do
-			tinsert(allGroups, {filterID = groupID, isPvE = true})
+			local activitiesSetting = retrieveSetting("activities", "enabled")
+			filterManager.Activities.CheckButton:SetChecked(activitiesSetting == nil and false or activitiesSetting)
 
-		end
+			local allGroups = {}
+			local seasonGroups = C_LFGList.GetAvailableActivityGroups(categoryID, miog:IsPlayerAtMaxLevel() and Enum.LFGListFilter.Recommended or Enum.LFGListFilter.CurrentExpansion)
 
-		if(isMainRaid and not isLegacyRaid) then
-			local worldBossActivities = C_LFGList.GetAvailableActivities(3, 0, 5)
+			table.sort(seasonGroups, sortActivityGroup)
 
-			if(worldBossActivities and #worldBossActivities > 0) then
-				for k, v in ipairs(worldBossActivities) do
-					tinsert(allGroups, {filterID = v, isWorld = true})
+			for k, groupID in ipairs(seasonGroups) do
+				tinsert(allGroups, {filterID = groupID, isPvE = true})
 
-				end
 			end
-		elseif(isArenaPvp) then
-			local pvpActivities = C_LFGList.GetAvailableActivities(categoryID)
 
-			if(pvpActivities and #pvpActivities > 0) then
-				for k, v in ipairs(pvpActivities) do
-					tinsert(allGroups, {filterID = v, isPvp = true})
+			if(isMainRaid and not isLegacyRaid) then
+				local worldBossActivities = C_LFGList.GetAvailableActivities(3, 0, 5)
 
-				end
+				if(worldBossActivities and #worldBossActivities > 0) then
+					for k, v in ipairs(worldBossActivities) do
+						tinsert(allGroups, {filterID = v, isWorld = true})
 
-			end
-		end
-
-
-		for rowCounter = 1, 4, 1 do
-			for activityCounter = 1, 4, 1 do
-				local counter = (rowCounter - 1) * 4 + activityCounter
-				local groupData = allGroups[counter]
-				local activityFilter = filterManager.ActivityGrid["Activity" .. counter]
-				local hasData = groupData ~= nil
-
-				if(hasData) then
-					local info
-
-					if(groupData.isPvE) then
-						info = miog:GetGroupInfo(groupData.filterID)
-
-					elseif(groupData.isPvp or groupData.isWorld) then
-						info = miog:GetActivityInfo(groupData.filterID)
-						
 					end
-					
-					activityFilter.type = groupData.isPvE and "pve" or groupData.isPvp and "pvp" or groupData.isWorld and "world"
-					activityFilter.filterID = groupData.filterID
-
-					activityFilter.Text:SetText(info.abbreviatedName or info.shortName)
-					
-					local groupSetting = retrieveSetting("activities", groupData.filterID)
-					activityFilter.CheckButton:SetChecked(groupSetting == nil and true or groupSetting)
-					activityFilter:Show()
-
-				else
-					activityFilter:Hide()
-
 				end
-			end
-		end
+			elseif(isArenaPvp) then
+				local pvpActivities = C_LFGList.GetAvailableActivities(categoryID)
 
-		if(isMainRaid and not isLegacyRaid) then
-			for raidIndex, data in ipairs(allGroups) do
-				local bossParent = filterManager.ActivityBosses["Bosses" .. raidIndex]
-
-				if(bossParent) then
-					local groupSetting = retrieveSetting("activities", data.filterID)
-					bossParent:SetShown(groupSetting ~= false and true or false)
-
-					local bossTable, bossIcons
-					
-					if(data.isPvE) then
-						local info = miog:GetGroupInfo(data.filterID)
-						bossTable = info.bosses
-						bossIcons = info.bossIcons or {}
-
-					elseif(data.isWorld) then
-						local info = miog:GetMapInfo(data.filterID)
-						bossTable = info.bosses
-						bossIcons = info.bossIcons or {}
+				if(pvpActivities and #pvpActivities > 0) then
+					for k, v in ipairs(pvpActivities) do
+						tinsert(allGroups, {filterID = v, isPvp = true})
 
 					end
 
-					if(bossTable) then
-						for i = 1, 20, 1 do
-							local bossFrame = bossParent["Boss" .. i]
+				end
+			end
+
+			for rowCounter = 1, 4, 1 do
+				for activityCounter = 1, 4, 1 do
+					local counter = (rowCounter - 1) * 4 + activityCounter
+					local groupData = allGroups[counter]
+					local activityFilter = filterManager.ActivityGrid["Activity" .. counter]
+					local hasData = groupData ~= nil
+
+					if(hasData) then
+						local info
+
+						if(groupData.isPvE) then
+							info = miog:GetGroupInfo(groupData.filterID)
+
+						elseif(groupData.isPvp or groupData.isWorld) then
+							info = miog:GetActivityInfo(groupData.filterID)
 							
-							if(bossTable[i]) then
-								bossFrame.name = bossTable[i].name
-
-								--PRESET FOR CURRENT RAIDS IN FILTERS
-
-								--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
-
-								bossFrame.Icon:SetTexture(bossIcons[i] and bossIcons[i].icon or bossTable[i].icon)
-
-								local setting = retrieveSetting("activityBosses", data.filterID)
-
-								bossFrame:SetScript("OnClick", function(self, button)
-									local currentState = retrieveSetting("activityBosses", data.filterID)
-
-									if(button == "LeftButton") then
-										if(currentState) then
-											if(currentState[i]) then
-												changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
-
-											else
-												changeSetting(2, "activityBosses", data.filterID, i)
-
-											end
-										end
-
-									else
-										changeSetting(1, "activityBosses", data.filterID, i)
-
-									end
-								end)
-
-								bossFrame:SetState(setting and (setting[i] == nil and false or setting[i]) or 1)
-
-								bossFrame:Show()
-
-							else
-								bossFrame:Hide()
-
-							end
 						end
+						
+						activityFilter.type = groupData.isPvE and "pve" or groupData.isPvp and "pvp" or groupData.isWorld and "world"
+						activityFilter.filterID = groupData.filterID
+
+						activityFilter.Text:SetText(info.abbreviatedName or info.shortName)
+						
+						local groupSetting = retrieveSetting("activities", groupData.filterID)
+						activityFilter.CheckButton:SetChecked(groupSetting == nil and true or groupSetting)
+						activityFilter:Show()
 
 					else
-						bossParent:Hide()
+						activityFilter:Hide()
 
 					end
 				end
 			end
 
-			for i = #allGroups + 1, 4, 1 do
-				filterManager.ActivityBosses["Bosses" .. i]:Hide()
+			if(isMainRaid and not isLegacyRaid) then
+				for raidIndex, data in ipairs(allGroups) do
+					local bossParent = filterManager.ActivityBosses["Bosses" .. raidIndex]
 
+					if(bossParent) then
+						local groupSetting = retrieveSetting("activities", data.filterID)
+						bossParent:SetShown(groupSetting ~= false and true or false)
+
+						local bossTable, bossIcons
+						
+						if(data.isPvE) then
+							local info = miog:GetGroupInfo(data.filterID)
+							bossTable = info.bosses
+							bossIcons = info.bossIcons or {}
+
+						elseif(data.isWorld) then
+							local info = miog:GetMapInfo(data.filterID)
+							bossTable = info.bosses
+							bossIcons = info.bossIcons or {}
+
+						end
+
+						if(bossTable) then
+							for i = 1, 20, 1 do
+								local bossFrame = bossParent["Boss" .. i]
+								
+								if(bossTable[i]) then
+									bossFrame.name = bossTable[i].name
+
+									--PRESET FOR CURRENT RAIDS IN FILTERS
+
+									--SetPortraitTextureFromCreatureDisplayID(bossFrame.Icon, bossTable[i].creatureDisplayInfoID)
+
+									bossFrame.Icon:SetTexture(bossIcons[i] and bossIcons[i].icon or bossTable[i].icon)
+
+									local setting = retrieveSetting("activityBosses", data.filterID)
+
+									bossFrame:SetScript("OnClick", function(self, button)
+										local currentState = retrieveSetting("activityBosses", data.filterID)
+
+										if(button == "LeftButton") then
+											if(currentState) then
+												if(currentState[i]) then
+													changeSetting(currentState[i] == 3 and 1 or currentState[i] + 1, "activityBosses", data.filterID, i)
+
+												else
+													changeSetting(2, "activityBosses", data.filterID, i)
+
+												end
+											end
+
+										else
+											changeSetting(1, "activityBosses", data.filterID, i)
+
+										end
+									end)
+
+									bossFrame:SetState(setting and (setting[i] == nil and false or setting[i]) or 1)
+
+									bossFrame:Show()
+
+								else
+									bossFrame:Hide()
+
+								end
+							end
+
+						else
+							bossParent:Hide()
+
+						end
+					end
+				end
+
+				for i = #allGroups + 1, 4, 1 do
+					filterManager.ActivityBosses["Bosses" .. i]:Hide()
+
+				end
+				
+				filterManager.ActivityBosses:MarkDirty()
 			end
-			
-			filterManager.ActivityBosses:MarkDirty()
+
+			refreshActivityFilterColor()
+		else
+			refreshInputFilters("Rating")
+
 		end
 
-		refreshActivityFilterColor()
-	else
-		refreshInputFilters("Rating")
+		currentSettings = MIOG_CharacterSettings.filters[panel][categoryID]
+		
+		filterManager:MarkDirty()
+		filterManager.ActivityGrid:MarkDirty()
+		filterManager.ActivityBosses:MarkDirty()
 
+		saveToAdvancedFilter()
 	end
-
-	currentSettings = MIOG_CharacterSettings.filters[panel][categoryID]
-	
-	filterManager:MarkDirty()
-	filterManager.ActivityGrid:MarkDirty()
-	filterManager.ActivityBosses:MarkDirty()
-
-	saveToAdvancedFilter()
-
 end
 
 miog.filter.refreshFilters = refreshFilters
@@ -1502,17 +1508,20 @@ local function loadFilterManager()
 			
 				if(getCurrentCategoryID() == 3 and type ~= "world") then
 					local bossParent = filterManager.ActivityBosses["Bosses" .. i]
-					local bossTable
-					
-					if(type == "pve") then
-						local info = miog:GetGroupInfo(filterID)
-						bossTable = info.bosses
 
+					if(bossParent) then
+						local bossTable
+						
+						if(type == "pve") then
+							local info = miog:GetGroupInfo(filterID)
+							bossTable = info.bosses
+
+						end
+
+						bossParent:SetShown(self:GetChecked() and bossTable and #bossTable > 0)
+
+						filterManager.ActivityBosses:MarkDirty()
 					end
-
-					bossParent:SetShown(self:GetChecked() and bossTable and #bossTable > 0)
-
-					filterManager.ActivityBosses:MarkDirty()
 				end
 
 			end

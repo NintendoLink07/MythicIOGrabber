@@ -728,7 +728,7 @@ miog.GROUP_ACTIVITY_ID_INFO = {
 		abbreviatedName = "VA",
 		mapID = 3004,
 		bossIcons = {
-			{icon = "interface/icons/interface/icons/inv_121_achievement_raid_ulatek.blp"},
+			{icon = "interface/icons/inv_121_achievement_raid_ulatek.blp"},
 		},
 	},
 	[429] = {
@@ -1352,7 +1352,7 @@ miog.MAP_INFO = {
 		fileName = "raidulatek",
 		bossData = {
 			[1] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_priestess.blp",
+				icon = "interface/icons/inv_121_raid_achievement_priestess.blp",
 				achievementIDs = {
 					63533,
 					63534,
@@ -1361,7 +1361,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[2] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_golems.blp",
+				icon = "interface/icons/inv_121_raid_achievement_golems.blp",
 				achievementIDs = {
 					63537,
 					63538,
@@ -1370,7 +1370,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[3] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_tortollans.blp",
+				icon = "interface/icons/inv_121_raid_achievement_tortollans.blp",
 				achievementIDs = {
 					63541,
 					63552,
@@ -1379,7 +1379,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[4] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_alchemist.blp",
+				icon = "interface/icons/inv_121_raid_achievement_alchemist.blp",
 				achievementIDs = {
 					63547,
 					63555,
@@ -1388,7 +1388,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[5] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_brute.blp",
+				icon = "interface/icons/inv_121_raid_achievement_brute.blp",
 				achievementIDs = {
 					63548,
 					63558,
@@ -1397,7 +1397,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[6] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_twins.blp",
+				icon = "interface/icons/inv_121_raid_achievement_twins.blp",
 				achievementIDs = {
 					63549,
 					63561,
@@ -1406,7 +1406,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[7] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp",
+				icon = "interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp",
 				achievementIDs = {
 					63550,
 					63564,
@@ -1415,7 +1415,7 @@ miog.MAP_INFO = {
 				},
 			},
 			[8] = {
-				icon = "interface/icons/interface/icons/inv_121_raid_achievement_ulatek.blp",
+				icon = "interface/icons/inv_121_raid_achievement_ulatek.blp",
 				achievementIDs = {
 					63551,
 					63567,
@@ -1426,14 +1426,14 @@ miog.MAP_INFO = {
 		},
 
 		bossIcons = {
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_priestess.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_golems.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_tortollans.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_alchemist.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_brute.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_twins.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp"},
-			{icon = "interface/icons/interface/icons/inv_121_raid_achievement_ulatek.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_priestess.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_golems.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_tortollans.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_alchemist.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_brute.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_twins.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_zuljinmalacrass.blp"},
+			{icon = "interface/icons/inv_121_raid_achievement_ulatek.blp"},
 		},
 		achievementIDs = {
 			63533,

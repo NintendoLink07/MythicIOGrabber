@@ -74,7 +74,7 @@ function AppViewer:RemoveApplicantFrame(applicantID)
 end
 
 function AppViewer:AddApplicant(applicantID)
-	local activeEntry = C_LFGList.GetActiveEntryInfo()
+	local activeEntry = miog:GetSecureActiveEntryInfo()
 	local applicantData = miog:GetSecureApplicantData(applicantID)
 
 	if(applicantData and miog:CanAccessValue(applicantData.comment)) then
@@ -184,7 +184,7 @@ function AppViewer:AddApplicant(applicantID)
 end
 
 function AppViewer:RetrieveAndSetEntryInfo()
-	local activeEntry = C_LFGList.GetActiveEntryInfo()
+	local activeEntry = miog:GetSecureActiveEntryInfo()
 
 	if(activeEntry) then
 		local activityInfo = miog:GetActivityInfo(activeEntry.activityIDs[1])
@@ -228,12 +228,12 @@ function AppViewer:RetrieveAndSetEntryInfo()
 end
 
 function AppViewer:Refresh()
+	treeDataProvider:Flush()
+	treeDataProvider:SetAllCollapsed(true)
+
 	local applicantList = C_LFGList.GetApplicants()
 
 	if(applicantList and #applicantList > 0) then
-		treeDataProvider:Flush()
-		treeDataProvider:SetAllCollapsed(true)
-
 		for _, applicantID in ipairs(applicantList) do
 			self:AddApplicant(applicantID)
 
@@ -259,7 +259,7 @@ function AppViewer:OnEvent(event, ...)
 			end
 		else
 			if(justCreated) then
-				treeDataProvider:Flush()
+				self:Refresh()
 				MIOG_NewSettings.queueUpTime = GetTimePreciseSec()
 				
 				if(queueTimer) then
@@ -284,9 +284,9 @@ function AppViewer:OnEvent(event, ...)
 	elseif(event == "LFG_LIST_APPLICANT_LIST_UPDATED") then
 		local newEntry, withData = ...
 
-		if(withData) then
+		if(withData or not newEntry) then
 			self:Refresh()
-
+			
 		end
 	elseif(event == "LFG_LIST_APPLICANT_UPDATED") then
 		local applicantID = ...

@@ -210,7 +210,7 @@ function miog:GetRaidProgress(playerName, realm, region)
 
 			currentTable.raids[i] = {
 				mainMapID = raidProgress.raid.mapId,
-				mapIDs = raidProgress.raid.dungeon.instance_map_ids,
+				mapIDs = raidProgress.raid.dungeon and raidProgress.raid.dungeon.instance_map_ids or raidProgress.raid.mapId,
 				shortName = raidProgress.raid.shortName,
 				bossCount = raidProgress.raid.bossCount,
 				difficulties = {}
@@ -589,73 +589,75 @@ miog.listGroup = function(manualAutoAccept) -- Effectively replaces LFGListEntry
 	local frame = miog.EntryCreation
 	local self = LFGListFrame.EntryCreation
 
-	local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+	local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
-	local activityID = LFGListFrame.EntryCreation.selectedActivity or 0
+	if(activeEntryInfo) then
+		local activityID = LFGListFrame.EntryCreation.selectedActivity or 0
 
-	local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0
-	local rating = tonumber(frame.Rating:GetText()) or 0
-	local pvpRating = (LFGListFrame.EntryCreation.selectedCategory == 4 or LFGListFrame.EntryCreation.selectedCategory == 9) and rating or 0
-	local mythicPlusRating = LFGListFrame.EntryCreation.selectedCategory == 2 and rating or 0
-	local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and LFGListFrame.EntryCreation.selectedPlaystyle or nil
+		local itemLevel = tonumber(frame.ItemLevel:GetText()) or 0
+		local rating = tonumber(frame.Rating:GetText()) or 0
+		local pvpRating = (LFGListFrame.EntryCreation.selectedCategory == 4 or LFGListFrame.EntryCreation.selectedCategory == 9) and rating or 0
+		local mythicPlusRating = LFGListFrame.EntryCreation.selectedCategory == 2 and rating or 0
+		local selectedPlaystyle = frame.PlaystyleDropDown:IsShown() and LFGListFrame.EntryCreation.selectedPlaystyle or nil
 
-	local autoAccept = manualAutoAccept or activeEntryInfo and activeEntryInfo.autoAccept or false
-	local privateGroup = frame.PrivateGroup:GetChecked();
-	local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
-	local questID = activeEntryInfo and activeEntryInfo.questID or 0
+		local autoAccept = manualAutoAccept or activeEntryInfo and activeEntryInfo.autoAccept or false
+		local privateGroup = frame.PrivateGroup:GetChecked();
+		local isCrossFaction =  frame.CrossFaction:IsShown() and not frame.CrossFaction:GetChecked();
+		local questID = activeEntryInfo and activeEntryInfo.questID or 0
 
-	local honorLevel = 0
+		local honorLevel = 0
 
-	local createData = {
-		activityIDs = { activityID },
-		questID = questID,
-		isAutoAccept = autoAccept,
-		isCrossFactionListing = isCrossFaction,
-		isPrivateGroup = privateGroup,
-		playstyle = selectedPlaystyle,
-		requiredDungeonScore = mythicPlusRating,
-		requiredItemLevel = itemLevel,
-		requiredPvpRating = pvpRating,
-	};
+		local createData = {
+			activityIDs = { activityID },
+			questID = questID,
+			isAutoAccept = autoAccept,
+			isCrossFactionListing = isCrossFaction,
+			isPrivateGroup = privateGroup,
+			playstyle = selectedPlaystyle,
+			requiredDungeonScore = mythicPlusRating,
+			requiredItemLevel = itemLevel,
+			requiredPvpRating = pvpRating,
+		};
 
-	--C_LFGList.CreateListing(createData)
+		--C_LFGList.CreateListing(createData)
 
-	if(LFGListEntryCreation_IsEditMode(self)) then
-		-- Pull these values from the active entry.
-		createData.isAutoAccept = activeEntryInfo.autoAccept;
-		createData.questID = activeEntryInfo.questID;
+		if(LFGListEntryCreation_IsEditMode(self)) then
+			-- Pull these values from the active entry.
+			createData.isAutoAccept = activeEntryInfo.autoAccept;
+			createData.questID = activeEntryInfo.questID;
 
-		if activeEntryInfo.isCrossFactionListing == isCrossFaction then
-			C_LFGList.UpdateListing(createData);
-		else
-			-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
-			C_LFGList.UpdateListing(createData);
+			if activeEntryInfo.isCrossFactionListing == isCrossFaction then
+				C_LFGList.UpdateListing(createData);
+			else
+				-- Changing cross faction setting requires re-listing the group due to how listings are bucketed server side.
+				C_LFGList.UpdateListing(createData);
 
 
-			-- DOESNT WORK BECAUSE OF PROTECTION XD
-			--C_LFGList.RemoveListing();
-			--C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
-		end
+				-- DOESNT WORK BECAUSE OF PROTECTION XD
+				--C_LFGList.RemoveListing();
+				--C_LFGList.CreateListing(activityID, itemLevel, honorLevel, activeEntryInfo.autoAccept, privateGroup, activeEntryInfo.questID, mythicPlusRating, pvpRating, selectedPlaystyle, isCrossFaction);
+			end
 
-		local unitName, unitID = miog.getGroupLeader()
+			local unitName, unitID = miog.getGroupLeader()
 
-		if(unitID == "player") then
-			LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
+			if(unitID == "player") then
+				LFGListFrame_SetActivePanel(self:GetParent(), self:GetParent().ApplicationViewer);
+				
+			end
 			
-		end
-        
-        LFGListEntryCreation_SetEditMode(self, false)
-	else
-		if(C_LFGList.HasActiveEntryInfo()) then
-			C_LFGList.UpdateListing(createData)
-
+			LFGListEntryCreation_SetEditMode(self, false)
 		else
-			C_LFGList.CreateListing(createData)
+			if(C_LFGList.HasActiveEntryInfo()) then
+				C_LFGList.UpdateListing(createData)
 
+			else
+				C_LFGList.CreateListing(createData)
+
+			end
+
+			self.WorkingCover:Show();
+			LFGListEntryCreation_ClearFocus(self);
 		end
-
-		self.WorkingCover:Show();
-		LFGListEntryCreation_ClearFocus(self);
 	end
 end
 
@@ -1179,6 +1181,15 @@ function miog:CanAccessValue(value)
 	
 end
 
+function miog:GetSecureActiveEntryInfo()
+	local activeEntry = C_LFGList.GetActiveEntryInfo()
+
+	if(activeEntry and miog:CanAccessValue(activeEntry.censored)) then
+		return activeEntry
+
+	end
+end
+
 function miog:GetSecureApplicantData(applicantID)
 	local applicantData = C_LFGList.GetApplicantInfo(applicantID)
 
@@ -1271,28 +1282,32 @@ miog.setInfoIndicators = function(frameWithDoubleIndicators, categoryID, dungeon
 			return
 		else
 			if(dungeonScore > 0) then
-				local reqScore = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredDungeonScore or 0
-				local highestKeyForDungeon
+            	local activeEntryInfo = miog:GetSecureActiveEntryInfo()
 
-				if(reqScore > dungeonScore) then
-					primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC.red))
+				if(activeEntryInfo) then
+					local reqScore = activeEntryInfo.requiredDungeonScore or 0
+					local highestKeyForDungeon
 
-				else
-					primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
+					if(reqScore > dungeonScore) then
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.CLRSCC.red))
 
+					else
+						primaryIndicator:SetText(wticc(tostring(dungeonScore), miog.createCustomColorForRating(dungeonScore):GenerateHexColor()))
+
+					end
+
+					if(dungeonData) then
+						highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
+
+					else
+						highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
+
+					end
+
+					secondaryIndicator:SetText(highestKeyForDungeon)
+
+					return
 				end
-
-				if(dungeonData) then
-					highestKeyForDungeon = wticc(tostring(dungeonData.bestRunLevel), dungeonData.finishedSuccess and miog.C.GREEN_COLOR or miog.CLRSCC.red)
-
-				else
-					highestKeyForDungeon = wticc("0", miog.CLRSCC.red)
-
-				end
-
-				secondaryIndicator:SetText(highestKeyForDungeon)
-
-				return
 			end
 		end
 	end
@@ -1525,8 +1540,18 @@ miog.updateRaiderIOScrollBoxFrameData = function(frame, data)
 		end
 
 		playerName, realm = data.name, data.realm
-		activityID = C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().activityIDs[1] or 0
 
+        local activeEntryInfo = miog:GetSecureActiveEntryInfo()
+
+
+		if(activeEntryInfo) then
+			activityID = activeEntryInfo.activityIDs[1]
+
+
+		else
+			activityID = 0
+
+		end
 	end
 	
 	frame:ApplyFillData(nil, true, playerName, realm)
