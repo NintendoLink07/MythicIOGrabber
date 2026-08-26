@@ -340,6 +340,12 @@ function QueueManagerApplicationFrameMixin:Update()
     end
 end
 
+function QueueManagerApplicationFrameMixin:CheckForEligibility()
+    local resultID = self.data.resultID;
+
+    return miog.filter.checkIfSearchResultIsEligible(resultID)
+end
+
 function QueueManagerApplicationFrameMixin:OnEnter()
     local resultID = self.data.resultID;
 
@@ -363,6 +369,24 @@ function QueueManagerApplicationFrameMixin:OnEnter()
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
                 GameTooltip:Show()
 			end
+
+            local success, reasonID = self:CheckForEligibility()
+
+            if(not success) then
+                local reason = miog.INELIGIBILITY_REASONS[reasonID]
+
+                if(reason) then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(WrapTextInColorCode(reason[1], miog.CLRSCC.red))
+
+                else
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine("Untracked ID", reasonID)
+
+                end
+            end
+
+            GameTooltip:Show()
 		end
 
         if(searchResultInfo.crossFactionListing) then

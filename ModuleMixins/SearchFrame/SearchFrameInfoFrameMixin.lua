@@ -1,6 +1,6 @@
 local addonName, miog = ...
 
-SearchFrameInfoFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
+SearchFrameInfoFrameMixin = {}
 
 function SearchFrameInfoFrameMixin:SetupMapTable()
     local orderedMapTable = miog:GetOrderedMythicPlusMapTable()
@@ -80,6 +80,18 @@ function SearchFrameInfoFrameMixin:SetupRaids()
     end
 end
 
+function SearchFrameInfoFrameMixin:SetStatus(text)
+    if(text) then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("DELISTED")
+        self.Background:SetVertexColor(1, 1, 1, 1)
+        
+    else
+        self.StatusFrame:Hide()
+
+    end
+end
+
 function SearchFrameInfoFrameMixin:Reset()
     for _, v in ipairs(self.Dungeons.childFrames) do
         v.Text:SetText(0)
@@ -103,6 +115,7 @@ function SearchFrameInfoFrameMixin:Reset()
         end
     end
 
+    self:SetStatus()
     self:SetKeyLevels()
 end
 
@@ -115,7 +128,7 @@ function SearchFrameInfoFrameMixin:OnLoad()
 
 end
 
-function SearchFrameInfoFrameMixin:RefreshStatus()
+function SearchFrameInfoFrameMixin:UpdateText()
     self.StatusFrame:Show()
 
     if self.isDelisted then
@@ -186,65 +199,65 @@ function SearchFrameInfoFrameMixin:SetKeyLevels(mplusData)
     end
 end
 
-function SearchFrameInfoFrameMixin:Update()
+function SearchFrameInfoFrameMixin:Update(parameterName, comment)
     if(miog:IsPlayerAtMaxLevel()) then
-        local data = self:GetData()
-        local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
+        local name, realm = strsplit("-", parameterName)
 
-        if(searchResultInfo and searchResultInfo.leaderName) then
-            local name, realm = strsplit("-", searchResultInfo.leaderName)
+        if(not realm) then
+            realm = GetNormalizedRealmName()
 
-            if(not realm) then
-                realm = GetNormalizedRealmName()
+        end
 
-            end
+        self:SetRealmData(realm)
 
-            self:SetRealmData(realm)
+        local mplusData = miog:GetMythicPlusDataViaRaiderIO(name, realm)
 
-            local mplusData = miog:GetMythicPlusDataViaRaiderIO(name, realm)
+        if(mplusData) then
+            for _, v in ipairs(self.Dungeons.childFrames) do
+                local idData = mplusData[v.id]
 
-            if(mplusData) then
-                for _, v in ipairs(self.Dungeons.childFrames) do
-                    local idData = mplusData[v.id]
+                if(idData) then
+                    v.Text:SetText(idData.level .. (strrep(miog.C.RIO_STAR_TEXTURE, idData.chests) or ""))
 
-                    if(idData) then
-                        v.Text:SetText(idData.level .. (strrep(miog.C.RIO_STAR_TEXTURE, idData.chests) or ""))
+                    if(idData.level == 0) then
+                        v.Text:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
+                        
+                    elseif(idData.chests > 0) then
+                        v.Text:SetTextColor(GREEN_FONT_COLOR:GetRGBA())
 
-                        if(idData.level == 0) then
-                            v.Text:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
-                            
-                        elseif(idData.chests > 0) then
-                            v.Text:SetTextColor(GREEN_FONT_COLOR:GetRGBA())
+                    else
+                        v.Text:SetTextColor(RED_FONT_COLOR:GetRGBA())
 
-                        else
-                            v.Text:SetTextColor(RED_FONT_COLOR:GetRGBA())
-
-                        end
                     end
                 end
-
-                if(mplusData.mplusMainCurrent and mplusData.mplusMainCurrent.score > 0) then
-                    self.MainChar:SetText("Alt; Main rating is " .. mplusData.mplusMainCurrent.score)
-
-                else
-                    self.MainChar:SetText("M+ Main")
-
-                end
-
-                self:SetKeyLevels(mplusData)
-            else
-                for _, v in ipairs(self.Dungeons.childFrames) do
-                    v.Text:SetText(0)
-                    v.Text:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
-                        
-                end
             end
 
-            local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
-            local bossesKilled = {}
+            if(mplusData.mplusMainCurrent and mplusData.mplusMainCurrent.score > 0) then
+                self.MainChar:SetText("Alt; Main rating is " .. mplusData.mplusMainCurrent.score)
 
-            if(raidData) then
-                for k, v in ipairs(raidData) do
+            else
+                self.MainChar:SetText("M+ Main")
+
+            end
+
+            self:SetKeyLevels(mplusData)
+        else
+            for _, v in ipairs(self.Dungeons.childFrames) do
+                v.Text:SetText(0)
+                v.Text:SetTextColor(GRAY_FONT_COLOR:GetRGBA())
+                    
+            end
+        end
+
+        local raidData = miog:GetRaidTierDataViaRaiderIO(name, realm)
+        local bossesKilled = {}
+
+        if(raidData) then
+            for raidIndex = 1, 2, 1 do
+            --for k, v in ipairs(raidData) do
+                local v = raidData[raidIndex]
+
+                if(v) then
                     local raidFrame = self.mapIDToRaid[v.mapID]
 
                     if(raidFrame) then
@@ -280,25 +293,22 @@ function SearchFrameInfoFrameMixin:Update()
                         end
                     end
                 end
-            else
-                local raidFrame1 = self.Raids["Raid1"]
-                raidFrame1.Progress1:SetText("")
-                raidFrame1.Progress2:SetText("")
-
-                local raidFrame2 = self.Raids["Raid2"]
-                raidFrame2.Progress1:SetText("")
-                raidFrame2.Progress2:SetText("")
-
             end
+        else
+            local raidFrame1 = self.Raids["Raid1"]
+            raidFrame1.Progress1:SetText("")
+            raidFrame1.Progress2:SetText("")
 
-            if(searchResultInfo.comment) then
-                self.Comment:SetText(searchResultInfo.comment)
+            local raidFrame2 = self.Raids["Raid2"]
+            raidFrame2.Progress1:SetText("")
+            raidFrame2.Progress2:SetText("")
 
-            end
         end
 
-        self:SetStatus(searchResultInfo)
-        
+        if(comment) then
+            self.Comment:SetText(comment)
+
+        end
     else
         self:Reset()
 

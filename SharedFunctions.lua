@@ -1172,12 +1172,12 @@ function miog:CanUpdateSecretStuff()
 end
 
 function miog:CanAccessTable(table)
-	return canaccesstable(table)
+	return canaccesstable(table) and miog:CanUpdateSecretStuff()
 
 end
 
 function miog:CanAccessValue(value)
-	return canaccessvalue(value)
+	return canaccessvalue(value) and miog:CanUpdateSecretStuff()
 	
 end
 
@@ -1687,24 +1687,6 @@ miog.getGroupLeader = function()
 		end
 	end
 end
-
---[[hooksecurefunc("LFGListSearchPanel_DoSearch", function(self)
-	LFGListFrame.SearchPanel.SearchBox:ClearAllPoints()
-	LFGListFrame.SearchPanel.SearchBox:SetParent(miog.SearchPanel)
-	LFGListFrame.SearchPanel.FilterButton:Hide()
-
-	if(not miog.F.LITE_MODE) then
-		LFGListFrame.SearchPanel.SearchBox:SetSize(miog.SearchPanel.SearchBoxBase:GetSize())
-
-	else
-		LFGListFrame.SearchPanel.SearchBox:SetWidth(miog.SearchPanel.standardSearchBoxWidth - 100)
-	
-	end
-
-	LFGListFrame.SearchPanel.SearchBox:SetPoint(miog.SearchPanel.SearchBoxBase:GetPoint())
-	LFGListFrame.SearchPanel.SearchBox:SetFrameStrata("HIGH")
-	LFGListFrame.SearchPanel.SearchBox:SetFrameLevel(9999)
-end)]]
 
 miog.createSplitName = function(name)
 	local shortName, realm = strsplit("-", name)

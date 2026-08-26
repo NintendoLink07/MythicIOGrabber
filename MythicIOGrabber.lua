@@ -106,16 +106,7 @@ local function mainEvents(_, event, ...)
 			miog.F.MAINFRAME_WAS_VISIBLE = false
 			miog.MainFrame:Show()
 
-		end
-
-		if(miog:CanUpdateSecretStuff()) then
-			for k, v in pairs(funcList) do
-				v[1]()
-
-				funcList[k] = nil
-			end
-		end
-		
+		end		
 	elseif(event == "LFG_LIST_AVAILABILITY_UPDATE") then
 		if(C_LFGList.HasActiveEntryInfo()) then
 			if(miog.EntryCreation and not miog.EntryCreation:IsVisible()) then

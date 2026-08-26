@@ -2480,6 +2480,8 @@ miog.BACKUP_SEASONAL_IDS = {
 }
 
 miog.TELEPORT_SPELLS_TO_MAP_DATA = {
+	[1254555] = {mapID = 658},
+
 	[445424] = {mapID = 670},
 	[410080] = {mapID = 657},
 	[424142] = {mapID = 643},
@@ -2509,6 +2511,7 @@ miog.TELEPORT_SPELLS_TO_MAP_DATA = {
 	[393764] = {mapID = 1477},
 	[373262] = {mapID = 1651},
 	[410078] = {mapID = 1458},
+	[1254551] = {mapID = 1753},
 
 	[424187] = {mapID = 1763},
 	[410071] = {mapID = 1754},
@@ -2519,6 +2522,8 @@ miog.TELEPORT_SPELLS_TO_MAP_DATA = {
 	[467553] = {mapID = 1594},
 	[410074] = {mapID = 1841},
 	[424167] = {mapID = 1862},
+	[1286831] = {mapID = 1762},
+	[1286828] = {mapID = 1877},
 
 	[354468] = {mapID = 2291},
 	[354465] = {mapID = 2287},
@@ -2563,8 +2568,11 @@ miog.TELEPORT_SPELLS_TO_MAP_DATA = {
 	[1254572] = {mapID = 2811},
 	[1254563] = {mapID = 2915},
 	[1254559] = {mapID = 2874},
-	[1254555] = {mapID = 658},
-	[1254551] = {mapID = 1753},
+	[1286801] = {mapID = 2859},
+	[1286804] = {mapID = 2923},
+	[1286807] = {mapID = 2825},
+	[1286809] = {mapID = 2813},
+	[1286812] = {mapID = 2993},
 }
 
 miog.MAP_TELEPORTS = {}
@@ -2615,7 +2623,7 @@ miog.TELEPORT_FLYOUT_IDS = { --https://wago.tools/db2/SpellFlyout
 	[10] = {id = 232, expansion = 10, type="dungeon"},
 	[11] = {id = 242, expansion = 10, type="raid"},
 
-	[12] = {id = 244, seasonID = 17, type="dungeon"},
+	[12] = {id = 244, seasonID = 18, type="dungeon"},
 	[13] = {id = 246, expansion = 11, type="dungeon"},
 }
 

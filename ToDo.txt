@@ -1,26 +1,7 @@
-Good
-- Main
+v4
 
-Okay
-- Group
-- Raid sheet
-- Gearing
-    - enable&disable columns
-- SearchPanel
-    - Short names
+Performance fixes Group Org
 
-WIP
-- Drops
-    - M+ itemlevels
+v3.10.6
 
-- Ports
-    - Overhaul, use grid system, integrate seasonal tp's
-
-Needs overhaul
-- Progress
-    - submenus only
-
-No idea
-- Upgrades
-- FilterManager
-- Entry creation
+Lockouts saved

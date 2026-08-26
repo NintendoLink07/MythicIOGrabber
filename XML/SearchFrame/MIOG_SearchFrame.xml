@@ -134,9 +134,18 @@
                 </Frames>
             </Frame>
             
+			<StatusBar parentKey="ProgressBar" mixin="SmoothStatusBarMixin" hidden="true">
+                <BarTexture atlas="activities-bar-fill"/>
+                <Size y="4" />
+				<Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT"/>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT"/>
+				</Anchors>
+            </StatusBar>
+            
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="2"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ProgressBar" relativePoint="BOTTOMLEFT" x="2"/>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Footer" relativePoint="TOPRIGHT" x="-2"/>
                 </Anchors>
             </Frame>

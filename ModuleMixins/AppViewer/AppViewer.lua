@@ -242,6 +242,8 @@ function AppViewer:Refresh()
     	self.SortButtons:Sort()
 	end
 
+	self.ScrollBox:SetDataProvider(treeDataProvider)
+
 	--self:CreateDebugApplicants(3)
 end
 
@@ -329,8 +331,6 @@ function AppViewer:OnEvent(event, ...)
 	end
 end
 
-local registered = false
-
 function AppViewer:OnShow()
 	self:Refresh()
 
@@ -342,6 +342,7 @@ function AppViewer:OnLoad()
         edgeSize = 2
     }
     local r, g, b, a = GRAY_FONT_COLOR:GetRGBA()
+	
 	self:SetBackdrop(visualTable)
 	self:SetBackdropBorderColor(r, g, b, a)
 

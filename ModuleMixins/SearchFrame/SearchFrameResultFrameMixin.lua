@@ -9,7 +9,7 @@ local rank = {
 local RED_R, RED_G, RED_B, RED_A = RED_FONT_COLOR:GetRGBA()
 local GREEN_R, GREEN_G, GREEN_B, GREEN_A = GREEN_FONT_COLOR:GetRGBA()
 
-SearchFrameResultFrameMixin = CreateFromMixins(SearchFrameBaseFrameMixin)
+SearchFrameResultFrameMixin = {}
 
 function SearchFrameResultFrameMixin:OnMouseDown(button)
     local searchResultInfo = miog:GetSecureSearchResultInfo(self.resultID)
@@ -24,6 +24,11 @@ function SearchFrameResultFrameMixin:OnMouseDown(button)
 
         self:Update()
     end
+end
+
+function SearchFrameResultFrameMixin:CheckForEligibility()
+    return miog.filter.checkIfSearchResultIsEligible(self.resultID)
+
 end
 
 function SearchFrameResultFrameMixin:OnEnter()
@@ -47,7 +52,7 @@ function SearchFrameResultFrameMixin:OnEnter()
 				GameTooltip:AddLine("|T" .. countryFlag .. ":12:12|t" .. " - " .. language)
 			end
 
-             local success, reasonID = miog.filter.checkIfSearchResultIsEligible(self.resultID)
+            local success, reasonID = self:CheckForEligibility()
 
             if(not success) then
                 local reason = miog.INELIGIBILITY_REASONS[reasonID]
@@ -117,49 +122,33 @@ local function sortByRoleAndSpec(k1, k2)
 
 end
 
-function SearchFrameResultFrameMixin:RefreshStatus()
-    self.StatusFrame:Hide()
-
+function SearchFrameResultFrameMixin:UpdateVertex()
     if self.isDelisted then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("DELISTED")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.hasInvitation then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("INVITED")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.isFull then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("FULL")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.applicationHasBeenDeclined then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("APP DECLINED")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.invitationHasBeenDeclined then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("INVITE DECLINED")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.applicationHasBeenCancelled then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("CANCELLED")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.isTimedOut then
         self.Attention:Hide()
-        self.StatusFrame:Show()
-        self.StatusFrame.Text:SetText("TIMEOUT")
         self.Background:SetVertexColor(1, 1, 1, 1)
 
     elseif self.isNowFilteredOut then
@@ -184,6 +173,41 @@ function SearchFrameResultFrameMixin:RefreshStatus()
     end
 end
 
+function SearchFrameResultFrameMixin:UpdateStatus()
+    if self.isDelisted then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("DELISTED")
+
+    elseif self.hasInvitation then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("INVITED")
+
+    elseif self.isFull then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("FULL")
+
+    elseif self.applicationHasBeenDeclined then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("APP DECLINED")
+
+    elseif self.invitationHasBeenDeclined then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("INVITE DECLINED")
+
+    elseif self.applicationHasBeenCancelled then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("CANCELLED")
+
+    elseif self.isTimedOut then
+        self.StatusFrame:Show()
+        self.StatusFrame.Text:SetText("TIMEOUT")
+
+    else
+        self.StatusFrame:Hide()
+
+    end
+end
+
 function SearchFrameResultFrameMixin:ResetCategoryData()
     --implement in children
 
@@ -192,6 +216,208 @@ end
 function SearchFrameResultFrameMixin:UpdateCategoryData(searchResultInfo)
     --implement in children
 
+end
+
+
+
+local function LFGListAdvancedFiltersActivitiesNoneChecked(enabled)
+	return #enabled.activities == 0;
+end
+
+local function LFGListAdvancedFiltersActivitiesAllChecked(enabled)
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
+	local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE));
+	local timerunningGroups = {};
+	if PlayerIsTimerunning() then
+		timerunningGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.Timerunning, Enum.LFGListFilter.PvE));
+	end
+	
+	return #enabled.activities == (#seasonGroups + #expansionGroups + #timerunningGroups);
+end
+
+local function LFGListAdvancedFiltersDifficultyNoneChecked(enabled)
+	return not (enabled.difficultyNormal or enabled.difficultyHeroic or enabled.difficultyMythic or enabled.difficultyMythicPlus);
+end
+
+local function LFGListAdvancedFiltersDifficultyAllChecked(enabled)
+	return enabled.difficultyNormal and enabled.difficultyHeroic and enabled.difficultyMythic and enabled.difficultyMythicPlus;
+end
+
+local function LFGListAdvancedFiltersGeneralPlaystyleNoneChecked(enabled)
+	return not (enabled.generalPlaystyle1 or enabled.generalPlaystyle2 or enabled.generalPlaystyle3 or enabled.generalPlaystyle4);
+end
+
+local function LFGListAdvancedFiltersGeneralPlaystyleAllChecked(enabled)
+	return enabled.generalPlaystyle1 and enabled.generalPlaystyle2 and enabled.generalPlaystyle3 and enabled.generalPlaystyle4;
+end
+
+--for activities, difficulties and general playstyle, none checked and all checked are equivalent. Although visually we want to show all checked as the default.
+local function LFGListAdvancedFiltersIsDefault(enabled)
+	return (LFGListAdvancedFiltersActivitiesNoneChecked(enabled) or LFGListAdvancedFiltersActivitiesAllChecked(enabled))
+		and (LFGListAdvancedFiltersDifficultyNoneChecked(enabled) or LFGListAdvancedFiltersDifficultyAllChecked(enabled))
+		and (LFGListAdvancedFiltersGeneralPlaystyleNoneChecked(enabled) or LFGListAdvancedFiltersGeneralPlaystyleAllChecked(enabled))
+		and not (enabled.needsTank or enabled.needsHealer or enabled.needsDamage or enabled.needsMyClass or enabled.hasTank or enabled.hasHealer 
+				or (enabled.minimumRating ~= 0));
+end
+
+local function LFGListAdvancedFiltersCheckAllDifficulties(enabled)
+	enabled.difficultyNormal = true;
+	enabled.difficultyHeroic = true;
+	enabled.difficultyMythic = true;
+	enabled.difficultyMythicPlus = true;
+end
+
+local function LFGListAdvancedFiltersCheckAllGeneralPlaystyles(enabled)
+	enabled.generalPlaystyle1 = true;
+	enabled.generalPlaystyle2 = true;
+	enabled.generalPlaystyle3 = true;
+	enabled.generalPlaystyle4 = true;
+end
+
+local function LFGListAdvancedFiltersCheckAllDungeons(enabled)
+	local seasonGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentSeason, Enum.LFGListFilter.PvE));
+	local expansionGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.CurrentExpansion, Enum.LFGListFilter.NotCurrentSeason, Enum.LFGListFilter.PvE));
+	
+	local allDungeons = {};
+
+	tAppendAll(allDungeons, seasonGroups);
+	tAppendAll(allDungeons, expansionGroups);
+
+	if PlayerIsTimerunning() then
+		local timerunningGroups = C_LFGList.GetAvailableActivityGroups(GROUP_FINDER_CATEGORY_ID_DUNGEONS, bit.bor(Enum.LFGListFilter.Timerunning, Enum.LFGListFilter.PvE));
+		tAppendAll(allDungeons, timerunningGroups);
+	end
+
+	enabled.activities = allDungeons;
+end
+
+local function EntryStillSatisfiesFilters(enabled, displayData, searchResultInfo)
+	local _, classFilename = UnitClass("player");
+	local infoTable = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1]);
+
+	if enabled.needsTank and displayData["TANK"] ~= 0 then
+		return false;
+	elseif enabled.needsHealer and displayData["HEALER"] ~= 0 then
+		return false;
+	elseif enabled.needsDamage and displayData["DAMAGER"] >= 3 then
+		return false;
+	elseif enabled.needsMyClass and displayData[classFilename] > 0 then
+		return false;
+	elseif enabled.hasTank and displayData["TANK"] == 0 then
+		return false;
+	elseif enabled.hasHealer and displayData["HEALER"] == 0 then
+		return false;
+	elseif enabled.minimumRating > (searchResultInfo.leaderOverallDungeonScore or 0) then
+		return false;
+	elseif #enabled.activities > 0 then
+		local foundActivity = false;
+		for _, activityID in ipairs(enabled.activities) do
+			if activityID == infoTable.groupFinderActivityGroupID then
+				foundActivity = true;
+				break;
+			end
+		end
+		if not foundActivity then
+			return false;
+		end
+	end
+	if not LFGListAdvancedFiltersDifficultyNoneChecked(enabled) then
+		if (infoTable.isNormalActivity and not enabled.difficultyNormal)
+			or (infoTable.isHeroicActivity and not enabled.difficultyHeroic) 
+			or (infoTable.isMythicActivity and not enabled.difficultyMythic)
+			or (infoTable.isMythicPlusActivity and not enabled.difficultyMythicPlus) then
+			return false;
+		end
+	end
+	if not LFGListAdvancedFiltersGeneralPlaystyleNoneChecked(enabled) then
+		if ((searchResultInfo.generalPlaystyle == Enum.LFGEntryGeneralPlaystyle.Learning) and not enabled.generalPlaystyle1)
+			or ((searchResultInfo.generalPlaystyle == Enum.LFGEntryGeneralPlaystyle.FunRelaxed) and not enabled.generalPlaystyle2)
+			or ((searchResultInfo.generalPlaystyle == Enum.LFGEntryGeneralPlaystyle.FunSerious) and not enabled.generalPlaystyle3)
+			or ((searchResultInfo.generalPlaystyle == Enum.LFGEntryGeneralPlaystyle.Expert) and not enabled.generalPlaystyle4) then
+			return false;
+		end
+	end
+
+	return true;
+end
+
+local function IsDeclined(appStatus)
+	return appStatus == "declined" or appStatus == "declined_delisted" or appStatus =="declined_full"
+
+end
+
+function SearchFrameResultFrameMixin:RefreshStatus()
+	local data = self:GetData()
+
+    local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
+
+	if(searchResultInfo) then
+		local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(searchResultInfo.searchResultID);
+		local isDeclined = IsDeclined(appStatus)
+
+		if LFGListFrame.declines then
+			if not isDeclined and LFGListFrame.declines[searchResultInfo.partyGUID] then
+				isDeclined = true;
+				appStatus = LFGListFrame.declines[searchResultInfo.partyGUID];
+			end
+		end
+
+		local isApplication = (appStatus ~= "none" or pendingStatus);
+		local isAppFinished = LFGListUtil_IsStatusInactive(appStatus) or LFGListUtil_IsStatusInactive(pendingStatus);
+		local enabled = C_LFGList.GetAdvancedFilter();
+		local displayData = C_LFGList.GetSearchResultMemberCounts(searchResultInfo.searchResultID);
+		
+		self.hasInvitation = appStatus == "invited"
+		self.isTimedOut = appStatus == "timedout"
+		self.isFull = appStatus == "declined_full"
+		self.applicationHasBeenCancelled = appStatus == "cancelled"
+		self.applicationHasBeenDeclined = appStatus == "declined"
+		self.invitationHasBeenDeclined = appStatus == "invitedeclined"
+
+		self.isNowFilteredOut = not self:CheckForEligibility() or LFGListFrame.CategorySelection.selectedCategory == GROUP_FINDER_CATEGORY_ID_DUNGEONS and not EntryStillSatisfiesFilters(enabled, displayData, searchResultInfo)
+		self.isApplication = isApplication and not isAppFinished;
+		self.isSelected = LFGListFrame.SearchPanel.selectedResult == searchResultInfo.searchResultID and not isApplication and not searchResultInfo.isDelisted;
+		self.isDelisted = searchResultInfo.isDelisted
+
+		local activityID = searchResultInfo.activityIDs[1]
+		local activityInfo = miog:GetActivityInfo(activityID)
+
+		if(activityInfo.horizontal) then
+			self.Background:SetTexture(activityInfo.horizontal, "MIRROR", "MIRROR")
+
+			if(self.Background:GetTexture() == nil) then
+				if(activityInfo.categoryID == 3) then
+					self.Background:SetTexture("interface/lfgframe/ui-lfg-background-randomdungeon.blp", "MIRROR", "MIRROR")
+
+				elseif(activityInfo.categoryID == 121) then
+					self.Background:SetAtlas(activityInfo.atlas)
+
+				end
+			end
+		elseif(activityInfo.categoryID == 4 or activityInfo.categoryID == 9) then
+			self.Background:SetTexture(activityInfo.categoryID == 4 and ("interface/lfgframe/ui-lfg-background-randomscenario.blp") or "interface/lfgframe/ui-lfg-background-heroicscenario.blp", "MIRROR", "MIRROR")
+			
+		else
+			self.Background:SetColorTexture(PANEL_BACKGROUND_COLOR:GetRGBA())
+			
+		end
+	else
+		self.hasInvitation = nil
+		self.isTimedOut = nil
+		self.isFull = nil
+		self.applicationHasBeenCancelled = nil
+		self.applicationHasBeenDeclined = nil
+		self.invitationHasBeenDeclined = nil
+
+		self.isNowFilteredOut = nil
+		self.isApplication = nil
+		self.isSelected = nil
+		self.isDelisted = nil
+
+	end
+
+    self:UpdateVertex()
+    self:UpdateStatus()
 end
 
 function SearchFrameResultFrameMixin:UpdateApplicationStatus()
@@ -208,7 +434,6 @@ end
 
 function SearchFrameResultFrameMixin:Update()
     local data = self:GetData()
-
     local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
     if(searchResultInfo) then
@@ -412,8 +637,7 @@ function SearchFrameResultFrameMixin:Update()
 
         self:UpdateCategoryData(searchResultInfo)
         self:UpdateApplicationStatus()
-
-        self:SetStatus(searchResultInfo)
+        self:RefreshStatus()
     end
 end
 

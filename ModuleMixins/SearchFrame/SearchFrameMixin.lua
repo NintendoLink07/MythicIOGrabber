@@ -298,11 +298,42 @@ function SearchFrameMixin:HasNewImportantData(resultID)
     end
 end
 
-local timer
+function SearchFrameMixin:UpdateInfoFrame(resultID)
+    local infoFrame = self:FindInfoFrame(resultID)
+
+    if(infoFrame) then
+        local searchResultInfo = miog:GetSecureSearchResultInfo(resultID)
+
+        if(searchResultInfo and searchResultInfo.leaderName) then
+            infoFrame:Update(searchResultInfo.leaderName, searchResultInfo.comment)
+
+        end
+    end
+end
+
+local loading = false
+local updateTimer
 
 function SearchFrameMixin:OnEvent(event, ...)
     if(event == "LFG_LIST_SEARCH_RESULTS_RECEIVED") then
         self:Refresh()
+
+        if(not loading) then
+            loading = true
+            self.ProgressBar:ResetSmoothedValue(0)
+            self.ProgressBar:Show()
+
+            updateTimer = C_Timer.NewTicker(0.25, function()
+                self.ProgressBar:SetSmoothedValue(self.ProgressBar:GetValue() + 0.25)
+
+                if(self.ProgressBar:GetValue() > 1.9) then
+                    self.ProgressBar:Hide()
+                    updateTimer:Cancel()
+                    loading = false
+
+                end
+            end)
+        end
 
     elseif(event == "LFG_LIST_SEARCH_FAILED") then
         self:RefreshSearchStatus()
@@ -310,32 +341,28 @@ function SearchFrameMixin:OnEvent(event, ...)
     elseif(event == "LFG_LIST_SEARCH_RESULT_UPDATED") then
         local resultID = ...
 
-        if(self:HasNewImportantData(resultID)) then
+        --[[if(self:HasNewImportantData(resultID)) then
             if(timer) then
                 timer:Cancel()
 
             end
 
-            timer = C_Timer.NewTimer(0.5, function()
+            timer = C_Timer.NewTimer(1, function()
                 self:Refresh()
             
             end)
-        else
+        else]]
             local frame = self:FindNodeFrame(resultID)
 
             if(frame) then
                 frame:Update()
 
                 if(not frame:IsCollapsed()) then
-                    local infoFrame = self:FindInfoFrame(resultID)
-
-                    if(infoFrame) then
-                        infoFrame:Update()
-
-                    end
+                    self:UpdateInfoFrame()
+                    
                 end
             end
-        end
+        --end
 
         self.Footer.SignUp:SetEnabled(LFGListFrame.SearchPanel.SignUpButton:IsEnabled())
 
@@ -346,13 +373,7 @@ function SearchFrameMixin:OnEvent(event, ...)
 
         if(frame) then
             frame:UpdateApplicationStatus()
-
-            local infoFrame = self:FindInfoFrame(resultID)
-            
-            if(infoFrame) then
-                infoFrame:Update()
-
-            end
+            self:UpdateInfoFrame()
         end
     end
 end
@@ -490,15 +511,14 @@ function SearchFrameMixin:OnLoad()
 
     end)
 
+    self.ProgressBar:SetMinMaxSmoothedValue(0, 2)
+
     self.Footer.RaidCompButton:SetScript("OnEnter", function(selfFrame)
         GameTooltip:SetOwner(selfFrame, "ANCHOR_RIGHT")
         GameTooltip:SetText("Toggle showing the raid composition for a raid search result")
         GameTooltip:Show()
 
     end)
-
-	--self.Header.SecondaryRatingSort:SetBackdrop(visualTable)
-	--self.Header.SecondaryRatingSort:SetBackdropBorderColor(r, g, b, a)
 
 	self:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED")
 	self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
@@ -511,8 +531,18 @@ function SearchFrameMixin:OnLoad()
 
     local function Initializer(frame, node)
 		local data = node:GetData()
+        
+        if(data.template == "MIOG_SearchFrameInfoFrameTemplate") then
+            local searchResultInfo = miog:GetSecureSearchResultInfo(data.resultID)
 
-        frame:Update()
+            if(searchResultInfo and searchResultInfo.leaderName) then
+                frame:Update(searchResultInfo.leaderName, searchResultInfo.comment)
+                
+            end
+        else
+            frame:Update()
+
+        end
 	end
 	
 	local function CustomFactory(factory, node)

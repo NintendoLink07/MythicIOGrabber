@@ -1,0 +1,480 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <Frame name="MIOG_ApplicationViewer" inherits="BackdropTemplate" mixin="SortingMixin" virtual="true" hidden="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+        </Anchors>
+
+        <Frames>
+            <Frame parentKey="TitleBar" inherits="BackdropTemplate">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Faction">
+                            <Size x="18" y="18" />
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-1"/>
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                    GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().isCrossFactionListing and CROSS_FACTION_CLUB_FINDER_SEARCH_OPTION or UnitFactionGroup("player"))
+                                    GameTooltip:Show()
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="GroupComposition" inherits="BackdropTemplate">
+                        <Size x="110" y="19" />
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.Faction" relativePoint="LEFT" x="-2" y="-1"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="Roles" font="GameFontHighlight" justifyH="RIGHT" justifyV="MIDDLE" outline="NORMAL" text="0/0/0" wordwrap="false">
+                                    <Anchors>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="0" wordwrap="false">
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3" />
+                                <Anchor point="RIGHT" relativeKey="$parent.GroupComposition" relativePoint="LEFT" x="-3" />
+                            </Anchors>
+
+                            <Scripts>
+                                <OnEnter>
+                                    if(self:IsTruncated()) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText(self:GetText())
+                                        GameTooltip:Show()
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="InfoPanel" inherits="BackdropTemplate">
+                <Size y="80" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.TitleBar" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="Background">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="-1" y="1" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Activity" font="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" outline="NORMAL" text="ActivityName" wordwrap="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="3" y="-3"/>
+                                <Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-3" y="-3" />
+                            </Anchors>
+
+                            <Color r="1" g="0.8" b="0" a="1" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <ScrollFrame parentKey="Description" inherits="ScrollFrameTemplate">
+                        <KeyValues>
+                            <KeyValue key="scrollBarHideIfUnscrollable" value="true" type="string" />
+                        </KeyValues>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.Activity" relativePoint="BOTTOMLEFT" y="-2" />
+                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" y="3" />
+                        </Anchors>
+
+                        <ScrollChild>
+                            <Frame parentKey="Container" setAllPoints="true">
+                                <Layers>
+                                    <Layer level="OVERLAY">
+                                        <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="TOP" outline="NORMAL" text="" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true" />
+                                    </Layer>
+                                </Layers>
+                            </Frame>
+                        </ScrollChild>
+                    </ScrollFrame>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="CreationSettings" inherits="BackdropTemplate">
+                <Size y="24" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.InfoPanel" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false" font="GameFontHighlight" hidden="true">
+                        <Frames>
+                            <Button parentKey="UpdateButton" inherits="UIPanelButtonTemplate" text="Update">
+                                <Size x="60" y="20" />
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent" relativePoint="RIGHT" />
+                                </Anchors>
+                            </Button>
+                        </Frames>
+
+                        <Scripts>
+                            <OnShow>
+                                self:SetFocus()
+                            </OnShow>
+                        </Scripts>
+                    </EditBox>
+
+                    <CheckButton parentKey="PrivateGroupButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="npe_exclamationpoint" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="3"/>
+                        </Anchors>
+
+                        <Scripts>                            
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and "Private listing: " .. tostring(C_LFGList.GetActiveEntryInfo().privateGroup) or "No current listing")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+
+                    </CheckButton>
+
+                    <CheckButton parentKey="VoiceChatButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="voicechat-icon-mic" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.PrivateGroupButton" relativePoint="RIGHT" x="3"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnClick>
+                                if(self:GetChecked()) then
+                                    self:GetNormalTexture():SetVertexColor(1, 1, 1, 1)
+                                    LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(true)
+
+                                else
+                                    self:GetNormalTexture():SetVertexColor(0.75, 0.75, 0.75, 0.25)
+                                    LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetChecked(false)
+                                
+                                end
+                            </OnClick>
+
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(LFGListFrame.EntryCreation.VoiceChat.CheckButton:GetChecked() and string.format(VOICE_CHAT_COLON, C_LFGList.GetActiveEntryInfo().voiceChat) or VOICECHAT_DISABLED)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+
+                    </CheckButton>
+                    
+                    <CheckButton parentKey="AutoAcceptButton" inherits="UIButtonTemplate">
+                        <NormalTexture atlas="recurringavailablequesticon" />
+
+                        <Size x="20" y="20" />
+
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.VoiceChatButton" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo() and LFG_LIST_AUTO_ACCEPT .. ": " .. tostring(C_LFGList.GetActiveEntryInfo().autoAccept) or "")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+
+                    </CheckButton>
+                </Frames>
+
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Playstyle" atlas="levelup-icon-book">
+                            <KeyValues>
+                                <KeyValue key="tooltipText" value="" type="global" />
+                            </KeyValues>
+
+                            <Size x="20" y="20" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.AutoAcceptButton" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                            <Scripts>
+                                <OnEnter>
+                                    if(self.tooltipText) then
+                                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                        GameTooltip:SetText(self.tooltipText)
+                                        GameTooltip:Show()
+                                    end
+                                </OnEnter>
+                                <OnLeave function="GameTooltip_Hide" />
+                            </Scripts>
+                        </Texture>
+                    </Layer>
+                </Layers>
+
+                <Frames>
+                    <Frame parentKey="Rating">
+                        <Size x="60" y="20" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeKey="$parent.Playstyle" relativePoint="RIGHT" x="5"/>
+                            </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Texture" atlas="jailerstower-scenario-skull3">
+
+                                    <Size x="20" y="20" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(C_LFGList.HasActiveEntryInfo()
+                                and (C_LFGList.GetActiveEntryInfo().requiredDungeonScore and string.format(GROUP_FINDER_MYTHIC_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredDungeonScore)
+                                or C_LFGList.GetActiveEntryInfo().requiredPvpRating and string.format(GROUP_FINDER_PVP_RATING_REQ_TOOLTIP, C_LFGList.GetActiveEntryInfo().requiredPvpRating))
+                                or "Rating required: 0")
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Frame>
+
+                    <Frame parentKey="ItemLevel">
+                        <Size x="50" y="20" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.Rating" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Texture" atlas="vehicle-hammergold-3">
+                                    <Size x="20" y="20" />
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="FontString" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="---" wordwrap="true" nonspacewrap="true" spacing="5" setAllPoints="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.Texture" relativePoint="RIGHT" x="5"/>
+                                        <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+
+                        <Scripts>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(string.format(LFG_LIST_TOOLTIP_ILVL, C_LFGList.HasActiveEntryInfo() and C_LFGList.GetActiveEntryInfo().requiredItemLevel or 0))
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave function="GameTooltip_Hide" />
+                        </Scripts>
+                    </Frame>
+                </Frames>
+
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="Timer" font="GameFontHighlight" justifyH="LEFT" justifyV="CENTER" outline="NORMAL" text="0:00:00" wordwrap="true" nonspacewrap="true">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-3" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <Frame parentKey="SortButtonRow" inherits="BackdropTemplate, HorizontalLayoutFrame">
+                <Size y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.CreationSettings" relativePoint="BOTTOMRIGHT" />
+                </Anchors>
+
+                <Frames>
+                    <Button parentKey="ResetButton" inherits="IconButtonTemplate">
+                        <KeyValues>
+                            <KeyValue key="iconAtlas" value="UI-RefreshButton" />
+                            <KeyValue key="iconSize" value="20" />
+                        </KeyValues>
+
+                        <Size x="20" y="20" />
+                        
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" />
+                        </Anchors>
+
+                        <Scripts>
+                            <OnShow>
+                                self:OnLoad()
+                            </OnShow>
+                            <OnClick>
+                                C_LFGList.RefreshApplicants()
+                                self:GetParent():GetParent().ScrollBox2:ScrollToBegin()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+
+            <Frame parentKey="ScrollBox2" inherits="WowScrollBoxList">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.SortButtonRow" relativePoint="BOTTOMLEFT" x="1"/>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT"  x="-1"/>
+                </Anchors>
+            </Frame>
+            
+            <EditBox parentKey="CopyBox" inherits="InputBoxTemplate" framestrata="FULLSCREEN" autoFocus="false" font="GameFontHighlight">
+                <Size y="20" />   
+                
+                <Scripts>
+                    <OnKeyDown>
+                        if(key == "ESCAPE" or key == "ENTER") then
+                            self:Hide()
+                            self:ClearFocus()
+
+                        end
+
+                        self.keyArray[key] = true
+
+                        if((self.keyArray["LCTRL"] or self.keyArray["RCTRL"]) and self.keyArray["C"]) then
+                            self.keyArray["LCTRL"] = nil
+                            self.keyArray["RCTRL"] = nil
+                            self.keyArray["C"] = nil
+
+                            C_Timer.After(0.1, function()
+                                self:Hide()
+                                self:ClearFocus()
+                            end)
+                        end
+                    </OnKeyDown>
+
+                    <OnKeyUp>
+                        self.keyArray[key] = nil
+
+                    </OnKeyUp>
+
+                    <OnLoad>
+                        self.keyArray = {}
+                        
+                    </OnLoad>
+                </Scripts>
+            </EditBox>
+
+            <Button parentKey="Browse" inherits="UIPanelDynamicResizeButtonTemplate" text="BROWSE">
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                        local activeEntryInfo = C_LFGList.GetActiveEntryInfo()
+                        if(activeEntryInfo) then
+                            local activityInfo = C_LFGList.GetActivityInfoTable(activeEntryInfo.activityIDs[1])
+                            if(activityInfo) then
+                                LFGListSearchPanel_SetCategory(LFGListFrame.SearchPanel, activityInfo.categoryID, activityInfo.filters, LFGListFrame.baseFilters)
+                                LFGListSearchPanel_DoSearch(LFGListFrame.SearchPanel)
+                                LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.SearchPanel)
+                            end
+                        end
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Delist" inherits="UIPanelDynamicResizeButtonTemplate" text="GROUP_FINDER_DELIST">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Browse" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		                C_LFGList.RemoveListing()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button parentKey="Edit" inherits="UIPanelDynamicResizeButtonTemplate" text="EDIT">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.Delist" relativePoint="RIGHT" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:FitToText()
+                        self:SetWidth(self:GetWidth() - 6)
+                    </OnShow>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                        LFGListEntryCreation_SetEditMode(LFGListFrame.EntryCreation, true)
+                        LFGListFrame_SetActivePanel(LFGListFrame, LFGListFrame.EntryCreation)
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnShow>
+                C_LFGList.RefreshApplicants()
+                self.ScrollBox2:ScrollToBegin()
+
+            </OnShow>
+        </Scripts>
+    </Frame>
+</Ui>

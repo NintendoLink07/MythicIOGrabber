@@ -1,16 +1,16 @@
-## [3.10.5](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.5) - 2026-08-19
+## [3.10.6](https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.6) - 2026-08-26
 
 ### Fixed
 
-- [Progress] Fixed an issue trying to update data right after 2 loading screens.
+- [Ports] The active season is now getting recognized correctly.
 
-- Again; more secret value fixes.
+- [Ports] The abbreviations for all the S2 dungeons are now showing up correctly.
 
-### Known issues
+- Some secret value fixes.
 
-- [AppViewer] The app viewer is sometimes not getting shown correctly.
-This is because of secret value issues.
-This will be fixed in v3.11.
+- Some minor performance improvements.
 
-- Lockouts aren't being saved correctly on all characters.
-This will be fixed in v3.10.6 (coming on the 20th or 21st).
+### Upcoming
+
+- There won't be any updates in August and September.
+Starting October version 4.0 will be released, fully secret value secure and with muuuuch better performance.

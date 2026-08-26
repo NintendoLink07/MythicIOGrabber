@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 
+
+## [3.10.6] - 2026-08-26
+
+### Fixed
+
+- [Ports] The active season is now getting recognized correctly.
+
+- [Ports] The abbreviations for all the S2 dungeons are now showing up correctly.
+
+- Some secret value fixes.
+
+- Some minor performance improvements.
+
+### Upcoming
+
+- There won't be any updates in August and September.
+Starting October version 4.0 will be released, fully secret value secure and with muuuuch better performance.
+
+
+
+
 ## [3.10.5] - 2026-08-19
 
 ### Fixed
@@ -5148,7 +5169,9 @@ Basically just the rating for the bracket and the tier they're currently in
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.4b..HEAD
+[unreleased]: https://github.com/NintendoLink07/MythicIOGrabber/compare/3.10.6..HEAD
+[3.10.6]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.6
+[3.10.5]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.5
 [3.10.4b]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4b
 [3.10.4a]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4a
 [3.10.4]: https://github.com/NintendoLink07/MythicIOGrabber/releases/tag/3.10.4

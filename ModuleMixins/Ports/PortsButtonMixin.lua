@@ -29,11 +29,13 @@ function PortsButtonMixin:CheckVisuals()
 
                 if(mapInfo) then
                     self.Text:SetText(mapInfo.abbreviatedName)
+
                 end
 
-            --else
-                --self.Text:SetText(WrapTextInColorCode("MISSING", "FFFF0000"))
-                --print(self.data.spellID, spellInfo.name)
+            else
+                self.Text:SetText(WrapTextInColorCode("MISSING", "FFFF0000"))
+                local spellInfo = C_Spell.GetSpellInfo(self.data.spellID)
+                print(self.data.spellID, spellInfo.name)
 
             end
         end

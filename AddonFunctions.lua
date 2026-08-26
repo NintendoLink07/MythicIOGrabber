@@ -55,12 +55,9 @@ end
 
 function miog:GetRaidTierDataViaRaiderIO(playerName, realm, region)
     local profile = self:GetRaiderIOProfile(playerName, realm, region)
-    local currentSeason = C_MythicPlus.GetCurrentSeason()
-
     local mapsDone = {}
 
 	if(profile and profile.raidProfile) then
-        local seasonRaidData = miog:GetSeasonRaidDataOrdered()
         local tiers = {sortedEntries = {}}
         local raidProgress = profile.raidProfile.raidProgress
         local sortedEntriesIndex = 0

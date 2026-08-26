@@ -5,6 +5,7 @@ local setupDone = false
 PortsMixin = {}
 
 local frameTable = {
+    [2] = "Left",
     [3] = "Left",
     [4] = "Left",
     [5] = "Left",
